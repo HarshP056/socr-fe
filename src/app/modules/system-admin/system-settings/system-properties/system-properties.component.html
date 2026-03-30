@@ -1,0 +1,38 @@
+<div class="container-fluid px-0">
+  <div class="bg-white">
+    <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+      <div>
+        <div class="mt-3">
+          <a routerLink="/system-admin/system-settings" class="text-decoration-none d-flex align-items-center px-0">
+            <h5 class="fw-semibold">
+              <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left" />
+              System Properties
+            </h5>
+          </a>
+          <div class="sub-title py-2 px-4">
+            <p style="color: rgba(9, 30, 66, 0.54); margin-left: 8px">
+              System properties in a system refer to the characteristics or
+              attributes that describe its behavior, functionality, and
+              configurations.
+            </p>
+          </div>
+        </div>
+        <div class="d-flex px-4" style="justify-content: flex-start; margin-bottom: 15px; margin-left: 10px; align-items: center;">
+          <div>System Property</div>
+          <div style="margin-left: 20px">
+            <button [cdkCopyToClipboard]="this.property | json" class="mat-ripple btn btn-info shadow"
+              matTooltip="Copy">
+              Copy Properties
+            </button>
+          </div>
+        </div>
+        <!-- <div class="properties">
+            <pre>{{ property | json }}</pre>
+          </div> -->
+        <div class="properties">
+          <ngx-json-viewer [json]="property"></ngx-json-viewer>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

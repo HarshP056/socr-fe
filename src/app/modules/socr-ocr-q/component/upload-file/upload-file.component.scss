@@ -1,0 +1,21 @@
+.myInput{
+    display: flex;
+    color: #80808F;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 8px 12px;
+    border-radius: 6px;
+    // border: 1px solid  #D0D5DD;
+    border: 1px solid #ced4da;
+    background:  #FFF;
+}
+
+.folder{
+    cursor: pointer; 
+    padding-bottom: 5px; 
+    padding-right: 5px;
+}
+
+input[type="file"] {
+    display: none;
+}

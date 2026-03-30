@@ -1,0 +1,224 @@
+<div class="pb-5 position-relative" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+      <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+          <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+              <img src="./assets/images/role-details.png" alt="role">
+          </div>Rule
+      </div>
+      <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close">
+          <img src="./assets/images/x.svg" alt="">
+      </button>
+  </div>
+  <div class="col-lg-12 col-xxl-12 d-flex justify-content-between px-4 py-3">
+      <div class="col-md-5">
+          <label for="name" class="form-label fw-semibold text-font-dark">Rule Name</label>
+          <input type="text" name="name" [(ngModel)]="rule.fieldName" class="form-control py-2">
+      </div>
+      <div class="col-md-5">
+          <label for="type" class="form-label fw-semibold text-font-dark">Type</label>
+          <select name="type" class="form-select py-2" [(ngModel)]="rule.type" (change)="getType($event)"aria-label="Default select example" style="border-radius: 4px;">
+              <option value="removeSpecialChar">Remove Special Character</option>
+              <option value="replaceText">Replace Text</option>
+              <option value="regex">Regex</option>
+              <option value="LimitTheCharacterOrDigit">Limit the character or digit</option>
+              <option value="Script">Script Based</option>
+          </select>
+      </div>
+  </div>
+  <div class="px-4" style="overflow-y: auto;padding-bottom: 75px;">
+      <div class="row">
+          <div class="col-lg-12 col-xxl-12">
+              <!-- === -->
+              <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0" *ngIf="rule.type==='removeSpecialChar'">
+                  <form #saveOCRLineItem="ngForm">
+                      <table class="table table-bordered user-management mb-0">
+                          <thead>
+                              <tr>
+                                  <th scope="col" style="width: 250px;">
+                                      <span>Where</span>
+                                  </th>
+                                  <th scope="col">
+                                      <span>Replace Character</span>
+                                  </th>
+                                  <th scope="col">
+                                      <span>With</span>
+                                  </th>
+
+                                  <th scope="col"></th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let data of rule.items; let i=index">
+                                  <td>
+                                      <select name="where{{i}}" class="form-select" [(ngModel)]="data.where" required aria-label="Default select example">
+                                          <option value="prefix">Prefix</option>
+                                          <option value="prefixandsuffix">Prefix and Suffix</option>
+                                          <option value="suffix">Suffix</option>
+                                          <option value="wholetext">Whole Text</option>
+                                      </select>
+                                  </td>
+                                  <td>
+                                      <div *ngIf="data.where=='prefix' || data.where=='prefixandsuffix' || data.where=='suffix'"><input type="text" name="replaceCharacter{{i}}" class="form-control py-2" [(ngModel)]="data.replaceCharacter" required /></div>
+                                      <div *ngIf="data.where=='wholetext'"> <input type="text" name="replaceCharacter{{i}}" class="form-control py-2" [(ngModel)]="data.replaceText" required /></div>
+                                  </td>
+                                  <td>
+                                     <div  *ngIf="data.where=='prefix' || data.where=='prefixandsuffix' || data.where=='suffix'"> <input type="text" name="with{{i}}" class="form-control py-2" [(ngModel)]="data.with" required /></div>
+                                     <div  *ngIf="data.where=='wholetext'"> <input type="text" name="with{{i}}" class="form-control py-2" [(ngModel)]="data.withText" required /></div>
+                                  </td>
+
+                                  <td style="width: 50px">
+                                      <a class="cursor-pointer" (click)="removeItem(i)">
+                                          <img src="./assets/images/trash-02.svg" alt="delete" />
+                                      </a>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td colspan="4">
+                                      <button class="btn btn-info shadow" (click)="addFields()">
+                                          <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                                          Add New
+                                      </button>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </form>
+              </div>
+              <!-- === -->
+              <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0" *ngIf="rule.type==='replaceText'">
+                  <form #saveOCRLineItem="ngForm">
+                      <table class="table table-bordered user-management mb-0">
+                          <thead>
+                              <tr>
+                                  <th scope="col" style="width: 200px;">
+                                      <span>Match</span>
+                                  </th>
+                                  <th scope="col">
+                                      <span>Replace text</span>
+                                  </th>
+                                  <th scope="col">
+                                      <span>With text</span>
+                                  </th>
+
+                                  <th scope="col"></th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let data of rule.items; let i=index">
+                                  <td>
+                                      <select class="form-select py-2" name="match{{i}}" [(ngModel)]="data.match" required>
+                                          <option value="Exact">Exact</option>
+                                          <option value="Fuzzy">Fuzzy</option>
+                                      </select>
+                                  </td>
+                                  <td>
+                                      <input type="text" name="replaceText{{i}}" class="form-control py-2" [(ngModel)]="data.replaceText" required />
+                                  </td>
+                                  <td>
+                                      <input type="text" name="withText{{i}}" class="form-control py-2" [(ngModel)]="data.withText" required />
+                                  </td>
+
+                                  <td style="width: 50px">
+                                      <a class="cursor-pointer" (click)="removeItemReplace(i)">
+                                          <img src="./assets/images/trash-02.svg" alt="delete" />
+                                      </a>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td colspan="4">
+                                      <button class="btn btn-info shadow" (click)="addFieldReplaceText()">
+                                          <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                                          Add New
+                                      </button>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </form>
+              </div>
+              <!-- ==== -->
+              <div *ngIf="rule.type==='regex'">
+                  <div class="col-lg-12 col-xxl-12 border-bottom pb-3 mb-3">
+                     <label for="regexValue" class="form-label fw-semibold text-font-dark">Regex Value</label>
+                     <input type="text" name="regexValue" class="form-control py-2" [(ngModel)]="rule.regexValue" />
+                  </div>
+                  <p>Test your rule</p>
+                  <div class="col-lg-12 col-xxl-12 d-flex align-items-center">
+                      <label for="value" class="form-label fw-semibold text-font-dark col-2 my-0">Enter Value</label>
+                      <input type="text" name="value" class="form-control py-2 w-75" [(ngModel)]="rule.value" />
+                      <a class="cursor-pointer ms-3" (click)="runTest()">
+                        <img src="./assets/images/run.svg" alt="delete" />
+                        </a>
+                  </div>
+              </div>
+              <div class="px-0" *ngIf="rule.type==='LimitTheCharacterOrDigit'">
+                  <div class="col-lg-12 col-xxl-12 py-3">
+                      <input type="radio" name="limitCharacterOrDigit" class="me-2" [(ngModel)]="rule.limitCharacterOrDigit" value="Charaters" />
+                      <label for="limitCharacterOrDigit" class="form-label fw-semibold text-font-dark me-2">Charaters</label>
+                      <input type="radio" name="limitCharacterOrDigit" class="me-2" [(ngModel)]="rule.limitCharacterOrDigit" value="Digits" />
+                      <label for="limitCharacterOrDigit" class="form-label fw-semibold text-font-dark me-2">Digits</label>
+                      <input type="radio" name="limitCharacterOrDigit" class="me-2" [(ngModel)]="rule.limitCharacterOrDigit" value="Amount" />
+                      <label for="limitCharacterOrDigit" class="form-label fw-semibold text-font-dark">Amount</label>
+                  </div>
+                  <div class="col-lg-12 col-xxl-12 d-flex align-items-center" *ngIf="rule.limitCharacterOrDigit == 'Digits' || rule.limitCharacterOrDigit == 'Charaters'">
+                      <label for="limit" class="form-label fw-semibold text-font-dark col-3">
+                          <span *ngIf="rule.limitCharacterOrDigit == 'Digits'">Limit digits to</span>
+                          <span *ngIf="rule.limitCharacterOrDigit == 'Charaters'">Limit charaters to</span>
+                      </label>
+                      <input type="text" name="limit" class="form-control py-2" [(ngModel)]="rule.limit" *ngIf="rule.limitCharacterOrDigit == 'Charaters'" />
+                      <input type="text" name="limit" class="form-control py-2" [(ngModel)]="rule.limit" *ngIf="rule.limitCharacterOrDigit == 'Digits'" numbersOnly />
+                  </div>
+                  <div class="col-lg-12 col-xxl-12 d-flex align-items-center justify-content-between " *ngIf="rule.limitCharacterOrDigit == 'Amount'">
+                      <div class="col-md-5">
+                          <label for="limit" class="form-label fw-semibold text-font-dark">
+                              Integer Limit
+                          </label>
+                          <input type="text" name="limit" class="form-control py-2" [(ngModel)]="rule.integerLimit" numbersOnly />
+                      </div>
+                      <div class="col-md-5">
+                          <label for="limit" class="form-label fw-semibold text-font-dark">
+                              Decimal Limit
+                          </label>
+                          <input type="text" name="limit" class="form-control py-2" [(ngModel)]="rule.decimalLimit" numbersOnly />
+                      </div>
+                  </div>
+              </div>
+              <div [hidden]="rule.type!=='Script'">
+                <mat-slide-toggle [(ngModel)]="rule.keyValueEnabled">
+                    <span>Enable Key Value</span>
+                </mat-slide-toggle>
+                <div style="height: 15rem; width: 100%;" class="mt-4">
+                    <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="rule.scriptValue">
+                    </ngx-monaco-editor>
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!-- <div class="col-lg-12 col-xxl-12 d-flex justify-content-between px-4 py-3" *ngIf="rule.type ==='Script' || rule.type === 'regex'">
+      <div class="col-md-5">
+          <label for="name" class="form-label fw-semibold text-font-dark">Test</label>
+          <input type="text" name="name" [(ngModel)]="test.value" class="form-control py-2">
+
+      </div>
+      <div class="col-md-5">
+          <label for="name" class="form-label fw-semibold text-font-dark">Result:</label>
+          <div class="col-lg-12 col-xxl-12 d-flex justify-content-between px-4 py-3">
+              {{test.response}}
+          </div>
+      </div>
+  </div> -->
+  <!-- <div class="col-lg-12 col-xxl-12 d-flex justify-content-between px-4 py-3" *ngIf="rule.type ==='Script' || rule.type === 'regex'">
+      <a class="cursor-pointer"  (click)="runTest()">
+          <img src="./assets/images/run.svg" alt="delete" />
+      </a>
+  </div> -->
+  <div class="offcanvas-footer bg-light px-3 py-2" style="position: fixed;bottom: 0;width: 50%;">
+      <div>
+          <div class="d-flex align-items-center gap-1" style="float: right;">
+              <button type="button" class="btn btn-light px-3 me-2" mat-dialog-close>Cancel</button>
+              <button type="button" class="btn btn-info px-5" (click)="saveRule()">Save</button>
+          </div>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,188 @@
+<!-- <div class="container-fluid px-0">
+  <div class="wrapper h-calc d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap"> -->
+      <div class="main-content bg-white w-100">
+        <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+          <a routerLink="/system-admin/system-logs" class="text-decoration-none d-flex align-items-center px-0">
+            <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> ERP Sync
+              Logs
+            </h5>
+          </a>
+          <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+            <div class="text-grey-4">
+              "ERP Sync logs provide a detailed record of software malfunctions, aiding developers in diagnosing issues
+              and
+              enhancing system stability through informed problem-solving."
+            </div>
+          </div>
+          <div class="col-lg-12 mb-2 px-0">
+            <div class="d-flex align-items-center flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 px-3">
+              <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">
+                <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by type"
+                  [(ngModel)]="searchParams.type">
+                <!-- <div>
+                    <p-dropdown appendTo="body" name="subType" [options]="subTypeList" optionLabel="name"
+                     optionValue="value" [(ngModel)]="searchParams.subType"
+                      placeholder="Select Sub Type"></p-dropdown>
+                </div> -->
+                <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by UUID"
+                  [(ngModel)]="searchParams.uuid">
+                <div>
+                  <p-dropdown appendTo="body" name="logicalSystem" [options]="logicalSytemList" optionLabel="systemId"
+                    optionValue="systemId" [(ngModel)]="searchParams.logicalSystem"
+                    placeholder="Select Logical System"></p-dropdown>
+                </div>
+                <div class="searchBox cursor-pointer">
+                  <input type="text" class="w-100 border-0" placeholder="Search By Created Date" #dp="bsDaterangepicker"
+                    bsDaterangepicker [bsConfig]="{
+                        showWeekNumbers: false,
+                        rangeInputFormat: 'DD MMM,YYYY'
+                      }" [(ngModel)]="queryParams.lastUpdated" (ngModelChange)="onDateRangeSelected()"
+                    [maxDate]="maxDate" readonly name="dateRange" style="font-size: 0.9rem;" />
+                  <div>
+                    <img (click)="dp.toggle()" *ngIf="!queryParams.dateRange?.length" src="./assets/media/calendar.svg"
+                      alt="" />
+                    <span *ngIf="queryParams.dateRange?.length" class="cursor-pointer crossicon" (click)="removeDate()">
+                      <span>
+                        <i class="bi bi-x-lg"></i>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2 ms-2">
+                <div>
+                  <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                    <ng-container *ngIf="isLoading">
+                      <span clas="indicator-progress" [style.display]="'block'">
+                        Searching...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </ng-container>
+                    <span *ngIf="!isLoading">Search</span>
+                  </button>
+                </div>
+                <div>
+                  <button class="btn btn-light text-info-dark fw-semibold shadow bg-white" matRipple
+                    [disabled]="resettingLoader" (click)="reset()">
+                    <ng-container *ngIf="resettingLoader">
+                      <span clas="indicator-progress" [style.display]="'block'">
+                        Resetting...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </ng-container>
+                    <span *ngIf="!resettingLoader">Reset</span>
+                  </button>
+                </div>
+                <div>
+                  <button matRipple class="btn btn-info shadow fw-semibold" [disabled]="isLoading" (click)="openAdvancedSearchPopUp()">
+                    <ng-container *ngIf="isLoading">
+                      <span clas="indicator-progress" [style.display]="'block'">
+                        Searching...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </ng-container>
+                    <span *ngIf="!isLoading">Advanced Search</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive mt-4 px-0" *ngIf="erpSyncLogs?.length && !initialLoader">
+              <table class="table user-management" mat-table matSort (matSortChange)="sortChange($event)"
+                [dataSource]="erpSyncLogs" matSortDirection="desc" matSortActive="lastUpdated">
+                <ng-container matColumnDef="uuid">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>UUID </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">{{element.uuid}}</p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="type">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Type </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">{{element.type}}</p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="subType">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Sub Type </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">{{element.subType}}</p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="error">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Error</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="fw-normal text-truncate my-0 table-id">{{element.error}}</p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="logicalSystem">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>System</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="fw-normal text-truncate my-0 table-id">{{element.logicalSystem}}</p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="response">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Response</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="fw-normal text-truncate my-0 table-id">{{element.response}}</p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lastUpdated">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Date/Time</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="fw-semibold text-truncate">{{element.lastUpdated | date:'MM-dd-yyyy HH:mm a'}}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Status</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="fw-semibold">{{element.status}}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="d-flex gap-3">
+                      <img src="./assets/images/eye.svg" matTooltip="View" alt="" class="me-3 cursor-pointer"
+                        (click)="openDialog(element.uuid)" />
+                        <a (click)="downloadERPXML(element.uuid)">
+                          <img src="./assets/images/download.svg" alt="" class="cursor-pointer" matTooltip="Download" />
+                        </a>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
+            <div *ngIf="!initialLoader">
+              <mat-paginator (page)="onPageChange($event)" [length]='totalElements' [pageIndex]="pageInd"
+                [pageSize]="queryParams.limit" [pageSizeOptions]="[5, 10, 20, 50, 100]" aria-label="Select page">
+              </mat-paginator>
+            </div>
+            <div class="center d-flex flex-column align-items-center mt-5"
+              *ngIf="!erpSyncLogs.length && !initialLoader">
+              No records found !
+            </div>
+            <div class="center h-100 mt-5" *ngIf="initialLoader">
+              <app-page-loader class="v-center"></app-page-loader>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- </div>
+  </div>
+</div> -->
+<ng-template #addAdvancedSearchView>
+  <app-erp-search (onclose)="addAdvancedSearchModal.hide()"></app-erp-search>
+</ng-template>
+
+<app-basic-modal #addAdvancedSearchModal (hidden)="addAdvancedSearchModal.hide()" [heading]="'Advance Search'"></app-basic-modal>

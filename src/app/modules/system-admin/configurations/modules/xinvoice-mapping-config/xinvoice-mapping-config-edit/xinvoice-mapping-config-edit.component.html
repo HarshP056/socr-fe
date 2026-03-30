@@ -1,0 +1,397 @@
+<div class="bg-white px-4">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+
+      <!-- Back button -->
+      <div class="col-sm-12">
+        <div (click)="onBack()" class="text-decoration-none d-flex align-items-center px-0 cursor-pointer">
+          <h5 class="fw-semibold">
+            <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">
+            {{ editMode === 'edit' ? 'Edit' : 'New' }} XInvoice Mapping Config
+          </h5>
+        </div>
+      </div>
+
+      <!-- General Info -->
+      <div class="row my-3">
+        <div class="col-4">
+          <label class="form-label fw-semibold text-font-dark">Config Name</label>
+          <input type="text" class="form-control py-2" [(ngModel)]="config.name" (input)="checkName = false">
+          <small style="color:red" *ngIf="checkName">Please enter a config name</small>
+        </div>
+        <div class="col-3">
+          <label class="form-label fw-semibold text-font-dark">Invoice Type</label>
+          <select class="form-select py-2" [(ngModel)]="config.invoiceType">
+            <option value="">Select Type</option>
+            <option *ngFor="let t of invoiceTypes" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+        <div class="col-5">
+          <label class="form-label fw-semibold text-font-dark">Line Items XPath</label>
+          <input type="text" class="form-control py-2" [(ngModel)]="config.lineItemsXPath"
+            placeholder="e.g. //ram:IncludedSupplyChainTradeLineItem">
+        </div>
+      </div>
+
+      <!-- Toggles -->
+      <div class="row mb-3" style="row-gap: 10px">
+        <div class="col-auto d-flex align-items-center gap-2">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="config.detectVendor" id="detectVendor">
+          <label class="form-check-label" for="detectVendor">Detect Vendor</label>
+        </div>
+        <div class="col-auto d-flex align-items-center gap-2">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="config.applyDataDerivation" id="applyDD">
+          <label class="form-check-label" for="applyDD">Apply Data Derivation</label>
+        </div>
+        <div class="col-auto d-flex align-items-center gap-2">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="config.setInvoiceDocTypeFromRoot" id="setInvDocType">
+          <label class="form-check-label" for="setInvDocType">Set Doc Type from Root (UBL)</label>
+        </div>
+        <div class="col-auto d-flex align-items-center gap-2">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="config.concatenateAddress" id="concatAddr">
+          <label class="form-check-label" for="concatAddr">Concatenate Address</label>
+        </div>
+        <div class="col-auto d-flex align-items-center gap-2">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="config.checkPoForNaValues" id="checkPoNa">
+          <label class="form-check-label" for="checkPoNa">Check PO for NA/N/A</label>
+        </div>
+        <div class="col-auto d-flex align-items-center gap-2">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="config.skipEmptyLineItems" id="skipEmpty">
+          <label class="form-check-label" for="skipEmpty">Skip Empty Line Items</label>
+        </div>
+      </div>
+
+      <!-- Conditional: Skip When Empty fields -->
+      <div class="row mb-3" *ngIf="config.skipEmptyLineItems">
+        <div class="col-6">
+          <label class="form-label fw-semibold text-font-dark">Skip When Empty (comma-separated fields)</label>
+          <input type="text" class="form-control py-2" [(ngModel)]="lineItemSkipWhenEmptyStr"
+            placeholder="e.g. materialDescription, subTotal">
+        </div>
+      </div>
+
+      <!-- Toggle descriptions -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="border rounded-2 p-2 bg-light" style="font-size: 12px; line-height: 1.8">
+            <strong>Detect Vendor</strong> &mdash; Auto-detect vendor ID after parsing. &nbsp;
+            <strong>Apply Data Derivation</strong> &mdash; Run data derivation rules post-parse (UBL). &nbsp;
+            <strong>Set Doc Type from Root</strong> &mdash; Set Invoice/Credit Note based on XML root element (UBL). &nbsp;
+            <strong>Concatenate Address</strong> &mdash; Join address fields (street, city, zip, state, country) into a single address1 string. &nbsp;
+            <strong>Check PO for NA/N/A</strong> &mdash; Treat PO numbers "NA" or "N/A" as empty (UBL). &nbsp;
+            <strong>Skip Empty Line Items</strong> &mdash; Discard line items where specified fields are empty/zero.
+          </div>
+        </div>
+      </div>
+
+      <!-- XPath Quick Guide (collapsible) -->
+      <div class="mb-3">
+        <button class="btn btn-sm px-3 py-1 d-flex align-items-center gap-2"
+          [class.btn-outline-primary]="!showGuide" [class.btn-primary]="showGuide"
+          (click)="showGuide = !showGuide">
+          <span style="font-size: 13px">{{ showGuide ? '&#9660;' : '&#9654;' }}</span>
+          XPath Quick Guide
+        </button>
+
+        <div *ngIf="showGuide" class="border rounded-2 mt-2 p-3 bg-light" style="font-size: 13px; line-height: 1.9">
+
+          <div class="row">
+            <!-- Left column: Basics -->
+            <div class="col-md-6">
+              <h6 class="fw-bold mb-2">XPath Basics</h6>
+              <table class="table table-sm table-bordered mb-3" style="font-size: 12px">
+                <thead class="table-light">
+                  <tr><th style="width: 45%">Pattern</th><th>Meaning</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>//tagName</code></td><td>Find tag anywhere in the document</td></tr>
+                  <tr><td><code>/root/child/tag</code></td><td>Absolute path from root</td></tr>
+                  <tr><td><code>/*</code></td><td>Any root element (useful for Invoice or CreditNote)</td></tr>
+                  <tr><td><code>prefix:tag</code></td><td>Namespaced tag (prefix defined in Namespaces tab)</td></tr>
+                  <tr><td><code>tag/@attr</code></td><td>Get attribute value (e.g. <code>@unitCode</code>)</td></tr>
+                  <tr><td><code>//tag[child='value']</code></td><td>Filter: select tag where child equals value</td></tr>
+                  <tr><td><code>//a | //b</code></td><td>Union: match either a or b (whichever exists)</td></tr>
+                </tbody>
+              </table>
+
+              <h6 class="fw-bold mb-2">Target Field Dot Notation</h6>
+              <p class="mb-1">Use dot notation for nested objects on InvoiceBuffer:</p>
+              <table class="table table-sm table-bordered mb-0" style="font-size: 12px">
+                <tbody>
+                  <tr><td><code>remitToAddress.address1</code></td><td>Supplier address &rarr; street</td></tr>
+                  <tr><td><code>remitToAddress.city</code></td><td>Supplier address &rarr; city</td></tr>
+                  <tr><td><code>shipToAddress.zip</code></td><td>Customer address &rarr; postal code</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Right column: Real examples -->
+            <div class="col-md-6">
+              <h6 class="fw-bold mb-2">Examples by Invoice Type</h6>
+              <table class="table table-sm table-bordered mb-3" style="font-size: 12px">
+                <thead class="table-light">
+                  <tr><th>Type</th><th>Example XPath</th><th>Target</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge bg-info text-dark">CII</span></td>
+                    <td><code>//ram:SellerTradeParty/ram:Name</code></td>
+                    <td>supplier</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge bg-success">UBL</span></td>
+                    <td><code>/*/cbc:ID</code></td>
+                    <td>invoiceNumber</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge bg-secondary">Pagero</span></td>
+                    <td><code>//sellerParty/name</code></td>
+                    <td>supplier</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge bg-warning text-dark">Custom</span></td>
+                    <td><code>//Partner[PartnerType='SU']/Name</code></td>
+                    <td>supplier</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h6 class="fw-bold mb-2">Special Features</h6>
+              <table class="table table-sm table-bordered mb-0" style="font-size: 12px">
+                <tbody>
+                  <tr>
+                    <td><strong>Fallback</strong></td>
+                    <td>Same target field with higher priority number. Tried only if lower priority returns empty.<br>
+                      e.g. <code>cac:Item/cbc:Description</code> (pri 1) &rarr; <code>cac:Item/cbc:Name</code> (pri 2)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Value Regex</strong></td>
+                    <td>Extracts group 1 from raw text.<br>
+                      e.g. <code>PO\s*(\d+)</code> on "PO 4500012345" &rarr; "4500012345"</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Date Format</strong></td>
+                    <td>Java date pattern for DATE type fields. Default: <code>yyyy-MM-dd</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <nav>
+        <div class="nav nav-underline" id="nav-tab" role="tablist">
+          <button class="nav-link px-2 active" id="ns-tab" data-bs-toggle="tab"
+            data-bs-target="#ns-panel" type="button" role="tab">Namespaces</button>
+          <button class="nav-link px-2" id="hdr-tab" data-bs-toggle="tab"
+            data-bs-target="#hdr-panel" type="button" role="tab">Header Mappings</button>
+          <button class="nav-link px-2" id="line-tab" data-bs-toggle="tab"
+            data-bs-target="#line-panel" type="button" role="tab">Line Item Mappings</button>
+        </div>
+      </nav>
+
+      <div class="tab-content mt-3" id="nav-tabContent">
+
+        <!-- ==================== Namespaces Tab ==================== -->
+        <div class="tab-pane fade show active" id="ns-panel" role="tabpanel">
+          <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bulb">
+            <div class="text-grey-4">
+              XML namespace prefixes used in XPath expressions. Not needed for non-namespaced XML (e.g. Pagero, Custom).
+              For UBL, use <code>__ROOT__</code> as the URI for the root element prefix (e.g. inv) to resolve dynamically at runtime.
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <table class="table table-bordered user-management mb-0">
+              <thead>
+                <tr>
+                  <th>PREFIX</th>
+                  <th>NAMESPACE URI</th>
+                  <th class="text-center" style="width:50px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ns of nsList; let i = index">
+                  <td>
+                    <input type="text" class="form-control py-1" [(ngModel)]="ns.prefix" [name]="'nsPrefix'+i"
+                      placeholder="e.g. cbc">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control py-1" [(ngModel)]="ns.uri" [name]="'nsUri'+i"
+                      placeholder="e.g. urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                  </td>
+                  <td class="text-center">
+                    <a class="cursor-pointer" (click)="removeNamespace(i)">
+                      <img src="./assets/images/trash-02.svg" alt="delete">
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <button class="btn btn-info shadow btn-sm" (click)="addNamespace()">
+                      <img src="./assets/images/plus.svg" class="me-1" alt="add"> Add Namespace
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ==================== Header Mappings Tab ==================== -->
+        <div class="tab-pane fade" id="hdr-panel" role="tabpanel">
+          <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bulb">
+            <div class="text-grey-4">
+              Map XML paths to InvoiceBuffer header fields. Use <strong>+ (icon)</strong> to add a fallback with lower precedence.
+            </div>
+          </div>
+
+          <!-- Reusable mapping table for header -->
+          <ng-container
+            *ngTemplateOutlet="mappingTable; context: { mappings: config.headerMappings, prefix: 'hdr' }">
+          </ng-container>
+        </div>
+
+        <!-- ==================== Line Item Mappings Tab ==================== -->
+        <div class="tab-pane fade" id="line-panel" role="tabpanel">
+          <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bulb">
+            <div class="text-grey-4">
+              Map XML paths (relative to each line item node) to LineItems fields.
+            </div>
+          </div>
+
+          <ng-container
+            *ngTemplateOutlet="mappingTable; context: { mappings: config.lineItemMappings, prefix: 'line' }">
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Save / Cancel -->
+      <div class="row mt-4">
+        <div class="d-flex align-items-center justify-content-end">
+          <button (click)="onBack()" class="cancel-btn me-3">Cancel</button>
+          <button matRipple class="common-btn" [disabled]="isWait" (click)="submit()">
+            <ng-container *ngIf="isWait">
+              <span style="display:block">
+                Please wait...
+                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+              </span>
+            </ng-container>
+            <ng-container *ngIf="!isWait && editMode==='new'">Save</ng-container>
+            <ng-container *ngIf="!isWait && editMode==='edit'">Update</ng-container>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Shared Mapping Table Template ==================== -->
+<ng-template #mappingTable let-mappings="mappings" let-prefix="prefix">
+  <div class="table-responsive" style="overflow-x:auto">
+    <table class="table table-bordered user-management mb-0" style="width:max-content">
+      <thead>
+        <tr>
+          <th class="text-uppercase text-nowrap">Target Field</th>
+          <th class="text-uppercase text-nowrap">XML Path</th>
+          <th class="text-uppercase text-nowrap text-center">Priority</th>
+          <th class="text-uppercase text-nowrap">Data Type</th>
+          <th class="text-uppercase text-nowrap">Date Format</th>
+          <th class="text-uppercase text-nowrap">Value Regex</th>
+          <th class="text-center text-nowrap"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let m of mappings; let i = index">
+          <!-- Group separator: thin top border before each new targetField group -->
+          <tr
+            [class.border-top]="isFirstInGroup(mappings, i) && i !== 0"
+            [style.border-top-width]="isFirstInGroup(mappings, i) && i !== 0 ? '3px' : ''"
+            [style.border-top-color]="isFirstInGroup(mappings, i) && i !== 0 ? '#0d6efd' : ''"
+          >
+            <!-- Target Field: shown normally for first in group, indented + readonly for fallbacks -->
+            <td class="text-nowrap">
+              <ng-container *ngIf="isFirstInGroup(mappings, i)">
+                <input type="text" class="form-control py-1" [(ngModel)]="m.targetField"
+                  [name]="prefix+'Target'+i" placeholder="e.g. invoiceNumber"
+                  (blur)="onTargetFieldChange(mappings)">
+              </ng-container>
+              <ng-container *ngIf="isFallbackRow(mappings, i)">
+                <div class="d-flex align-items-center ps-3 text-muted">
+                  <span class="me-2" style="font-size: 14px">&#8627;</span>
+                  <span class="fw-medium small">{{ m.targetField }}</span>
+                  <span class="badge bg-secondary ms-2 small" style="font-size: 10px">fallback</span>
+                </div>
+              </ng-container>
+            </td>
+
+            <!-- XML Path -->
+            <td class="text-nowrap">
+              <input type="text" class="form-control py-1" [(ngModel)]="m.xmlPath"
+                [name]="prefix+'Xml'+i" placeholder="e.g. //ram:InvoiceCurrencyCode"
+                [style.width.ch]="maxXmlPathWidth(mappings)">
+            </td>
+
+            <!-- Priority with duplicate warning -->
+            <td class="text-center text-nowrap">
+              <input type="number" class="form-control py-1 text-center" [(ngModel)]="m.priority"
+                [name]="prefix+'Pri'+i" min="1"
+                (change)="onTargetFieldChange(mappings)"
+                [class.border-danger]="hasDuplicatePriority(mappings, i)"
+                [title]="hasDuplicatePriority(mappings, i) ? 'Duplicate priority for this target field!' : ''">
+              <small class="text-danger" *ngIf="hasDuplicatePriority(mappings, i)">
+                Duplicate!
+              </small>
+            </td>
+
+            <!-- Data Type -->
+            <td class="text-nowrap">
+              <select class="form-select py-1 pe-4" [(ngModel)]="m.dataType" [name]="prefix+'Dt'+i"
+                style="background-position: right 0.4rem center;">
+                <option *ngFor="let dt of dataTypes" [value]="dt">{{ dt }}</option>
+              </select>
+            </td>
+
+            <!-- Date Format -->
+            <td class="text-nowrap">
+              <input type="text" class="form-control py-1" [(ngModel)]="m.dateFormat"
+                [name]="prefix+'Df'+i" [disabled]="m.dataType !== 'DATE'" placeholder="yyyy-MM-dd">
+            </td>
+
+            <!-- Value Regex -->
+            <td class="text-nowrap">
+              <input type="text" class="form-control py-1" [(ngModel)]="m.valueRegex"
+                [name]="prefix+'Vr'+i" placeholder="e.g. PO\s*(\d+)">
+            </td>
+
+            <!-- Actions: Fallback + Delete -->
+            <td class="text-center text-nowrap">
+              <a class="cursor-pointer me-2" (click)="addFallback(mappings, i)"
+                title="Add fallback for this field">
+                <img src="./assets/images/plus.svg" alt="add fallback" style="opacity:0.6; width:16px">
+              </a>
+              <a class="cursor-pointer" (click)="removeMapping(mappings, i)">
+                <img src="./assets/images/trash-02.svg" alt="delete">
+              </a>
+            </td>
+          </tr>
+        </ng-container>
+
+        <!-- Add new row -->
+        <tr>
+          <td colspan="7">
+            <button class="btn btn-info shadow btn-sm" (click)="addMapping(mappings)">
+              <img src="./assets/images/plus.svg" class="me-1" alt="add"> Add Mapping
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>

@@ -1,0 +1,486 @@
+<div class="container-fluid px-0" style="height: calc(100% - 25px);">
+  <div class="wrapper h-100 d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap h-100">
+      <div class="w-100 d-flex h-100 overflow-hidden">
+        <div class="bg-white h-100 border" style="width: 420px;">
+          <div class="p-2 border-bottom d-flex">
+            <span *ngFor="let channel of filteredChannels">
+              <span class="px-4 channel cursor-pointer" *ngIf="channel.enabled && channel.tagName == 'Email'"
+                [ngClass]="{'active': activeChannel == 'EMAIL'}" (click)="setActiveChannel('EMAIL','', 'Email', 'OCR')">Email</span>
+              <span class="px-4 channel cursor-pointer" *ngIf="channel.enabled && channel.tagName == 'REST'"
+                [ngClass]="{'active': activeChannel == 'REST'}" (click)="setActiveChannel('REST',channel.metaDataMapping, 'REST', 'OCR')">Rest</span>
+              <span class="px-4 channel cursor-pointer" *ngIf="channel.enabled && channel.tagName == 'Network FS'"
+                [ngClass]="{'active': activeChannel == 'NETWORK'}" (click)="setActiveChannel('NETWORK', channel.metaDataMapping, 'Network FS', 'OCR')">Network</span>
+              <span class="px-4 channel cursor-pointer" *ngIf="channel.enabled && channel.tagName == 'Local FS'"
+                [ngClass]="{'active': activeChannel == 'LOCAL'}" (click)="setActiveChannel('LOCAL', channel.metaDataMapping, 'Local FS', 'OCR')">Local</span>
+              <span class="px-4 channel cursor-pointer" *ngIf="channel.enabled && channel.tagName == 'SFTP'"
+                [ngClass]="{'active': activeChannel == 'FTP'}" (click)="setActiveChannel('FTP', channel.metaDataMapping, 'SFTP', 'OCR')">FTP</span>
+              <span class="px-4 channel cursor-pointer" *ngIf="channel.enabled && channel.metadata === true && channel.tagName == 'Scanner'"
+                [ngClass]="{'active': activeChannel == 'Scanner'}" (click)="setActiveChannel('Scanner',channel.metaDataMapping, 'Scanner', 'OCR')">Scanner</span>
+            </span>
+          </div>
+          <ul class="mb-10 mt-2 px-2" *ngIf="user.role !== 'CompanyUser'" style="overflow: auto;height: calc(100vh - 20%);">
+            <li class="cursor-pointer">
+              <div (click)="showHideAllSubMenu()">
+                <span [hidden]="showAllEmail"><fa-icon [icon]="faChevronRight"></fa-icon></span>
+                <span [hidden]="!showAllEmail"><fa-icon [icon]="faChevronDown"></fa-icon></span>
+                <span class="ps-3 fw-bold">All Accounts</span>
+              </div>
+              <ul class="px-0 mt-2" [hidden]="!showAllEmail">
+                <li class="ps-3" [ngClass]="{'activeLeftMenu': activeLeftMenu == 'NEW'}" (click)="setActiveLeftMenu('NEW')">
+                  <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                    <div>
+                      <span class="iconify cursor-pointer search-icon-requestor" style="font-size: 24px;"
+                      data-icon="mdi:new-box"></span>
+                      <span class="ps-3">New</span>
+                    </div>
+                    <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{newCount}}</span>
+                  </div>
+                </li>
+                <li class="ps-3" [ngClass]="{'activeLeftMenu': activeLeftMenu == 'INIT'}" (click)="setActiveLeftMenu('INIT')">
+                  <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                    <div>
+                      <fa-icon [icon]="faCircleExclamation" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                      <span class="ps-3">Init</span>
+                    </div>
+                    <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{initCount}}</span>
+                  </div>
+                </li>
+                <li class="ps-3" [ngClass]="{'activeLeftMenu': activeLeftMenu == 'OCR'}" (click)="setActiveLeftMenu('OCR')">
+                  <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                    <div>
+                      <span class="iconify cursor-pointer search-icon-requestor" style="font-size: 24px;"
+                      data-icon="iconamoon:scanner-light"></span>
+                      <span class="ps-3">SOCR</span>
+                    </div>
+                    <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{ocrCount}}</span>
+                  </div>
+                </li>
+                <li class="ps-3" [ngClass]="{'activeLeftMenu': activeLeftMenu == 'OCR_COMPLETED'}" (click)="setActiveLeftMenu('OCR_COMPLETED')">
+                  <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                    <div>
+                      <fa-icon [icon]="faInbox" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                      <span class="ps-3">SOCR Completed</span>
+                    </div>
+                    <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{ocrCompletedCount}}</span>
+                  </div>
+                </li>
+                <li class="ps-3" [ngClass]="{'activeLeftMenu': activeLeftMenu == 'JUNK'}" (click)="setActiveLeftMenu('JUNK')">
+                  <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                    <div>
+                      <fa-icon [icon]="faBan" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                      <span class="ps-3">Junk</span>
+                    </div>
+                    <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{junkCount}}</span>
+                  </div>
+                </li>
+                <li class="ps-3 mb-2" [ngClass]="{'activeLeftMenu': activeLeftMenu == 'PROCESSED'}" (click)="setActiveLeftMenu('PROCESSED')">
+                  <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                    <div>
+                      <fa-icon [icon]="faUserTie" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                      <span class="ps-3">Processed</span>
+                    </div>
+                    <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{processedCount}}</span>
+                  </div>
+                </li>
+                <li class="ps-3 mb-2" *ngFor="let subChannel of subChannels; index as i;">
+                  <div class="d-flex justify-content-between align-items-center" (click)="setActiveLeftMenu(subChannel.usernameId)">
+                    <div style="margin: 0 12px 0 0;overflow: hidden;" (click)="showHideSubMenu(subChannel, i)">
+                      <span [hidden]="subChannel.isShow"><fa-icon
+                          [icon]="faChevronRight"></fa-icon></span>
+                      <span [hidden]="!subChannel.isShow"><fa-icon
+                          [icon]="faChevronDown"></fa-icon></span>
+                      <span class="ps-2 fw-bold"
+                        style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{subChannel.usernameId}}</span>
+                    </div>
+                  </div>
+                  <ul class="ps-3 mt-2" [hidden]="!subChannel.isShow">
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'NEW' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('NEW', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <span class="iconify cursor-pointer search-icon-requestor" style="font-size: 24px;"
+                      data-icon="mdi:new-box"></span>
+                          <span class="ps-3">New</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.newCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'INIT' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('INIT', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faCircleExclamation" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">Init</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.initCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'OCR' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('OCR', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <span class="iconify cursor-pointer search-icon-requestor" style="font-size: 24px;"
+                      data-icon="iconamoon:scanner-light"></span>
+                          <span class="ps-3">SOCR</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.ocrCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'OCR_COMPLETED' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('OCR_COMPLETED', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faInbox" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">SOCR Completed</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.ocrCompletedCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'JUNK' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('JUNK', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faBan" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">Junk</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.junkCount}}</span>
+                      </div>
+                    </li>
+                    <li class="mb-2" [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'PROCESSED'}" (click)="setActiveOtherChannelSubMenu('PROCESSED', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faUserTie" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">Processed</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.processedCount}}</span>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="mb-10 mt-2 px-2" *ngIf="user.role === 'CompanyUser'">
+            <li class="cursor-pointer">
+              <ul class="px-0 mt-2" [hidden]="!showAllEmail">
+                <li class="ps-3 mb-2" *ngFor="let subChannel of subChannels; index as i;">
+                  <div class="d-flex justify-content-between align-items-center" (click)="setActiveLeftMenu(subChannel.usernameId)">
+                    <div style="margin: 0 12px 0 0;overflow: hidden;" (click)="showHideSubMenu(subChannel, i)">
+                      <span [hidden]="subChannel.isShow"><fa-icon
+                          [icon]="faChevronRight"></fa-icon></span>
+                      <span [hidden]="!subChannel.isShow"><fa-icon
+                          [icon]="faChevronDown"></fa-icon></span>
+                      <span class="ps-2 fw-bold"
+                        style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{subChannel.usernameId}}</span>
+                    </div>
+                  </div>
+                  <ul class="ps-3 mt-2" [hidden]="!subChannel.isShow">
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'NEW' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('NEW', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <span class="iconify cursor-pointer search-icon-requestor" style="font-size: 24px;"
+                      data-icon="mdi:new-box"></span>
+                          <span class="ps-3">New</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.newCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'INIT' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('INIT', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faCircleExclamation" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">Init</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.initCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'OCR' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('OCR', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <span class="iconify cursor-pointer search-icon-requestor" style="font-size: 24px;"
+                      data-icon="iconamoon:scanner-light"></span>
+                          <span class="ps-3">SOCR</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.ocrCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'OCR_COMPLETED' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('OCR_COMPLETED', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faInbox" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">SOCR Completed</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.ocrCompletedCount}}</span>
+                      </div>
+                    </li>
+                    <li [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'JUNK' && selectedIndex == i}" (click)="setActiveOtherChannelSubMenu('JUNK', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faBan" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">Junk</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.junkCount}}</span>
+                      </div>
+                    </li>
+                    <li class="mb-2" [ngClass]="{'activeLeftMenu': subChannel.activeMenu == 'PROCESSED'}" (click)="setActiveOtherChannelSubMenu('PROCESSED', i, subChannel.usernameId)">
+                      <div class="d-flex justify-content-between align-items-center" style="margin-left: 0;">
+                        <div>
+                          <fa-icon [icon]="faUserTie" style="width: 24px; height: 24px; display: inline-block; text-align: center;"></fa-icon>
+                          <span class="ps-3">Processed</span>
+                        </div>
+                        <span style="font-size: 13px;font-weight: bold;padding: 0 8px;">{{subChannel.processedCount}}</span>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="main-content h-100 pb-0 bg-white" style="overflow: hidden;">
+          <div class="w-100 d-flex align-items-center justify-content-between flex-wrap px-2 pt-2">
+            <div class="w-100 d-flex align-items-center flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 p-3 mb-2">
+              <div class="col-2" [hidden]="activeChannel != 'EMAIL'">
+                <input type="search" class="form-control py-2" placeholder="Search By Sender Email"
+                  [(ngModel)]="queryParams.fromEmail" style="font-size: 0.9rem;" />
+              </div>
+              <div class="col-2">
+                <input type="search" class="form-control py-2" placeholder="Search By Doc ID"
+                  [(ngModel)]="queryParams.docId" style="font-size: 0.9rem;" />
+              </div>
+              <div class="col-2" [hidden]="activeChannel === 'EMAIL'">
+                <input type="search" class="form-control py-2" placeholder="Search By File Name"
+                  [(ngModel)]="queryParams.fileName" style="font-size: 0.9rem;" />
+              </div>
+               <div class="col-2">
+                <input type="search" class="form-control py-2" placeholder="Search By Channel"
+                  [(ngModel)]="queryParams.channelEmail" style="font-size: 0.9rem;" />
+              </div>
+              <div class="searchBox cursor-pointer col-3 gap-2">
+                <input type="text" class="w-100 border-0" placeholder="Search By Received Date" #dp="bsDaterangepicker"
+                  bsDaterangepicker [bsConfig]="{
+                      showWeekNumbers: false,
+                      rangeInputFormat: 'DD MMM,YYYY'
+                    }" [(ngModel)]="queryParams.receivedDate" (ngModelChange)="onDateRangeSelected()"
+                  [maxDate]="maxDate" readonly name="dateRange" style="font-size: 0.9rem;" />
+                <div>
+                  <img (click)="dp.toggle()" *ngIf="!queryParams.dateRange?.length" src="./assets/media/calendar.svg"
+                    alt="" />
+                  <span *ngIf="queryParams.dateRange?.length" class="cursor-pointer crossicon" (click)="removeDate()">
+                    <span>
+                      <i class="bi bi-x-lg"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                  <div>
+                    <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                      <ng-container *ngIf="isLoading">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Searching...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!isLoading">Search</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button class="btn btn-light text-info-dark fw-semibold shadow bg-white" matRipple
+                      [disabled]="resettingLoader" (click)="reset()">
+                      <ng-container *ngIf="resettingLoader">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Resetting...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!resettingLoader">Reset</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <button class="btn btn-info shadow " matRipple *ngIf="junkButton" [disabled]="junkLoading"
+                  (click)="moveTo('JUNK')">
+                  <ng-container *ngIf="junkLoading">
+                    <span clas="indicator-progress" [style.display]="'block'">
+                      Moving...{{ " " }}
+                      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </ng-container>
+                  <span *ngIf="!junkLoading">Move to Junk</span>
+                </button>
+              </div>
+              <div>
+                <button class="btn btn-info shadow " matRipple *ngIf="initButton && junkButton" [disabled]="initLoading"
+                  (click)="moveTo('INIT')">
+                  <ng-container *ngIf="initLoading">
+                    <span clas="indicator-progress" [style.display]="'block'">
+                      Moving...{{ " " }}
+                      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </ng-container>
+                  <span *ngIf="!initLoading">Move to Init</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="px-2" style="height: calc(100% - 90px);overflow: auto;">
+            <div class="table-responsive mt-3" *ngIf="invoices?.length && !initialLoader">
+              <table class="mb-0 table user-management" (matSortChange)="sortChange($event)" matSort
+                matSortDirection="desc" matSortActive="receivedDate" mat-table [dataSource]="invoices">
+                <ng-container matColumnDef="check">
+                  <th mat-header-cell *matHeaderCellDef disableClear></th>
+                  <td mat-cell *matCellDef="let element; let i=index">
+                    <input (change)="moveSelected($event, element)" [(ngModel)]="element.multiSelect"
+                      *ngIf="!(element.status == 'OCR_COMPLETED' || element.status == 'JUNK' || element.status == 'NEW')"
+                      class="form-check-input cursor-pointer mb-1" type="checkbox" name="multiSelect" id="issuccess" />
+                  </td>
+                </ng-container>
+                <ng-container *ngFor="let item of dynamicColumn" [matColumnDef]="item">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear style="text-transform: capitalize;">
+                     <span [ngSwitch]="item">
+                        <span *ngSwitchCase="'fromEmail'">Sender Email</span>
+                        <span *ngSwitchCase="'channelEmail'">Channel</span>
+                        <span *ngSwitchCase="'requestId'">Doc ID</span>
+                        <span *ngSwitchCase="'subject'">Subject</span>
+                        <span *ngSwitchDefault>{{showTable(item)}}</span>
+                     </span>
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title" style="max-width: 100px;">
+                      <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20px;"
+                        [matTooltip]="element[item]" matTooltipPosition="above">
+                        {{element[item]}}
+                      </span>
+                    </p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="logicalSystem">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="text-truncate">
+                    System
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 word-break table-title word-wrap">
+                      {{ element.logicalSystem }}
+                    </p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="receivedDate">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Received Date
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="fw-semibold text-truncate">{{
+                      element.receivedDate | date : user.dateAndTimeFormate }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="abbyBatchid">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="text-truncate">
+                    Batch ID
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="fw-semibold">{{ element.abbyBatchId }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Status
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="icon-box icon-box-success text-success fw-semibold"
+                      *ngIf="element.status === 'OCR_COMPLETED'">{{ element.status }}</span>
+                    <span class="icon-box icon-box-primary text-primary fw-semibold" *ngIf="element.status === 'OCR'">{{
+                      element.status }}</span>
+                    <span class="icon-box icon-box-warning text-warning fw-semibold" *ngIf="element.status === 'JUNK'">{{
+                      element.status }}</span>
+                    <span class="icon-box icon-box-warning text-warning fw-semibold"
+                      *ngIf="element.status === 'INIT'">{{ element.status }}</span>
+                    <span class="icon-box icon-box-primary text-primary fw-semibold" *ngIf="element.status === 'NEW'">{{
+                      element.status }}</span>
+                    <span class="icon-box icon-box-info text-info fw-semibold" *ngIf="element.status === 'ERP'">{{
+                      element.status }}</span>
+                    <span class="icon-box icon-box-success text-success fw-semibold" *ngIf="element.status === 'PROCESSED'">{{
+                        element.status }}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="rejectionReason">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="text-truncate" [hidden]="queryParams.status != 'JUNK'">
+                    Rejection Reason
+                  </th>
+                  <td mat-cell *matCellDef="let element" [hidden]="queryParams.status != 'JUNK'">
+                    <span>{{ element.rejectionReason }}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="d-flex gap-1 align-items-center">
+                      <span (click)="onShowNotification(element)" style="cursor: pointer !important;"
+                        matTooltip="Notification Logs" matTooltipPosition="above">
+                        <img src="./assets/media/notification.svg" alt="">
+                      </span>
+                      <div class="d-flex align-items-center" *ngIf="element?.attachments?.length > 0">
+                        <img (click)="viewDoc(element)" src="./assets/images/attachment.svg" alt=""
+                          matTooltip="View Attachments" matTooltipPosition="above" class="me-2 cursor-pointer" />
+                        {{ element.attachments.length }}
+                      </div>
+                      <span *ngIf="element.status != 'JUNK'">
+                        <span *ngIf="!element.isSyncWaiting" style="cursor: pointer !important;"
+                          [matTooltip]="element.erpSync === true?'Sync With ERP':'UnSync With ERP'"
+                          matTooltipPosition="above" (click)="runERPSYNC(element)">
+                          <img *ngIf="!element.erpSync" style="width: 20px;" class="me-1"
+                            src="./assets/media/sync-off.svg" />
+                          <img *ngIf="element.erpSync" style="width: 20px;" class="me-1"
+                            src="./assets/media/sync.svg" />
+                        </span>
+                        <span *ngIf="element.isSyncWaiting" style="width: 12px;height: 12px;"
+                          class="spinner-border text-color" role="status"></span>
+                      </span>
+                      <img *ngIf="element.status === 'OCR_COMPLETED' || element.status === 'PROCESSED'" src="./assets/images/eye.svg" alt=""
+                        matTooltip="View XML" matTooltipPosition="above" class="cursor-pointer"
+                        (click)="openDialog(element.id)" />
+                      <img *ngIf="element.status === 'OCR_COMPLETED' || element.status === 'PROCESSED'"
+                        src="./assets/images/s1Reponse.svg" alt=""matTooltip="{{systemConfig.enable ? 'Synces Data to s1'  :  'SOCR Response'}}"
+                        matTooltipPosition="above" class="cursor-pointer" (click)="openS1Dialog(element.abbyBatchId, element.xmlInvoice, element.ocrXML)" />
+                      <span class="d-flex">
+                        <img *ngIf="element.status === 'OCR'" (click)="onMove(element.id,'INIT')"
+                          src="./assets/media/movetoinit.svg" alt="" matTooltip="Move to Init"
+                          matTooltipPosition="above" class="me-2 cursor-pointer" />
+                        <img *ngIf="element.status === 'INIT' || element.status === 'OCR'"
+                          (click)="onMove(element.id,'JUNK')" src="./assets/media/disabled.svg" alt=""
+                          matTooltip="Move to Junk" matTooltipPosition="above" class="me-2 cursor-pointer ms-1" />
+                      </span>
+                      <span *ngIf="element.status === 'INIT'">
+                        <span *ngIf="!element.isInItWaiting" style="cursor: pointer !important; "
+                          matTooltip="Queue Process" matTooltipPosition="above" (click)="runQueue(element)">
+                          <img style="width: 20px;" class="me-1" src="./assets/media/play.svg" />
+                        </span>
+                        <span *ngIf="element.isInItWaiting" style="width: 12px;height: 12px;"
+                          class="spinner-border text-color" role="status"></span>
+                      </span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              </table>
+              <div *ngIf="!initialLoader" class="mb-2">
+                <mat-paginator showFirstLastButtons [length]="total" [pageSize]="limit"
+                  (page)="onPaginateChange($event)" [pageIndex]="page - 1" [pageSizeOptions]="limits"
+                  (page)="pageEvent = $event">
+                </mat-paginator>
+              </div>
+            </div>
+            <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!invoices?.length && !initialLoader">
+              No records found !
+            </div>
+            <div class="center h-100 mt-5" *ngIf="initialLoader">
+              <app-page-loader class="v-center"></app-page-loader>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

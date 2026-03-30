@@ -1,0 +1,185 @@
+<div class="home-page">
+  <div class="home-page-container">
+    <header class="home-page-header" style="height: 300px;">
+      <div class="ms-Stack css-102">
+        <div class="home-page-header-logo-container">
+          <img src="../../../../favicon.ico" alt="Azure logo." width="30px"/>
+        </div>
+        <h2
+          tabindex="0"
+          aria-label="Get started with Document Intelligence Studio"
+          class="page-title css-103 mt-2"
+        >
+        Get Started with SmartDocs OCR Studio
+        </h2>
+        <span
+          aria-label="Document Intelligence Studio is an online tool to visually explore, understand, train, and integrate features into your applications. You can easily extract key data from documents or create your own custom models with a no-code approach."
+          class="header-description css-103" style="font-size: 16px;"
+          >SmartDocs OCR Studio is a powerful online platform that simplifies document processing. Easily extract key data from documents or create custom models tailored to your needs. Our versatile tool makes integrating these features into your applications straightforward and efficient.</span
+        >
+      </div>
+      <div class="home-page-header-image-container">
+        <img class="home-page-header-image" src="./assets/images/Document.jpg" alt="Illustration depicting a file with an AI neural network." style="height: 300px;">
+      </div>
+    </header>
+    <main class="mt-5">
+      <div>
+        <section class="service-block">
+          <h2 aria-label="Document analysis" class="service-name" style="font-size: 18px;">Document analysis</h2>
+          <span
+            aria-label="Extract text, tables, structure, key-value pairs, and named entities from documents."
+            class="service-description css-103"
+            style="font-size: 16px;" >Extract data from unique document types using the following prebuilt models.</span
+          >
+          <nav class="service-cards">
+            <div class="ms-Stack css-106">
+              <div class="ms-Stack-inner css-105">
+                <a class="linkcard-link cursor-pointer" (click)="redirectToInvoices('invoices')">
+                  <div role="group" class="ms-DocumentCard root-107">
+                    <div class="root-108">
+                      <div class="ms-Image root-127" style="height: 153px">
+                        <img
+                          src="./assets/images/home-invoice-card.svg"
+                          role="presentation"
+                          alt=""
+                          class="ms-Image-image is-loaded ms-Image-image--contain ms-Image-image--portrait is-fadeIn image-128"
+                        />
+                      </div>
+                      <i aria-hidden="true" class="cornerIcon-129"></i>
+                    </div>
+                    <div class="ms-DocumentCardTitle root-115" title="Read" style="font-size: 16px;">Invoice</div>
+                    <div class="ms-DocumentCardDetails root-116">
+                      <div
+                        class="ms-DocumentCardTitle root-117"
+                        title="Extract printed and handwritten text along with barcodes, formulas and font styles from images and documents."
+                        style="font-size: 14px;">
+                      Extract invoice ID, customer details, vendor details, ship to, bill to, total tax, subtotal, line items and more.
+                      </div>
+                    </div>
+                  </div></a
+                >
+                <a class="linkcard-link cursor-pointer" (click)="redirectToInvoices('purchaseOrder')">
+                  <div role="group" class="ms-DocumentCard root-107">
+                    <div class="root-108">
+                      <div class="ms-Image root-127" style="height: 153px">
+                        <img
+                          src="./assets/images/home-credit-card-card.svg"
+                          role="presentation"
+                          alt=""
+                          class="ms-Image-image is-loaded ms-Image-image--contain ms-Image-image--portrait is-fadeIn image-128"
+                        />
+                      </div>
+                      <i aria-hidden="true" class="cornerIcon-129"></i>
+                    </div>
+                    <div class="ms-DocumentCardTitle root-115" title="Layout" style="font-size: 16px;">
+                      Purchase Orders
+                    </div>
+                    <div class="ms-DocumentCardDetails root-116">
+                      <div
+                        class="ms-DocumentCardTitle root-117"
+                        title="Extract tables, check boxes, and text from forms and documents."
+                        style="font-size: 14px;">
+                        Extract tables, check boxes, and text from forms and documents.
+                      </div>
+                    </div>
+                  </div></a
+                >
+                <a class="linkcard-link cursor-pointer" (click)="redirectToInvoices('contracts')"
+                  ><div role="group" class="ms-DocumentCard root-107">
+                    <div class="root-108">
+                      <div class="ms-Image root-127" style="height: 153px">
+                        <img
+                          src="./assets/images/home-credit-card-card.svg"
+                          role="presentation"
+                          alt=""
+                          class="ms-Image-image is-loaded ms-Image-image--contain ms-Image-image--portrait is-fadeIn image-128"
+                        />
+                      </div>
+                      <i aria-hidden="true" class="cornerIcon-129"></i>
+                    </div>
+                    <div
+                      class="ms-DocumentCardTitle root-115"
+                      title="General documents"
+                      style="font-size: 16px;">
+                    Contracts
+                    </div>
+                    <div class="ms-DocumentCardDetails root-116">
+                      <div
+                        class="ms-DocumentCardTitle root-117"
+                        title="Extract key value pairs and structure like tables and selection marks from any form or document."
+                        style="font-size: 14px;">
+                      Extract the title and signatory parties' information (including names, reference names, and addresses) from contracts.
+                      </div>
+                    </div>
+                  </div></a
+                >
+                <a class="linkcard-link cursor-pointer" (click)="redirectToInvoices('expenses')"
+                  ><div role="group" class="ms-DocumentCard root-107">
+                    <div class="root-108">
+                      <div class="ms-Image root-127" style="height: 153px">
+                        <img
+                          src="./assets/images/home-credit-card-card.svg"
+                          role="presentation"
+                          alt=""
+                          class="ms-Image-image is-loaded ms-Image-image--contain ms-Image-image--portrait is-fadeIn image-128"
+                        />
+                      </div>
+                      <i aria-hidden="true" class="cornerIcon-129"></i>
+                    </div>
+                    <div
+                      class="ms-DocumentCardTitle root-115"
+                      title="General documents"
+                      style="font-size: 16px;">
+                    Expenses
+                    </div>
+                    <div class="ms-DocumentCardDetails root-116">
+                      <div
+                        class="ms-DocumentCardTitle root-117"
+                        title="Extract key value pairs and structure like tables and selection marks from any form or document."
+                        style="font-size: 14px;">
+                        Extract key value pairs and structure like tables and selection
+                        marks from any form or document.
+                      </div>
+                    </div>
+                  </div></a
+                >
+
+                <a class="linkcard-link cursor-pointer" (click)="redirectToInvoices('general-documents')"
+                ><div role="group" class="ms-DocumentCard root-107">
+                  <div class="root-108">
+                    <div class="ms-Image root-127" style="height: 153px">
+                      <img
+                        src="./assets/images/general-doc.svg"
+                        role="presentation"
+                        alt=""
+                        class="ms-Image-image is-loaded ms-Image-image--contain ms-Image-image--portrait is-fadeIn image-128"
+                      />
+                    </div>
+                    <i aria-hidden="true" class="cornerIcon-129"></i>
+                  </div>
+                  <div
+                    class="ms-DocumentCardTitle root-115"
+                    title="General documents"
+                    style="font-size: 16px;">
+                  General Documents
+                  </div>
+                  <div class="ms-DocumentCardDetails root-116">
+                    <div
+                      class="ms-DocumentCardTitle root-117"
+                      title="Extract key value pairs and structure like tables and selection marks from any form or document."
+                      style="font-size: 14px;">
+                      Extract key value pairs and structure like tables and selection
+                      marks from any form or document.
+                    </div>
+                  </div>
+                </div></a
+              >
+              </div>
+            </div>
+          </nav>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>

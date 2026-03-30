@@ -1,0 +1,30 @@
+<div class="data-viewer-container">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between fixed-header">
+    <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+      <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+        <img src="./assets/images/role-details.png" alt="data">
+      </div>
+      {{ data.title }}
+    </div>
+    <button type="button" class="btn btn-cls" (click)="close()" aria-label="Close">
+      <img src="./assets/images/x.svg" alt="close">
+    </button>
+  </div>
+
+  <div class="px-4 py-3" *ngIf="isLoading">
+    <div class="text-center py-5">
+      <span class="spinner-border spinner-border-lg" role="status"></span>
+      <p class="mt-3">Loading data...</p>
+    </div>
+  </div>
+
+  <div class="px-4 py-3" *ngIf="error && !isLoading">
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  </div>
+
+  <div class="px-4 py-3 data-content" *ngIf="!isLoading && !error && responseData">
+    <pre class="formatted-data">{{ formatJSON(responseData) }}</pre>
+  </div>
+</div>

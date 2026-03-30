@@ -1,0 +1,48 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc-ocr d-flex justify-content-center">
+      <div class="bg-white px-4" style="width: 100%;">
+        <div class="row mx-0 pt-3 pt-lg-4">
+          <div class="p-4 pt-0">
+            <div class="col-sm-12">
+              <a routerLink="/system-admin/integrations" class="text-decoration-none d-flex align-items-center px-0">
+                <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">
+                  Open AI Config
+                </h5>
+              </a>
+            </div>
+            <form #form="ngForm"
+              class="d-flex align-items-center flex-wrap gap-2 bg-light-2 border border-dashed rounded-3 px-4 py-3">
+              <div class="col-lg-12">
+
+                  <label for="key" class="form-label fw-semibold text-font-dark">API Key</label>
+                  <input [(ngModel)]="openAi.key" name="apikey" type="text" class="form-control" id="key"
+                    placeholder="Enter API Key">
+              </div>
+              <div class="col-lg-12">
+
+                  <label for="url" class="form-label fw-semibold text-font-dark">API URL</label>
+                  <input [(ngModel)]="openAi.url" name="apiurl" type="text" class="form-control" id="url"
+                    placeholder="Enter API URL">
+
+              </div>
+              <div class="col-lg-12">
+                <label for="model" class="form-label fw-semibold text-font-dark">Model Name</label>
+                <input [(ngModel)]="openAi.modelName" name="modelname" type="text" class="form-control" id="model"
+                  placeholder="Enter Model Name">
+              </div>
+              <button type="button" class="btn btn-info px-4 py-2 my-3" [disabled]="isWait || form.invalid"
+                (click)="submit()">
+                <ng-container *ngIf="isWait">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait">Update</ng-container>
+              </button>
+            </form>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

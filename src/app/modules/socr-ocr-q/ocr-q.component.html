@@ -1,0 +1,354 @@
+<div class="container-fluid px-0 h-100">
+  <div class="wrapper h-calc d-flex justify-content-center h-100">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+      <div class="main-content bg-white w-100">
+        <div class="row mx-0 pb-0 px-lg-4 pt-lg-3">
+          <div class="d-flex gap-5 align-items-center">
+            <span>
+              <h5 class="fw-semibold">OCR Q</h5>
+            </span>
+            <div class="card flex justify-content-center" style=" margin-bottom: 5px; border: none;">
+              <p-dropdown name="project" [options]="project" optionLabel="projectNameOrGuid" optionValue="id" [showClear]="true" placeholder="Select Project" [(ngModel)]="searchQueryParams.projectId" (onChange)="onProjectChange()"></p-dropdown>
+            </div>
+          </div>
+          <!-- <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bilb" />
+            <div class="text-grey-4">
+              Boost Productivity with Simplified Image-to-Text Conversion: Optimizing Your Document Management Process.
+            </div>
+          </div> -->
+          <div class="d-flex justify-content-between">
+            <div class="mainFrameInside-RightSecction-NavBox-Row">
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'New'
+              }" (click)="setStage('New')" *ngIf="user.role !== 'VerificationUser'">
+                New
+                <span class="tabIcon"><span
+                    style="font-size: 12px; padding-left: 6px"> {{stageCount?.New}}   </span></span>
+              </div>
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'PageSeperation'
+              }" (click)="setStage('PageSeperation')" *ngIf="user.role !== 'VerificationUser'">
+                Page Seperation
+                <span style="font-size: 12px; padding-left: 6px">{{stageCount?.PageSeperation}}</span>
+              </div>
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'DataReconization'
+              }" (click)="setStage('DataReconization')" *ngIf="user.role !== 'VerificationUser'">
+                Data Recognization
+                <span class="tabIcon" style="background: #f2f4f7"><span style="font-size: 12px; padding-left: 6px">{{stageCount?.DataReconization}}</span></span>
+              </div>
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'RuleEngine'
+              }" (click)="setStage('RuleEngine')" *ngIf="user.role !== 'VerificationUser'">
+                Rule Engine<span class="tabIcon" style="background: #fef3f2"><span
+                    style="font-size: 12px; padding-left: 2px"> {{stageCount?.RuleEngine}}   </span></span>
+              </div>
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'DataDerive'
+              }" (click)="setStage('DataDerive')" *ngIf="user.role !== 'VerificationUser'">
+                Data<span class="tabIcon" style="background: #fef3f2"><span
+                    style="font-size: 12px; padding-left: 2px"> {{stageCount?.DataDerive}}   </span></span>
+              </div>
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'Verification'
+              }" (click)="setStage('Verification')">
+                Verification<span class="tabIcon" style="background: #fef3f2"><span
+                    style="font-size: 12px; padding-left: 2px"> {{stageCount?.Verification}}  </span></span>
+              </div>
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'Processed'
+              }" (click)="setStage('Processed')">
+                Processed<span class="tabIcon" style="background: #fef3f2"><span
+                    style="font-size: 12px; padding-left: 2px"> {{stageCount?.Processed}}  </span></span>
+              </div>
+              <div class="mainFrameInside-RightSecction-NavBox-Row-Box1" [ngClass]="{
+                'mainFrameInside-RightSecction-NavBox-Row-Box1-Active':
+                  activeTab === 'Exception'
+              }" (click)="setStage('Exception')">
+                Exception<span class="tabIcon" style="background: #fef3f2"><span
+                    style="font-size: 12px; padding-left: 2px"> {{stageCount?.Exception}}  </span></span>
+              </div>
+
+            </div>
+            <div>
+              <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="upload(searchQueryParams.projectId)">
+                <ng-container *ngIf="isLoading">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Opening...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <span *ngIf="!isLoading">Upload File</span>
+              </button>
+            </div>
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-between flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 px-3 mt-3">
+            <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">
+              <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by Doc ID"
+                [(ngModel)]="searchQueryParams.docId" />
+                <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by File Name"
+                [(ngModel)]="searchQueryParams.fileName" />
+                <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by Location"
+                     [(ngModel)]="searchQueryParams.location" />
+              <div class="searchBox cursor-pointer col-3 gap-2" style="width: 250px;">
+                <input type="text" class="w-100 border-0" placeholder="Search By Received Date" #dp="bsDaterangepicker"
+                    bsDaterangepicker [bsConfig]="{
+                        showWeekNumbers: false,
+                        rangeInputFormat: 'DD MMM,YYYY'
+                      }" [(ngModel)]="queryParams.createdDate" (ngModelChange)="onDateRangeSelected()"
+                    [maxDate]="maxDate" readonly name="dateRange" style="font-size: 0.9rem;" />
+                <div>
+                  <img (click)="dp.toggle()" *ngIf="!queryParams.createdDate?.length" src="./assets/media/calendar.svg"
+                      alt="" />
+                  <span *ngIf="queryParams.createdDate?.length" class="cursor-pointer crossicon" (click)="removeDate()">
+                    <span>
+                      <i class="bi bi-x-lg"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                  <div>
+                    <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                      <ng-container *ngIf="isLoading">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Searching...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!isLoading">Search</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button class="btn btn-light text-info-dark fw-semibold shadow bg-white" matRipple
+                      [disabled]="resettingLoader" (click)="reset()">
+                      <ng-container *ngIf="resettingLoader">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Resetting...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!resettingLoader">Reset</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- <div>
+                <button class="btn btn-info shadow " matRipple *ngIf="junkButton" [disabled]="junkLoading"
+                  (click)="moveTo('JUNK')">
+                  <ng-container *ngIf="junkLoading">
+                    <span clas="indicator-progress" [style.display]="'block'">
+                      Moving...{{ " " }}
+                      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </ng-container>
+                  <span *ngIf="!junkLoading">Move to Junk</span>
+                </button>
+              </div> -->
+              <!-- <div>
+                <button class="btn btn-info shadow " matRipple *ngIf="initButton && junkButton" [disabled]="initLoading"
+                  (click)="moveTo('INIT')">
+                  <ng-container *ngIf="initLoading">
+                    <span clas="indicator-progress" [style.display]="'block'">
+                      Moving...{{ " " }}
+                      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </ng-container>
+                  <span *ngIf="!initLoading">Move to Init</span>
+                </button>
+              </div> -->
+            </div>
+          </div>
+          <div class="col-lg-12 px-0">
+            <div class="table-responsive mt-4 px-0" *ngIf="invoices?.length && !initialLoader">
+              <table class="mb-0 table user-management" (matSortChange)="sortChange($event)" matSort
+                matSortDirection="desc" matSortActive="receivedDate" mat-table [dataSource]="invoices">
+                <ng-container matColumnDef="check">
+                  <th mat-header-cell *matHeaderCellDef disableClear></th>
+                  <td mat-cell *matCellDef="let element; let i=index">
+                    <!-- <input (change)="moveSelected($event, element)" [(ngModel)]="element.multiSelect"
+                      *ngIf="!(element.status == 'OCR_COMPLETED' || element.status == 'JUNK' || element.status == 'NEW')"
+                      class="form-check-input cursor-pointer mb-1" type="checkbox" name="multiSelect" id="issuccess" /> -->
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="projectId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Project Id
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 word-break table-title">
+                       {{ element.projectId }}
+                    </p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="requestId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Request Id
+                  </th>
+                  <td mat-cell *matCellDef="let element" [routerLink]="['details-c', element.requestId]"
+                  [queryParams]="{ listPage: searchQueryParams.page }">
+                    <p class="text-primary my-0 word-break table-title word-wrap cursor-pointer fw-semibold" *ngIf="element.requestId=== selectedRequestId"  >
+                      {{ element.requestId }}
+                    </p>
+                    <p class="text-primary my-0 word-break table-title word-wrap cursor-pointer" *ngIf="element.requestId!== selectedRequestId"  >
+                      {{ element.requestId }}
+                    </p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="docId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Doc ID
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="my-0 word-break table-title word-wrap cursor-pointer" >
+                      {{ element.docId }}
+                    </p>
+                  </td>
+                </ng-container>
+                <!-- <ng-container matColumnDef="taxId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="text-truncate">
+                    Tax Id
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="my-0 fw-semibold text-truncate">
+                      {{element.taxId}}
+                    </p>
+                  </td>
+                </ng-container> -->
+                <ng-container matColumnDef="fileName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="text-truncate">
+                    File Name
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 word-break table-title word-wrap">
+                      {{ element.fileName }}
+                    </p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="projectName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Project Name
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title" style="max-width: 100px;">
+                      <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20px;" [matTooltip]="element.subject" matTooltipPosition="above">
+                        {{ element.projectName }}
+                      </span>
+                    </p>
+                  </td>
+                </ng-container>
+
+                
+                <ng-container matColumnDef="location">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Location
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title" style="max-width: 100px;">
+                      <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20px;" [matTooltip]="element.subject" matTooltipPosition="above">
+                        {{ element.location }}
+                      </span>
+                    </p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="logicalSystem">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    System
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title" style="max-width: 100px;">
+                      <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 20px;" [matTooltip]="element.subject" matTooltipPosition="above">
+                        {{ element.logicalSystem }}
+                      </span>
+                    </p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="createdDate">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Received Date
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="text-grey-4 my-0 word-break table-title word-wrap text-truncate">{{ element.createdDate | date : "medium" }}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="createdBy">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="text-truncate">
+                    Created By
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="text-grey-4 my-0 word-break table-title word-wrap">{{ element.createdBy }}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="d-flex gap-4 align-items-center">
+
+                      <img src="./assets/images/eye.svg" alt="" (click)="getDoc(element)" matTooltip="View pdf" matTooltipPosition="above" class="me-2 cursor-pointer"
+                        *ngIf="element.stage === 'Processed' || element.stage === 'Verification'" />
+
+                      <fa-icon [icon]="faSync" *ngIf="element.stage === 'Verification' && !element.isWaiting" class="me-2 cursor-pointer" (click)="reprocessInvoice(element)" matTooltip="Re-process Invoice" matTooltipPosition="above"></fa-icon>
+                      <ng-container *ngIf="element.isWaiting">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          <span class="spinner-border spinner-border-sm align-middle"></span>
+                        </span>
+                      </ng-container>
+
+                      <img *ngIf="element.stage === 'Processed' || element.stage === 'Verification'" src="./assets/images/download.svg" alt=""
+                      matTooltip="Download XML" matTooltipPosition="above" class="me-2 cursor-pointer"
+                      (click)="downloadXML(element.taxId)" />
+
+                      <img src="./assets/images/eye.svg" alt="" class="me-3 cursor-pointer" matTooltip="View Exception" *ngIf="element.stage === 'Exception'"
+                      (click)="openErrorLog(element)" />
+
+                      <img *ngIf="!element.processing && element.stage != 'Verification' && element.stage != 'Processed' && element.stage != 'Exception'"
+                       src="./assets/images/run.svg" alt="" class="me-3 cursor-pointer" matTooltip="Proceed for next stage." (click)="proceedToNextStage(element)" />
+
+                      <img *ngIf="!element.processing && element.stage === 'Exception'"
+                       src="./assets/images/run.svg" alt="" class="me-3 cursor-pointer" matTooltip="Proceed for previous stage." (click)="proceedToPreviousStage(element)" />
+
+                      <span *ngIf="element.processing" clas="indicator-progress" [style.display]="'block'">
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              </table>
+              <div *ngIf="!initialLoader">
+                <mat-paginator #paginator showFirstLastButtons [length]="totalLength" [pageSize]="limit"
+                  (page)="onPaginateChange($event)" [pageIndex]="searchQueryParams.page - 1" [pageSizeOptions]="limits">
+                </mat-paginator>
+              </div>
+            </div>
+            <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!invoices?.length && !initialLoader">
+              <!-- <img src="./assets/media/icons/not-found.svg" alt="" /> -->
+              No records found !
+            </div>
+            <div class="center h-100 mt-5" *ngIf="initialLoader">
+              <app-page-loader class="v-center"></app-page-loader>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,214 @@
+<div class="main-content bg-white w-100">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+      <div class="col-sm-12 mb-3">
+        <a routerLink="/system-admin/system-settings" class="text-decoration-none d-flex align-items-center px-0">
+          <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> Spring Job
+          </h5>
+        </a>
+      </div>
+      <div
+        class="d-flex align-items-center justify-content-between flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 px-3">
+        <div>
+          <!-- <button class="btn btn-info shadow" type="button" (click)="openDialog('')"
+            aria-controls="offcanvasWithBothOptions"><img src="./assets/images/plus.svg" class="me-1" alt="add">
+            New Job</button> -->
+        </div>
+        <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 text-nowrap pb-3 pt-0 pt-lg-3">
+
+          <div class="d-flex">
+            <div class="me-2">
+              <button matRipple class="btn btn-info shadow" [disabled]="readEmailLoading" (click)="runEmail()">
+                <ng-container *ngIf="readEmailLoading">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Running...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <span *ngIf="!readEmailLoading">Run Read Email</span>
+              </button>
+            </div>
+            <div class="me-2">
+              <button matRipple class="btn btn-info shadow" [disabled]="splitPageLoading" (click)="runSplitPage()">
+                <ng-container *ngIf="splitPageLoading">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Running...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <span *ngIf="!splitPageLoading">Run Split Page</span>
+              </button>
+            </div>
+            <div class="me-2">
+              <button matRipple class="btn btn-info shadow" [disabled]="sendToOcrLoading" (click)="runsendToOcr()">
+                <ng-container *ngIf="sendToOcrLoading">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Running...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <span *ngIf="!sendToOcrLoading">Run Send To OCR</span>
+              </button>
+            </div>
+            <div class="me-2">
+              <button matRipple class="btn btn-info shadow" [disabled]="recognizeLoading" (click)="runrecognize()">
+                <ng-container *ngIf="recognizeLoading">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Running...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <span *ngIf="!recognizeLoading">Run Recognize OCR</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="table-responsive mt-4 px-0">
+          <ng-container *ngIf="JobDetails?.length && !initialLoader">
+            <table mat-table matSort class="table user-management" [dataSource]="JobDetails"
+              (matSortChange)="sortChange($event)" matSortDirection="desc" matSortActive="createdDate">
+              <ng-container matColumnDef="jobName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                  Job Name
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <p class="text-info-dark fw-semibold my-0">{{element.jobName}}</p>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="cronType">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                  Cron Type
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <span>{{element.cronType}}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="jobDesc">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                  Job Desc
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <span>{{element.jobDesc}}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="cronExpession">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                  Cron Expession
+                </th>
+                <td mat-cell *matCellDef="let element">
+
+                  <p class="text-grey my-0">{{element.cronExpession}}</p>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="lastUpdated">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                  Last Updated
+                </th>
+                <td mat-cell *matCellDef="let element">
+
+                  <p class="text-grey my-0">{{element.lastUpdated | date : "medium" }}</p>
+                </td>
+              </ng-container>
+
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                  Status
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <p class="my-0 icon-box icon-box-success text-success fw-semibold" *ngIf="element.status === 'OPEN'">{{element.status}}</p>
+                  <p class="my-0 icon-box icon-box-warning text-danger fw-semibold" *ngIf="element.status !== 'OPEN'">{{element.status}}</p>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="log">
+                <th mat-header-cell *matHeaderCellDef>
+
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <button class="btn btn-light w-100 text-info-dark fw-semibold shadow bg-white" matRipple
+                    [disabled]="isViewLog" (click)="openViewLog(element)">
+                    <ng-container *ngIf="isViewLog">
+                      <span clas="indicator-progress" [style.display]="'block'">
+                        Showing...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </ng-container>
+                    <span *ngIf="!isViewLog">View Log</span>
+                  </button>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef disableClear>
+                  <span></span>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="d-flex align-items-center gap-3">
+                    <!-- <span *ngIf="element.status === 'OPEN'">
+                      <span *ngIf="!element.isPause" class="cursor-pointer" matTooltip="Pause"
+                        matTooltipPosition="above" (click)="onPause(element)">
+                        <img src="./assets/media/pause-outline.svg" alt="">
+                      </span>
+                      <span *ngIf="element.isPause" style="width: 12px;height: 12px;" class="spinner-border text-color"
+                        role="status"></span>
+                    </span> -->
+                    <span *ngIf="element.status === 'PAUSED'">
+                      <span *ngIf="!element.isResume" (click)="onResume(element)" class="cursor-pointer "
+                        matTooltip="Resume" matTooltipPosition="above">
+                        <img src="./assets/media/resume.svg" alt="">
+                      </span>
+                      <span *ngIf="element.isResume" style="width: 12px;height: 12px;" class="spinner-border text-color"
+                        role="status"></span>
+                    </span>
+                    <!-- <span style="cursor: pointer !important; " matTooltip="Triggered Details" matTooltipPosition="above"
+                      (click)="runTrigger(element)">
+                      <img style="width: 20px;" class="me-1" src="./assets/images/eye.svg" />
+                    </span> -->
+                    <!-- <div class="d-flex align-items-center gap-3">
+                      <span [matMenuTriggerFor]="menu" class="cursor-pointer">
+                        <img src="./assets/images/more-vertical.svg" alt="">
+                      </span>
+                    </div>
+                    <mat-menu #menu="matMenu" xPosition="before">
+                      <button class="mat-item" mat-menu-item (click)="openDialog(element)">Edit</button>
+                      <button class="mat-item" mat-menu-item (click)="openConfirmationModal(element)">Remove</button>
+                    </mat-menu> -->
+                  </div>
+
+                </td>
+              </ng-container>
+              <!-- ================================================================ -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="table-head"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns" class=""></tr>
+            </table>
+            <div *ngIf="!initialLoader">
+              <mat-paginator showFirstLastButtons [length]="total" [pageSize]="this.queryParams.limit"
+                (page)="onPageChange($event)" [pageIndex]="page-1" [pageSizeOptions]="limits"
+                (page)="pageEvent = $event">
+              </mat-paginator>
+            </div>
+          </ng-container>
+        </div>
+
+
+      </div>
+      <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!JobDetails?.length && !initialLoader">
+        No records found !
+      </div>
+      <div class="center h-100" *ngIf="initialLoader">
+        <app-page-loader class="v-center"></app-page-loader>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation -->
+<app-delete-confirmation-modal #deleteModal [content]="
+    'Be careful, this process can not be undone. Are you sure you want to delete this Job'
+  " [isLoading]="isDelete" (hidden)="deleteModal.hide()" (yes)="deleteJobs()"
+  (no)="deleteModal.hide()"></app-delete-confirmation-modal>
+
+<!-- Delete Confirmation -->

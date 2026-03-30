@@ -1,0 +1,95 @@
+<!-- Add New Role (offcanvas)-->
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+    <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+      <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+        <img src="./assets/images/role-details.png" alt="role">
+      </div> User Details
+    </div>
+    <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+        alt=""></button>
+  </div>
+  <div class="px-4 py-3" style="height: calc(100% - 25px);overflow-y: auto;">
+    <!-- form -->
+    <form #userF="ngForm">
+      <div class="row g-3 w-100">
+        <div class="col-md-12">
+          <label for="FirstName" class="required form-label">First Name</label>
+
+          <input type="text" class="form-control" name="name" [(ngModel)]="user.firstName"
+            (keydown)="spaceNotAllowed($event)" minlength="3" #firstName="ngModel" required maxlength="40"
+            pattern="[a-zA-Z ]*" />
+          <!-- <div *ngIf="firstName.errors?.['required']">
+            First Name is required.
+          </div> -->
+          <div *ngIf="firstName.errors?.['minlength']">
+            First Name must be minimum 3 characters.
+          </div>
+          <div *ngIf="firstName.errors?.['maxlength']">
+            First Name must be at most 40 characters long.
+          </div>
+          <div *ngIf="firstName.errors?.['pattern']">
+            First Name cannot contain number and special characters.
+          </div>
+        </div>
+        <div class="col-md-12">
+          <label for="LastName" class="required form-label">Last Name</label>
+          <input type="text" class="form-control" name="lastName" [(ngModel)]="user.lastName"
+            (keydown)="spaceNotAllowed($event)" minlength="3" #lastName="ngModel" required maxlength="40"
+            pattern="[a-zA-Z ]*" />
+          <div *ngIf="lastName.errors?.['minlength']">
+            Last Name must be minimum 3 characters.
+          </div>
+          <div *ngIf="lastName.errors?.['maxlength']">
+            Last Name must be at most 40 characters long.
+          </div>
+          <div *ngIf="lastName.errors?.['pattern']">
+            Last Name cannot contain number and special characters.
+          </div>
+          <!-- <input type="text" class="form-control" name="type" [(ngModel)]="user.lastName" /> -->
+        </div>
+        <div class="col-md-12">
+          <label for="LastName" class="form-label">Email ID</label>
+          <input type="text" class="form-control" name="scope" [(ngModel)]="user.email" required />
+        </div>
+        <div class="col-md-12">
+          <label for="LastName" class="form-label">Password</label>
+          <input type="password" class="form-control" name="clientId" [(ngModel)]="user.password" required />
+        </div>
+        <div class="col-md-12">
+          <label for="LastName" class="form-label">Invalid Password Attempts</label>
+
+          <input [disabled]="userLoggedIn.role !== 'SuperAdmin'" type="number" class="form-control"
+            name="invalidPasswordAttempts" [(ngModel)]="user.invalidPasswordAttempts" min="0"/>
+        </div>
+        <div class="col-md-12">
+          <label for="Select Role" class="form-label">Role</label>
+          <p-dropdown appendTo="body" name="email" [options]="rolesOptions" [(ngModel)]="user.role"
+            placeholder="Select Role" [required]="true"></p-dropdown>
+        </div>
+        <div class="col-md-12" *ngIf="user.role === 'CompanyUser' || user.role === 'VerificationUser'">
+          <label for="Select Channel" class="form-label">Channel</label>
+            <p-multiSelect appendTo="body" name="channel" [options]="channelOptions" (ngModelChange)="onChangeMultiselectChannel($event)"
+            optionLabel="usernameId" optionValue="usernameId" [(ngModel)]="selectedChannel" placeholder="Select Channels"
+            [required]="true"></p-multiSelect>
+        </div>
+        <div class="col-md-12" *ngIf="user.role === 'CompanyUser' || user.role === 'VerificationUser'">
+          <label for="Select OCR Project" class="form-label">OCR Project</label>
+            <p-multiSelect appendTo="body" name="ocrProject" [options]="ocrProjectOptions" (ngModelChange)="onChangeMultiselectProject($event)"
+            optionLabel="projectNameOrGuid" optionValue="projectNameOrGuid" [(ngModel)]="selectedProject" placeholder="Select OCR Projects"
+            [required]="true"></p-multiSelect>
+        </div>
+      </div>
+    </form>
+    <!-- form -->
+  </div>
+  <div class="offcanvas-footer position-absolute bottom-0 bg-light px-3 py-2 w-100">
+    <div>
+      <div class="d-flex align-items-center gap-1" style="float: right;">
+        <button type="button" class="btn btn-light px-3 me-2" mat-dialog-close>Cancel</button>
+        <button type="button" class="btn btn-info px-5" [disabled]="userF.invalid" (click)="submit()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /Add New Role (offcanvas)-->

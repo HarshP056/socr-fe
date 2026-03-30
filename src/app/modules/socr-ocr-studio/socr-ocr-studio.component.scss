@@ -1,0 +1,161 @@
+.pdf-document-viewer__header {
+  border: 1px solid #ddd6d6;
+  padding: 5px;
+}
+
+.nav-tab {
+  border-bottom: 1px solid #ddd6d6;
+}
+
+.nav-tab .nav-link.activeTab {
+  color: #026aa2 !important;
+  border-bottom: 2px solid #026aa2;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #667085;
+  cursor: pointer;
+  padding: 12px 16px;
+
+  &:hover {
+    color: #026aa2 !important;
+    border-bottom: 2px solid #026aa2;
+  }
+}
+
+.fix-fields {
+  border-bottom: 1px solid #ddd6d6;
+}
+
+// .fix-fields:last-child {
+//   border: none;
+// }
+
+.doc-type-item {
+  border-bottom: 1px solid #ddd6d6;
+  background-color: #faf9f8;
+}
+
+input,
+select {
+  border-radius: 0;
+  border: 1px solid #bdbdbd;
+  outline: none;
+  // padding: 4px 10px;
+  font-size: 13px;
+}
+
+.purchaseOrder,
+.max-content {
+  width: max-content !important;
+  min-width: 200px;
+}
+
+.mdiLineItem th,
+.mdiLineItem td {
+  padding: 5px 10px !important;
+}
+
+.mdiLineItem th {
+  max-width: 150px;
+}
+
+.mdiLineItem td input {
+  width: 100%;
+}
+
+.w-250 {
+  width: 250px !important;
+  max-width: 250px !important;
+}
+
+.customTable {
+  border: 1px solid #E5EAEE;
+  margin-bottom: 0;
+}
+
+.customTable td {
+  border: 1px solid #E5EAEE;
+  padding: 8px !important;
+}
+
+.customTable td:first-child {
+  border-left: none !important;
+}
+
+.customTable td:last-child {
+  border-right: none !important;
+}
+
+.customTable tr:first-child td {
+  border-top: none !important;
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-border {
+  border-radius: 5px;
+}
+
+.customInput {
+  background: #FFFFFF;
+  border: 1px solid #D0D5DD;
+  box-shadow: 0px 1px 2px 0px #1018280D;
+  padding: 4px 14px;
+  border-radius: 4px;
+  width: 100%;
+  opacity: 0px;
+}
+
+.multipleTable {
+  border: 1px solid #ddd6d6;
+}
+
+.multipleTable>tbody>tr>td {
+  padding: 5px;
+  min-width: 50px;
+  font-size: 13px;
+  border-right: 1px solid #ddd6d6;
+  border-bottom: 1px solid #ddd6d6;
+}
+
+.multipleTable>tbody>tr>td:last-child {
+  border-right: none;
+}
+
+.h-calc-30 {
+  height: calc(100% - 30px);
+}
+
+.h-calc-40 {
+  height: calc(100% - 40px);
+}
+
+.h-calc-50 {
+  height: calc(100% - 50px);
+}
+
+.h-calc-75 {
+  height: calc(100% - 75px);
+}
+
+.form-control:focus { box-shadow: none !important;}
+
+
+
+custom-progress-bar {
+  height: 10px;
+  border-radius: 20px;
+}

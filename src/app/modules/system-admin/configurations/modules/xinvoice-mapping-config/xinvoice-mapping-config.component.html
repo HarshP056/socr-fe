@@ -1,0 +1,96 @@
+<div class="main-content bg-white w-100">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+
+      <!-- Header -->
+      <div class="col-sm-12 mb-3">
+        <a routerLink="/system-admin/configurations" class="text-decoration-none d-flex align-items-center px-0">
+          <h5 class="fw-semibold">
+            <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">
+            XInvoice Mapping Configuration
+          </h5>
+        </a>
+        <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+          <img src="./assets/images/bulb.svg" class="me-2" alt="bulb">
+          <div class="text-grey-4">
+            Configure how XML invoice fields map to InvoiceBuffer fields for each invoice type.
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="col-lg-12 px-0 mb-3">
+        <div class="d-flex align-items-center justify-content-end bg-light-2 border border-dashed rounded-3 px-3 py-3">
+          <button (click)="create()" class="btn btn-info shadow">
+            <img src="./assets/images/plus.svg" class="me-1" alt="add">
+            New Mapping Config
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="col-lg-12">
+        <div class="table-responsive mt-4 px-0">
+          <ng-container *ngIf="configs?.length && !initialLoader">
+            <table mat-table class="table user-management" [dataSource]="configs">
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let element">
+                  <p class="text-info-dark fw-semibold my-0">{{ element.name }}</p>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="invoiceType">
+                <th mat-header-cell *matHeaderCellDef>Invoice Type</th>
+                <td mat-cell *matCellDef="let element">{{ element.invoiceType }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="headerCount">
+                <th mat-header-cell *matHeaderCellDef>Header Mappings</th>
+                <td mat-cell *matCellDef="let element">{{ element.headerMappings?.length || 0 }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="lineCount">
+                <th mat-header-cell *matHeaderCellDef>Line Item Mappings</th>
+                <td mat-cell *matCellDef="let element">{{ element.lineItemMappings?.length || 0 }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element">
+                  <span [matMenuTriggerFor]="menu" class="cursor-pointer">
+                    <img src="./assets/images/more-vertical.svg" alt="">
+                  </span>
+                  <mat-menu #menu="matMenu" xPosition="before">
+                    <button class="mat-item" mat-menu-item (click)="edit(element)">Edit</button>
+                    <button class="mat-item" mat-menu-item (click)="openConfirmationModal(element)">Remove</button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="table-head"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </ng-container>
+        </div>
+
+        <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!configs?.length && !initialLoader">
+          No records found!
+        </div>
+        <div class="center h-100" *ngIf="initialLoader">
+          <app-page-loader class="v-center"></app-page-loader>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation -->
+<app-delete-confirmation-modal #deleteModal
+  [content]="'Are you sure you want to delete this XInvoice Mapping Config?'"
+  [isLoading]="isDelete"
+  (hidden)="deleteModal.hide()"
+  (yes)="deleteConfig()"
+  (no)="deleteModal.hide()">
+</app-delete-confirmation-modal>

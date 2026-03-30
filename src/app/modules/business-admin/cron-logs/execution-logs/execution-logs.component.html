@@ -1,0 +1,122 @@
+
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+    <div class="text-grey-3 d-flex align-items-center gap-2 py-3 ps-3">
+      <span style="font-weight: 800; font-size: large;"> Execution Logs</span>
+
+    </div>
+    <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+        alt=""></button>
+  </div>
+  <div>
+      <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3 px-3">
+          <div class="card flex justify-content-center" style=" margin-bottom: 5px; border: none;">
+              <p-dropdown name="project" [options]="project" optionLabel="projectNameOrGuid" optionValue="id" [showClear]="true" placeholder="Select Project" [(ngModel)]="queryParams.projectId"></p-dropdown>
+
+            </div>
+          <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by Request Id"
+            [(ngModel)]="queryParams.requestId">
+          <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by Tx Id"
+            [(ngModel)]="queryParams.txId">
+
+          <div class="d-flex align-items-center gap-2 ms-2">
+            <div>
+              <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                <ng-container *ngIf="isLoading">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Searching...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <span *ngIf="!isLoading">Search</span>
+              </button>
+            </div>
+            <div>
+              <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple
+                [disabled]="resettingLoader" (click)="reset()">
+                <ng-container *ngIf="resettingLoader">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Resetting...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <span *ngIf="!resettingLoader">Reset</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+  <div class="table-responsive mt-4 px-3" *ngIf="executionLogs.length && !initialLoader">
+      <table class="table user-management" mat-table matSort (matSortChange)="sortChange($event)"
+        matSortDirection="desc"
+        matSortActive="dateTime"
+        [dataSource]="executionLogs">
+
+        <ng-container matColumnDef="projectId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Project Id</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="fw-normal  my-0 table-id">{{getProJectName(element.projectId)}}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="txId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>tx Id</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="fw-normal  my-0 table-id">{{element.txId}}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="requestId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Request Id</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="fw-normal  my-0 table-id">{{element.requestId}}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let element">
+            <span *ngIf="element.status === 'SUCCESS'" class="icon-box icon-box-success p-2" style="border-radius: 4px;">SUCCESS</span>
+            <span *ngIf="element.status !== 'SUCCESS'" class="icon-box icon-box-danger p-2" style="border-radius: 4px;">FAILED</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="startDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Start At</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="text-truncate">{{element.startDate | date:'MM-dd-yyyy HH:mm a'}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="endDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>End At</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="text-truncate">{{element.endDate | date:'MM-dd-yyyy HH:mm a'}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stage">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Stage</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="fw-normal  my-0 table-id">{{element.stage}}</span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <div *ngIf="!initialLoader">
+        <mat-paginator (page)="onPageChange($event)" [length]='totalElements' [pageIndex]="pageInd"
+          [pageSize]="queryParams.limit" [pageSizeOptions]="[5, 10, 20, 50, 100]" aria-label="Select page">
+        </mat-paginator>
+      </div>
+    </div>
+
+    <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!executionLogs?.length && !initialLoader">
+      No records found !
+    </div>
+    <div class="center h-100 mt-5" *ngIf="initialLoader">
+      <app-page-loader class="v-center"></app-page-loader>
+    </div>
+<div>
+</div>

@@ -1,0 +1,193 @@
+<div class="pattern-dashboard">
+  <div class="container-fluid custom h-calc">
+    <div class="row">
+      <div class="col-lg-12 mb-2 mt-4 px-4">
+        <form action=""
+          class="d-flex align-items-center flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 px-3 mx-1">
+          <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">Filter
+            <div class="card flex justify-content-center" style="border: none;">
+              <p-dropdown name="profileId" class="graph" [options]="project" optionLabel="projectNameOrGuid" optionValue="id" [showClear]="true" placeholder="Select Profile" [(ngModel)]="profileId" (onChange)="getDashBoardCount()"></p-dropdown>
+            </div>
+            <div class="card flex justify-content-center" style="border: none;">
+              <p-dropdown name="channelId" class="dFilter" [options]="channels" optionLabel="usernameId" optionValue="usernameId" [showClear]="true" placeholder="Select Channel" [(ngModel)]="channelId" (onChange)="getDashBoardCount()"></p-dropdown>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="d-flex col-lg-12 mb-2">
+        <div class="col-lg-3 d-flex align-items-center flex-wrap p-3">
+          <div class="p-3 w-100 rounded-3 shadow card d-flex flex-row align-items-center gap-3">
+            <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-4 position-relative">
+              <img src="./assets/images/invoice.png" alt="invoice">
+            </div>
+            <div>
+              <h6 class="text-grey-3 mb-1 small-lg fw-bold">Total Invoices</h6>
+              <h4 class="text-grey-4 fw-normal">{{dashboardCount?.totalInvoiceCount}}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-center flex-wrap p-3">
+          <div class="p-3 w-100 rounded-3 shadow card d-flex flex-row align-items-center gap-3">
+            <div class="icon-box icon-box-success rounded-3 p-2 p-xxl-4 position-relative">
+              <img src="./assets/images/pages.png" alt="invoice">
+            </div>
+            <div>
+              <h6 class="text-grey-3 mb-1 small-lg fw-bold">Consumed Pages</h6>
+              <h4 class="text-grey-4 fw-normal">{{dashboardCount?.totalConsumedPagesCount}}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-center flex-wrap p-3">
+          <div class="p-3 w-100 rounded-3 shadow card d-flex flex-row align-items-center gap-3">
+            <div class="icon-box icon-box-warning rounded-3 p-2 p-xxl-4 position-relative">
+              <img src="./assets/images/license.png" alt="invoice">
+            </div>
+            <div>
+              <h6 class="text-grey-3 mb-1 small-lg fw-bold">License Total Pages</h6>
+              <h4 class="text-grey-4 fw-normal">{{dashboardCount?.totalLicensePagesCount}}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-center flex-wrap p-3">
+          <div class="p-3 w-100 rounded-3 shadow card d-flex flex-row align-items-center gap-3">
+            <div class="icon-box icon-box-danger rounded-3 p-2 p-xxl-4 position-relative">
+              <img src="./assets/images/remaining-pages.png" alt="invoice">
+            </div>
+            <div>
+              <h6 class="text-grey-3 mb-1 small-lg fw-bold">Remaining Pages</h6>
+              <h4 class="text-grey-4 fw-normal">{{dashboardCount?.totalRemainingPagesCount}}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 mb-4">
+        <div class="px-3 h-100">
+          <div class="card card-body p-3">
+            <div class="d-flex align-items-start justify-content-between">
+              <div>
+                <h5>Processed Invoices Timeline</h5>
+                <p>Invoices that are processed over the period of time</p>
+              </div>
+              <div>
+                <div class="card flex align-items-end justify-content-end" style="border: none;">
+                  <p-dropdown name="options" class="graph" [options]="options" [showClear]="false" placeholder="" [(ngModel)]="invoiceFilter" (onChange)="getInvoiceDataForGraph(invoiceFilter)"></p-dropdown>
+                </div>
+                <div class="searchBox cursor-pointer my-2" *ngIf="invoiceFilter == 'Custom'">
+                  <input type="text" class="w-100 border-0" placeholder="Search By Created Date" #dp="bsDaterangepicker"
+                    bsDaterangepicker [bsConfig]="{
+                        showWeekNumbers: false,
+                        rangeInputFormat: 'MM/DD/YYYY'
+                      }" [(ngModel)]="dateRange" (ngModelChange)="onDateRangeSelected()" [maxDate]="maxDate" readonly name="dateRange" style="font-size: 0.9rem;" />
+                  <div>
+                    <img (click)="dp.toggle()" *ngIf="!dateRange?.length" src="./assets/media/calendar.svg"
+                      alt="" />
+                    <span *ngIf="dateRange?.length" class="cursor-pointer crossicon" (click)="removeDate()">
+                      <img src="./assets/images/x.svg" alt="" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="barChart" *ngIf="chartOptions">
+              <apx-chart
+                [series]="chartOptions.series"
+                [chart]="chartOptions.chart"
+                [dataLabels]="chartOptions.dataLabels"
+                [plotOptions]="chartOptions.plotOptions"
+                [yaxis]="chartOptions.yaxis"
+                [legend]="chartOptions.legend"
+                [fill]="chartOptions.fill"
+                [stroke]="chartOptions.stroke"
+                [tooltip]="chartOptions.tooltip"
+                [xaxis]="chartOptions.xaxis"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 mb-4 ps-0">
+        <div class="pe-3 h-100">
+          <div class="card card-body p-3">
+            <div class="d-flex flex-row align-items-center justify-content-between mb-3">
+              <h5 class="mb-0">Invoice Stages</h5>
+              <!-- <div class="card flex justify-content-center" style="border: none;">
+                <p-dropdown name="project" class="graph" [options]="project" optionLabel="projectNameOrGuid" optionValue="projectId" [showClear]="true" placeholder="Select Project" [(ngModel)]="searchQueryParams.projectId" (onChange)="getStageCount()"></p-dropdown>
+              </div> -->
+            </div>
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex w-100 mb-2">
+                  <div class="col-4 ps-1 pe-3">
+                    <div class="d-flex flex-column align-items-center justify-content-center rounded-2 py-3 bg-indigo-50 text-indigo-800">
+                      <div class="text-7xl fw-bold leading-none tracking-tight">
+                          {{dashboardCount?.verificationCount}}
+                      </div>
+                      <div class="mt-1 text-lg fw-normal">Verification</div>
+                    </div>
+                  </div>
+                  <div class="col-4 px-2">
+                    <div class="d-flex flex-column align-items-center justify-content-center rounded-2 py-3 bg-green-50 text-green-800">
+                      <div class="text-7xl fw-bold leading-none tracking-tight">
+                          {{dashboardCount?.processedCount}}
+                      </div>
+                      <div class="mt-1 text-lg fw-normal">Processed</div>
+                    </div>
+                  </div>
+                  <div class="col-4 px-2">
+                    <div class="d-flex flex-column align-items-center justify-content-center rounded-2 py-3 text-bg-danger">
+                      <div class="text-7xl fw-bold leading-none tracking-tight">
+                          {{dashboardCount?.exceptionCount}}
+                      </div>
+                      <div class="mt-1 text-lg fw-normal">Exception</div>
+                    </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between w-100 mb-2">
+                <div class="col-4 ps-1 pe-2">
+                  <div class="d-flex flex-column align-items-center justify-content-center py-3 rounded-2 bg-gray-100 text-secondary">
+                    <div class="text-7xl fw-bold leading-none tracking-tight">
+                        {{dashboardCount?.newCount}}
+                    </div>
+                    <div class="mt-1 text-sm fw-normal text-center">New</div>
+                  </div>
+                </div>
+                <div class="col-4 px-2">
+                  <div class="d-flex flex-column align-items-center justify-content-center py-3 rounded-2 bg-gray-100 text-secondary">
+                    <div class="text-7xl fw-bold leading-none tracking-tight">
+                        {{dashboardCount?.pageSeparationCount}}
+                    </div>
+                    <div class="mt-1 text-sm fw-normal text-center">Page Seperation</div>
+                  </div>
+                </div>
+                <div class="col-4 px-2">
+                  <div class="d-flex flex-column align-items-center justify-content-center py-3 rounded-2 bg-gray-100 text-secondary">
+                    <div class="text-7xl fw-bold leading-none tracking-tight">
+                        {{dashboardCount?.ruleEngineCount}}
+                    </div>
+                    <div class="mt-1 text-sm fw-normal text-center">Rule Engine</div>
+                  </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+              <div class="col-6 ps-1 pe-2">
+                <div class="d-flex flex-column align-items-center justify-content-center py-3 rounded-2 bg-gray-100 text-secondary">
+                    <div class="text-7xl fw-bold leading-none tracking-tight">
+                        {{dashboardCount?.dataRecognizationCount}}
+                    </div>
+                    <div class="mt-1 text-sm fw-normal text-center">Data Recognization</div>
+                </div>
+              </div>
+              <div class="col-6 px-2">
+                <div class="d-flex flex-column align-items-center justify-content-center py-3 rounded-2 bg-gray-100 text-secondary">
+                    <div class="text-7xl fw-bold leading-none tracking-tight">
+                        {{dashboardCount?.dataDerivationCount}}
+                    </div>
+                    <div class="mt-1 text-sm fw-normal text-center">Data Derivation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+<!-- <div class="container-fluid px-0">
+  <div class="wrapper h-calc d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap"> -->
+      <div class="main-content bg-white w-100">
+        <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+          <a routerLink="/system-admin/system-settings" class="text-decoration-none d-flex align-items-center px-0 mb-2">
+            <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> Cron Job Logs
+            </h5>
+          </a>
+        </div>
+        <div class="table-responsive mt-4 px-3" *ngIf="cronLogs.length && !initialLoader">
+          <table class="table user-management" mat-table matSort (matSortChange)="sortChange($event)"
+            matSortDirection="desc" matSortActive="dateTime" [dataSource]="cronLogs">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Job Id </th>
+              <td mat-cell *matCellDef="let element">
+                <p class="text-grey-4 my-0 table-title">{{element?.id}}
+                </p>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+              <td mat-cell *matCellDef="let element">
+                <p class="fw-normal  my-0 table-id">{{element.description}}</p>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="pettern">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Pattern</th>
+              <td mat-cell *matCellDef="let element" style="width: 25% !important">
+                <div
+                  class="alert alert-warning fit-width d-flex align-items-start word-break rounded-pill mb-0 border-0 py-2 px-3"
+                  role="alert">
+                  <div class="text-warning-dark">
+                    {{element.pettern}}
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lastExecution">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date/Time</th>
+              <td mat-cell *matCellDef="let element">
+                <span class="fw-semibold text-truncate">{{element.lastExecution | date:'MM-dd-yyyy HH:mm a'}}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="enable">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Enable</th>
+              <td mat-cell *matCellDef="let element">
+                <mat-slide-toggle style="display: flex;padding-left: 5px; align-items: center;margin-top: 7px; " [(ngModel)]="element.enable"
+                  (change)="changeStatus(element.id, element)" name="enable"></mat-slide-toggle>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <div class="d-flex">
+                  <img src="./assets/images/eye.svg" alt="" class="me-3 cursor-pointer" matTooltip="View"
+                    (click)="openExecutionLog(element)" />
+                  <img src="./assets/images/run.svg" alt="" class="me-3 cursor-pointer" matTooltip="Run Job"
+                    (click)="runNewJob(element)" />
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <div *ngIf="!initialLoader">
+            <mat-paginator (page)="onPageChange($event)" [length]='totalElements' [pageIndex]="pageInd"
+              [pageSize]="queryParams.limit" [pageSizeOptions]="[5, 10, 20, 50, 100]" aria-label="Select page">
+            </mat-paginator>
+          </div>
+        </div>
+
+        <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!cronLogs?.length && !initialLoader">
+          No records found !
+        </div>
+        <div class="center h-100 mt-5" *ngIf="initialLoader">
+          <app-page-loader class="v-center"></app-page-loader>
+        </div>
+      </div>
+    <!-- </div>
+  </div>
+</div> -->

@@ -1,0 +1,46 @@
+
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+    <div class="text-grey-3 d-flex align-items-center gap-2 py-3 ps-3">
+      <span style="font-weight: 800; font-size: large;"> Upload File</span>
+
+    </div>
+    <button type="button" class="btn btn-cls" (click)="closeDialog()" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+        alt=""></button>
+  </div>
+  <div>
+      <div class="px-3 mt-3">
+
+        <div class="card flex justify-content-center" style="border: none;">
+          <p-dropdown name="system" [options]="systems" optionValue="systemId" optionLabel="systemId" [showClear]="true" placeholder="Select System" [(ngModel)]="logicalSystem"></p-dropdown>
+        </div>
+  <div class="search-box d-flex mt-2 gap-2" style="justify-content: flex-start; align-items: end;">
+          <label class=" myInput d-flex cursor-pointer" style="justify-content: space-between; align-items: center; width: 90%;">
+              <div *ngIf="file != null">{{file.name}}</div>
+              <div for="file-upload" *ngIf="file == null" style="color: #a9a3af;">Choose File...</div>
+              <div>
+                  <input (change)="onFileSelect($event)" type="file" id="file-upload" placeholder="Choose file..." accept=".xlsx,.xls,.xml,.json">
+              </div>
+              <div>
+                  <label for="file-upload">
+                      <img class="folder" src="./assets/media/file-folder.svg" alt=""  *ngIf="file == null">
+                  </label>
+              </div>
+          </label>
+
+          <div>
+              <button [disabled]="file == null" type="button" class="btn btn-info px-3 me-2" style="height: 40px;" (click)="removeFile()">Remove</button>
+          </div>
+
+  </div>
+
+  <div class="offcanvas-footer position-absolute bottom-0 bg-light px-3 py-2 w-100">
+    <div>
+      <div class="d-flex align-items-center gap-1" style="padding-right: 10px; justify-content: flex-end;">
+        <button type="button" class="btn btn-light px-3 me-2" (click)="closeDialog()" mat-dialog-close>Cancel</button>
+        <button [disabled]="file == null" type="button" class="btn btn-info px-3"
+         (click)="uploadFile()" >Upload</button>
+      </div>
+    </div>
+  </div>
+</div>

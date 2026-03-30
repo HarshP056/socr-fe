@@ -1,0 +1,38 @@
+<div class="mb-3 cursor-pointer d-flex justify-content-between fixed-header border-bottom">
+  <div class="header-style text-grey-400 fw-bold size">
+    OCR Request Exception Log
+  </div>
+  <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close">
+    <img src="./assets/images/x.svg" alt="">
+  </button>
+</div>
+<div class="h-100">
+  <div>
+    <ng-container *ngIf="!initialLoader && errorLog">
+      <div class="modal-body pb-0 mt-4" style="padding: 4px 16px;">
+        <div class="mb-5 d-flex align-items-center justify-content-between">
+          <div class="d-flex flex-column gap-2">
+            <span class="text-grey-400 fw-bold size">Title : <span class="text-grey-600 fw-normal">{{errorLog.title}}</span></span>
+          </div>
+          <div class="d-flex flex-column gap-2">
+            <span class="text-grey-400 fw-bold size">Created Date : <span
+                class="text-grey-600 fw-normal">{{errorLog.createdDate
+                |
+                date:'medium'}}</span></span>
+          </div>
+        </div>
+        <div class="bg-black p-10 rounded text-white">
+          <pre class="p-1 size" style="height: 800px;">{{errorLog?.errorLog | xml}}</pre>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!initialLoader && !errorLog">
+      <div class="center d-flex flex-column align-items-center mt-5">
+              No records found !
+      </div>
+    </ng-container>
+    <div class="p-10" *ngIf="initialLoader">
+      <app-page-loader [content]="'Loading...'"></app-page-loader>
+    </div>
+  </div>
+</div>

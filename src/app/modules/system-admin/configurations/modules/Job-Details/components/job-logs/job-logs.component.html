@@ -1,0 +1,101 @@
+<div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+  <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+    <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+      <img src="./assets/images/role-details.png" alt="role">
+    </div> Job Logs <br>
+    <div class="d-flex align-items-center" style="margin-left: 155px;">
+      <span>
+        Job ID -
+        <span class="text-primary">{{data.jobName}}</span>
+      </span>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+      alt=""></button>
+</div>
+<div class="col-lg-12">
+  <div class="table-responsive px-0">
+    <ng-container *ngIf="jobLogData?.length && !initialLoader">
+      <table mat-table matSort class="table user-management" [dataSource]="jobLogData"
+        (matSortChange)="sortChange($event)" matSortDirection="desc" matSortActive="startTime">
+        <ng-container matColumnDef="jobId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Job Name
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="text-info-dark fw-semibold my-0">{{element.jobId}}</p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Type
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span>{{element.type}}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cronExpr">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Cron Expression
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span>{{element.cronPattern}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="startTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Start Time
+          </th>
+          <td mat-cell *matCellDef="let element">
+
+            <p class="text-grey my-0">{{element.startTime | date : "medium" }}</p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="endTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            End Time
+          </th>
+          <td mat-cell *matCellDef="let element">
+
+            <p class="text-grey my-0">{{element.endTime | date : "medium"}}</p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="dateTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Date Time
+          </th>
+          <td mat-cell *matCellDef="let element">
+
+            <p class="text-grey my-0">{{element.dateTime | date : "medium" }}</p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+            Status
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="text-grey-3 my-0">{{element.status}}</p>
+          </td>
+        </ng-container>
+        <!-- ================================================================ -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="table-head"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class=""></tr>
+      </table>
+      <div *ngIf="!initialLoader">
+        <mat-paginator showFirstLastButtons [length]="totalElements" [pageSize]="queryParams.limit"
+          (page)="onPaginateChange($event)" [pageIndex]="pageInd- 1" [pageSizeOptions]="[5,10,25,100]">
+        </mat-paginator>
+      </div>
+    </ng-container>
+  </div>
+
+
+</div>
+<div class="center d-flex flex-column align-items-center mt-5" *ngIf="!jobLogData?.length && !initialLoader">
+  No records found !
+</div>
+<div class="center h-100" *ngIf="initialLoader">
+  <app-page-loader class="v-center"></app-page-loader>
+</div>

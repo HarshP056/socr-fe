@@ -1,0 +1,111 @@
+<div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+  <div class="main-content bg-white w-100">
+    <div class="row mx-0 pt-3 pt-lg-4">
+      <div class="p-4 pt-0">
+        <div class="col-sm-12">
+          <a (click)="onBack()" class="text-decoration-none d-flex align-items-center px-0" style="cursor: pointer;">
+            <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">
+              <span *ngIf="!id">Create Template</span>
+              <span *ngIf="id">Update Template</span>
+            </h5>
+          </a>
+        </div>
+        <div class="col-lg-12">
+          <hr class="mt-2">
+        </div>
+        <form #form="ngForm">
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <mat-slide-toggle class="example-margin" [checked]="emailTemplateModel.enabled"
+                (change)="getToggle($event)">
+                Enabled
+              </mat-slide-toggle>
+            </div>
+            <div class="col-xl-6 mb-3">
+              <label for="" class="form-label fw-semibold text-font-dark">Title</label>
+              <input type="text" name="title" class="form-control" [(ngModel)]="emailTemplateModel.title"
+                [disabled]="!emailTemplateModel.enabled" />
+
+            </div>
+            <div class="col-xl-6 mb-3">
+              <label for="type" class="form-label">Type</label>
+              <div class="dropdown-border">
+                <p-dropdown appendTo="body" name="email" [options]="emailTemplateTypes"
+                  [(ngModel)]="emailTemplateModel.type" placeholder="Select Types"
+                  [disabled]="!emailTemplateModel.enabled"></p-dropdown>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="emailTemplateModel.type === 'ALERT_LICENSE_EMAIL'">
+            <div class="col-6 mb-3 d-flex align-items-center gap-2">
+              <label for="" class="form-label fw-semibold text-font-dark" style="text-wrap: nowrap;">If License Pages less than</label>
+              <input type="text" name="licensePages" (keydown.enter)="onKeyDown($event)" placeholder="Enter Page"
+                class="form-control" [(ngModel)]="emailTemplateModel.licensePages"
+                [disabled]="!emailTemplateModel.enabled" />
+            </div>
+          </div>
+
+          <div class="row" *ngIf="emailTemplateModel.type === 'LICENSE_EXHAUSTED' || emailTemplateModel.type === 'ALERT_LICENSE_EMAIL' || emailTemplateModel.type === 'SMARTSTORE_UPLOAD_FAILED'
+          || emailTemplateModel.type === 'OCR_NOTIFICATION_TO_SUPPORT_ON_INV_STUCK'">
+            <div class="col-6 mb-3 d-flex align-items-center gap-2">
+              <label for="" class="form-label fw-semibold text-font-dark" style="text-wrap: nowrap;">Send Email To: </label>
+              <input type="text" name="userEmail" (keydown.enter)="onKeyDown($event)" placeholder="Type email and hit Enter"
+                class="form-control" [(ngModel)]="userEmail"
+                [disabled]="!emailTemplateModel.enabled" />
+            </div>
+          </div>
+
+          <div *ngIf="emailTemplateModel.emails?.length" class="py-2 mt-2">
+            <div
+              *ngFor="let item of emailTemplateModel.emails; index as i"
+              class="align-items-center justify-content-between custom-email ms-2">
+              <p class="mb-0">
+                <a
+                  class=""
+                  >{{ item }}</a
+                >
+              </p>
+              <div class="ms-2">
+                <span class="cursor-pointer" (click)="onRemoveUser(i)">
+                  X
+                 </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row justify-content-center gap-2 mt-4">
+            <div class="col-xl-5" style="border: 1px solid #c9c9c9;position: relative;border-radius: 4px;">
+              <span class="content">Templete Body</span>
+              <div class="h-100">
+                <textarea (keydown)="onChange($event)"
+                  style="border: none; width: 100%;height: 100%;padding-top: 34px;background: none;"
+                  [disabled]="!emailTemplateModel.enabled" [(ngModel)]="emailTemplateModel.body" name="body"></textarea>
+              </div>
+            </div>
+            <div class="col-xl-5" style="border: 1px solid #c9c9c9;position: relative;border-radius: 4px;">
+              <span class="content">View</span>
+              <div style="padding-top: 12px;" class="mt-3" [innerHTML]="templetView"></div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-end mt-4">
+            <button (click)="onBack()" class="cancel-btn me-3">
+              Cancel
+            </button>
+            <button matRipple class="common-btn" [disabled]="isWait || form.invalid" (click)="saveApplication()">
+              <ng-container *ngIf="isWait">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isWait && !id">Save</ng-container>
+              <ng-container *ngIf="!isWait && id">Update</ng-container>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

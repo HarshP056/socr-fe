@@ -1,0 +1,48 @@
+<div class="w-13">
+  <ng-container *ngIf="!initialLoader">
+    <div class="modal-body pb-0">
+      <div class="d-flex justify-content-end mb-3" *ngIf="errorObject.status === 'NEW'">
+        <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple
+          [disabled]="isLoading" (click)="addComments()">
+          <ng-container *ngIf="isLoading">
+            <span clas="indicator-progress" [style.display]="'block'">
+              Processing...{{ " " }}
+              <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+            </span>
+          </ng-container>
+          <span *ngIf="!isLoading">Resolve</span>
+        </button>
+      </div>
+      <div class="mb-5 d-flex align-items-center justify-content-between">
+        <div class="d-flex flex-column gap-2">
+          <span class="fw-medium">Tx ID : <span class="text-grey-600 fw-normal">{{errorObject.txId}}</span></span>
+          <span class="fw-medium" *ngIf="errorObject.status === 'RESOLVED'">Resolved By : <span
+              class="text-grey-600 fw-normal">{{errorObject.resolvedBy}}</span></span>
+          <span class="fw-medium" *ngIf="errorObject.status === 'RESOLVED'">Comment : <span
+              class="text-grey-600 fw-normal">{{errorObject.comment}}</span></span>
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <span class="fw-medium" *ngIf="errorObject.status === 'RESOLVED'">Resolved Date&Time : <span
+              class="text-grey-600 fw-normal">{{errorObject.resolvedDateTime
+              |
+              date:'medium'}}</span></span>
+          <span class="fw-medium">Date : <span class="text-grey-600 fw-normal">{{errorObject.dateTime |
+              date:'medium'}}</span></span>
+        </div>
+
+      </div>
+      <div class="bg-black p-10 rounded text-white">
+        <pre class="p-1">{{errorLog.errorLog | xml}}</pre>
+      </div>
+    </div>
+  </ng-container>
+  <div class="p-10" *ngIf="initialLoader">
+    <app-page-loader [content]="'Loading...'"></app-page-loader>
+  </div>
+</div>
+
+<ng-template #addComment>
+  <app-add-comment (onclose)="comment.hide()" [txtId]="txId" (onsubmit)="onErrorClose($event)"></app-add-comment>
+</ng-template>
+
+<app-basic-modal #comment (hidden)="comment.hide()" [heading]="title"></app-basic-modal>

@@ -1,0 +1,176 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc-ocr d-flex justify-content-center">
+      <div class="bg-white px-4 w-100">
+        <div class="row mx-0 pt-3 pt-lg-4">
+          <div class="p-4 pt-0">
+            <div class="col-sm-12 ">
+              <a routerLink="/system-admin/integrations" class="text-decoration-none d-flex align-items-center px-0">
+                <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">
+                  SmartStore Config
+                </h5>
+              </a>
+              <div class="d-flex align-items-center gap-2 justify-content-between mt-2">
+                <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2" role="alert">
+                  <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+                  <div class="text-grey-4">
+                    Fine-tuning settings to personalize and optimize your experience.
+                  </div>
+                </div>
+                <div>
+                  <button *ngIf="!showUpdateSystem" class="btn btn-info shadow" type="button" (click)="showCreateForm()"><img src="./assets/images/plus.svg" class="me-1" alt="add">
+                    New SmartStore Config</button>
+                </div>
+              </div>
+
+            </div>
+            <form #form="ngForm" *ngIf="!showUpdateSystem"
+              class="d-flex align-items-center flex-wrap gap-2 bg-light-2 border border-dashed rounded-3 px-4 py-3">
+              <div class="row w-100">
+                <div class="mb-3">
+                  <label for="auth" class="form-label fw-semibold text-font-dark">Logical System</label>
+                  <p-dropdown appendTo="body" name="id" optionLabel="systemId" (onChange)="onChangeSystem($event)" optionValue="systemId" [options]="logicalSystemList" [(ngModel)]="systemId"
+                    placeholder="Select logical system" [required]="true"></p-dropdown>
+                </div>
+              </div>
+              <div  *ngIf="showSystemDetails" class="w-100">
+              <div class="row w-100">
+
+                <div class="col-lg-4 mb-3">
+                  <label for="auth" class="form-label fw-semibold text-font-dark">Auth ID</label>
+                  <input [(ngModel)]="smartStore.authId" name="authId" type="text" class="form-control" id="auth"
+                    placeholder="Enter Auth Id">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="comp" class="form-label fw-semibold text-font-dark">Company ID</label>
+                  <input [(ngModel)]="smartStore.compId" name="compId" type="text" class="form-control" id="comp"
+                    placeholder="Enter Company ID">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="contRep" class="form-label fw-semibold text-font-dark">Cont Rep</label>
+                  <input [(ngModel)]="smartStore.contRep" name="contRep" type="text" class="form-control" id="contRep"
+                    placeholder="Enter contRep">
+                </div>
+              </div>
+              <div class="row w-100">
+                <div class="col-lg-4 mb-3">
+                  <label for="expiration" class="form-label fw-semibold text-font-dark">Expiration</label>
+                  <input [(ngModel)]="smartStore.expiration" name="expiration" type="text" class="form-control"
+                    id="expiration" placeholder="Enter expiration">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="pversion" class="form-label fw-semibold text-font-dark">pversion</label>
+                  <input [(ngModel)]="smartStore.pversion" name="pversion" type="text" class="form-control"
+                    id="pversion" placeholder="Enter pversion">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="system" class="form-label fw-semibold text-font-dark">System</label>
+                  <input [(ngModel)]="smartStore.system" name="system" type="text" class="form-control" id="system"
+                    placeholder="Enter system">
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <label for="security" class="form-label fw-semibold text-font-dark">Security key</label>
+                <input [(ngModel)]="smartStore.secKey" name="secKey" [type]="show ? 'text' : 'password'" class="form-control" id="security" (blur)="show=false"
+                  placeholder="Enter security key" (focus)="show=true">
+              </div>
+              <div class="col-lg-12">
+                <label for="server" class="form-label fw-semibold text-font-dark">Server URL</label>
+                <input [(ngModel)]="smartStore.serverURL" name="serverURL" type="text" class="form-control" id="server"
+                  placeholder="Enter server url">
+              </div>
+              <button type="button" class="btn btn-danger px-4 py-2 my-3"
+              (click)="deleteConfig()">
+              <ng-container *ngIf="isDelete">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isDelete">Delete</ng-container>
+            </button>
+              <button type="button" class="btn btn-info px-4 py-2 my-3 ms-2" [disabled]="isWait || form.invalid"
+                (click)="submit()">
+                <ng-container *ngIf="isWait">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait">Update</ng-container>
+              </button>
+              </div>
+            </form>
+            <form #createform="ngForm" *ngIf="showUpdateSystem"
+              class="d-flex align-items-center flex-wrap gap-2 bg-light-2 border border-dashed rounded-3 px-4 py-3">
+              <div class="row w-100">
+                <div class="mb-3">
+                  <label for="auth" class="form-label fw-semibold text-font-dark">Logical System</label>
+                  <p-dropdown appendTo="body" name="email" optionLabel="systemId" (onChange)="onChangeSystem($event)" optionValue="systemId" [options]="logicalSystemList" [(ngModel)]="createmartStore.id"
+                    placeholder="Select logical system" [required]="true"></p-dropdown>
+                </div>
+              </div>
+              <div  class="w-100">
+              <div class="row w-100">
+
+                <div class="col-lg-4 mb-3">
+                  <label for="auth" class="form-label fw-semibold text-font-dark">Auth ID</label>
+                  <input [(ngModel)]="createmartStore.authId" name="authId" type="text" class="form-control" id="auth"
+                    placeholder="Enter Auth Id">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="comp" class="form-label fw-semibold text-font-dark">Company ID</label>
+                  <input [(ngModel)]="createmartStore.compId" name="compId" type="text" class="form-control" id="comp"
+                    placeholder="Enter Company ID">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="contRep" class="form-label fw-semibold text-font-dark">Cont Rep</label>
+                  <input [(ngModel)]="createmartStore.contRep" name="contRep" type="text" class="form-control" id="contRep"
+                    placeholder="Enter contRep">
+                </div>
+              </div>
+              <div class="row w-100">
+                <div class="col-lg-4 mb-3">
+                  <label for="expiration" class="form-label fw-semibold text-font-dark">Expiration</label>
+                  <input [(ngModel)]="createmartStore.expiration" name="expiration" type="text" class="form-control"
+                    id="expiration" placeholder="Enter expiration">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="pversion" class="form-label fw-semibold text-font-dark">pversion</label>
+                  <input [(ngModel)]="createmartStore.pversion" name="pversion" type="text" class="form-control"
+                    id="pversion" placeholder="Enter pversion">
+                </div>
+                <div class="col-lg-4 mb-3">
+                  <label for="system" class="form-label fw-semibold text-font-dark">System</label>
+                  <input [(ngModel)]="createmartStore.system" name="system" type="text" class="form-control" id="system"
+                    placeholder="Enter system">
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <label for="security" class="form-label fw-semibold text-font-dark">Security key</label>
+                <input [(ngModel)]="createmartStore.secKey" name="secKey" [type]="show ? 'text' : 'password'" class="form-control" id="security" (blur)="show=false"
+                  placeholder="Enter security key" (focus)="show=true">
+              </div>
+              <div class="col-lg-12">
+                <label for="server" class="form-label fw-semibold text-font-dark">Server URL</label>
+                <input [(ngModel)]="createmartStore.serverURL" name="serverURL" type="text" class="form-control" id="server"
+                  placeholder="Enter server url">
+              </div>
+              <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple type="button" (click)="hideCreateForm()">
+                Cancel</button>
+              <button type="button" class="btn btn-info px-4 my-3 ms-2" [disabled]="isWait || createform.invalid"
+                (click)="createConfig()">
+                <ng-container *ngIf="isWait">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait">Save</ng-container>
+              </button>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

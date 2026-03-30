@@ -1,0 +1,61 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc-ocr d-flex justify-content-center">
+      <div class="bg-white px-4">
+        <div class="row mx-0 pt-3 pt-lg-4">
+          <div class="p-4 pt-0">
+            <div class="col-sm-12">
+              <a routerLink="/system-admin/system-settings" class="text-decoration-none d-flex align-items-center px-0">
+                <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">
+                  SmartStore Config
+                </h5>
+              </a>
+              <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2" role="alert">
+                <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+                <div class="text-grey-4">
+                  Fine-tuning settings to personalize and optimize your experience.
+                </div>
+              </div>
+            </div>
+            <form #form="ngForm"
+              class="d-flex align-items-center flex-wrap gap-2 bg-light-2 border border-dashed rounded-3 px-4 py-3">
+              <div class="row w-100">
+                <div class="col-lg-6 mb-3">
+                  <label for="auth" class="form-label fw-semibold text-font-dark">Database Platform</label>
+                  <input [(ngModel)]="smartStore.databasePlatform" name="databasePlatform" type="text" class="form-control" id="auth"
+                    placeholder="Enter Database Platform">
+                </div>
+                <div class="col-lg-6 mb-3">
+                  <label for="comp" class="form-label fw-semibold text-font-dark">JDBC URL</label>
+                  <input [(ngModel)]="smartStore.jdbcURL" name="jdbcURL" type="text" class="form-control" id="comp"
+                    placeholder="Enter JDBC URL">
+                </div>
+                
+              </div>
+              <div class="row w-100">
+                <div class="col-lg-6 mb-3">
+                  <label for="contRep" class="form-label fw-semibold text-font-dark">User Name</label>
+                  <input [(ngModel)]="smartStore.userName" name="userName" type="text" class="form-control" id="contRep"
+                    placeholder="Enter User Name">
+                </div>
+                <div class="col-lg-6 mb-3">
+                  <label for="expiration" class="form-label fw-semibold text-font-dark">Password</label>
+                  <input [(ngModel)]="smartStore.password" name="password" type="text" class="form-control"
+                    id="expiration" placeholder="Enter password">
+                </div>
+              </div>
+              <button type="button" class="btn btn-info px-4 py-2 my-3" [disabled]="isWait || form.invalid"
+                (click)="submit()">
+                <ng-container *ngIf="isWait">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait">Update</ng-container>
+              </button>
+            </form>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+    <div class="text-grey-3 d-flex align-items-center gap-2 py-3 ps-3">
+      <span style="font-weight: 800; font-size: large;">Upload File</span>
+    </div>
+    <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close">
+      <img src="./assets/images/x.svg" alt="">
+    </button>
+  </div>
+
+  <div>
+    <div class="px-3 mt-3">
+
+      <div *ngIf="!hideProjectInput" class="card flex justify-content-center"
+        style="margin-top: 10px; margin-bottom: 5px; border: none; width: 80%;">
+        <p-dropdown [(ngModel)]="data" name="project" [options]="project"
+          optionLabel="projectNameOrGuid" optionValue="id"
+          [showClear]="true" placeholder="Select Project">
+        </p-dropdown>
+      </div>
+
+      <div class="search-box d-flex mt-2 gap-2" style="justify-content: flex-start; align-items: center;">
+        <div class="myInput d-flex align-items-center flex-wrap"
+          style="width: 90%; min-height: 40px; gap: 6px; padding: 5px 36px 5px 10px; position: relative; cursor: pointer;"
+          (click)="data && fileUpload.click()">
+
+          <!-- Placeholder -->
+          <span *ngIf="files.length === 0" style="color: #a9a3af; font-size: 13px;">Choose File(s)...</span>
+
+          <!-- Blue Chips -->
+          <span *ngFor="let f of files"
+            style="display:inline-flex; align-items:center; gap:5px; background:#E6F1FB;
+                  border:1px solid #B5D4F4; border-radius:20px; padding:3px 8px 3px 11px;
+                  font-size:12px; color:#0C447C; font-weight:500; max-width:180px;">
+            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ f.name }}</span>
+            <span (click)="removeFile(f.name); $event.stopPropagation()"
+              style="width:15px; height:15px; border-radius:50%; background:#B5D4F4; display:inline-flex;
+                    align-items:center; justify-content:center; cursor:pointer; font-size:10px;
+                    font-weight:700; color:#185FA5; flex-shrink:0;">&#x2715;</span>
+          </span>
+
+          <!-- Folder Icon -->
+          <label (click)="$event.stopPropagation()"
+            style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer; margin:0;">
+            <img src="./assets/images/file-folder.svg" alt="" style="width:20px; height:20px;">
+          </label>
+
+          <!-- File Input -->
+          <input #fileUpload type="file" accept=".pdf" multiple style="display:none"
+            (change)="onFileSelect($event)">
+
+        </div>
+
+        <!-- Remove All -->
+        <button [disabled]="files.length === 0" type="button" class="btn btn-info px-3 me-2"
+          style="height: 40px; white-space: nowrap;" (click)="removeFile()">
+          Remove All
+        </button>
+      </div>
+
+      <div *ngIf="files.length > 0" class="mt-1 ps-1"
+        style="font-size: 12px; color: #185FA5; font-weight: 500;">
+        {{ files.length }} file{{ files.length > 1 ? 's' : '' }} selected
+      </div>
+
+    </div>
+
+    <div class="offcanvas-footer position-absolute bottom-0 bg-light px-3 py-2 w-100">
+      <div class="d-flex align-items-center gap-1"
+        style="padding-right: 10px; justify-content: flex-end;">
+        <button type="button" class="btn btn-light px-3 me-2" mat-dialog-close>Cancel</button>
+        <button [disabled]="files.length === 0" type="button" class="btn btn-info px-3"
+          (click)="sendFileToMDI()">
+          Upload
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

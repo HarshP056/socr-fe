@@ -1,0 +1,121 @@
+
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+    <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+      <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+        <img src="./assets/images/role-details.png" alt="role">
+      </div> Vendor Details
+    </div>
+    <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+        alt=""></button>
+  </div>
+  <div class="px-4 py-3" style="height: calc(100% - 25px);overflow-y: auto;">
+
+    <form #vendorF="ngForm">
+      <div class="row g-3 w-100">
+        <div class="col-md-12">
+          <label for="name" class="form-label">Name <span class="validateIcon" style="color: red">*</span></label>
+          <input type="text" class="form-control" name="name" [(ngModel)]="vendor.name" />
+        </div>
+        <div class="col-md-12">
+          <label for="email" class="form-label">Email</label>
+          <input type="text" class="form-control" name="email" [(ngModel)]="vendor.primaryEmail" />
+        </div>
+        <div class=" row d-flex mt-3" style="justify-content: space-between;">
+          <div class="col-md-6">
+            <label for="gst" class="form-label">GSTIN</label>
+            <input style="width: 107%;" type="text" class="form-control" name="gstin" [(ngModel)]="vendor.gstNo"/>
+          </div>
+          <div class="col-md-6">
+            <label for="pan" class="form-label">PAN</label>
+            <input style="width: 111%;" type="text" class="form-control" name="panNo" [(ngModel)]="vendor.panNo"/>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <label for="supplierId" class="form-label">Supplier Id <span class="validateIcon" style="color: red">*</span></label>
+          <input type="text" class="form-control" name="supplierId" [(ngModel)]="vendor.supplierId" />
+        </div>
+        <div class="col-md-12">
+          <label for="Select Role" class="form-label">System <span class="validateIcon" style="color: red">*</span></label>
+          <p-dropdown appendTo="body" name="system" [options]="systems" optionLabel="systemId" optionValue="systemId" [(ngModel)]="vendor.logicalSystem"
+                placeholder="Select System" [required]="true"></p-dropdown>
+        </div>
+
+          <div class="col-md-9">
+            <label for="phone" class="form-label">Phone Number</label>
+            <div class="d-flex gap-3">
+              <input style="width: 30%;" type="number" min="0" class="form-control" name="phoneCntryCode" [(ngModel)]="vendor.phoneCntryCode"
+              [required]="false"/>
+              <input [maxLength]="250" class="form-control" type="text" name="phoneNumber" [(ngModel)]="vendor.phone" (ngModelChange)="formatPhoneNumber($event)"
+              #phoneNumber="ngModel"  oninput="this.value =
+              !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"  [required]="false"/>
+          </div>
+          </div>
+
+        <div>
+          <label for="address" class="form-label">Address</label>
+          <div>
+            <label for="address1" class="form-label">Address1 <span class="validateIcon" style="color: red">*</span></label>
+            <input type="text" class="form-control" name="address1" [(ngModel)]="vendor.address.address1" required/>
+          </div>
+          <div>
+            <label for="address2" class="form-label">Address2</label>
+            <input type="text" class="form-control" name="address2" [(ngModel)]="vendor.address.address2"/>
+          </div>
+          <div>
+            <label for="address3" class="form-label">Address3</label>
+            <input type="text" class="form-control" name="address3" [(ngModel)]="vendor.address.address3"/>
+          </div>
+          <div class="row d-flex gap-1" style="justify-content: flex-start;">
+            <div class="col-md-5">
+              <label for="city" class="form-label">City</label>
+              <input type="text" class="form-control" name="city" [(ngModel)]="vendor.address.city"/>
+            </div>
+            <div class="col-md-5">
+              <label for="state" class="form-label">State</label>
+              <input type="text" class="form-control" name="state" [(ngModel)]="vendor.address.state"/>
+            </div>
+          </div>
+          <div class="row d-flex gap-1">
+            <div class="col-md-5">
+              <label for="country" class="form-label">Country</label>
+              <input type="text" class="form-control" name="country" [(ngModel)]="vendor.address.country"/>
+            </div>
+            <div class="col-md-5">
+              <label for="zipcode" class="form-label">Zipcode</label>
+              <input type="text" class="form-control" name="zipcode" [(ngModel)]="vendor.address.zip"/>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="offcanvas-footer position-absolute bottom-0 bg-light px-3 py-2 w-100">
+    <div>
+      <div class="d-flex align-items-center gap-1" style="float: right;">
+        <button type="button" class="btn btn-light px-3 me-2" mat-dialog-close>Cancel</button>
+        <button type="button" class="btn btn-info px-5" [disabled]="vendorF.invalid" mat-dialog-close
+          (click)="saveVendor()">Save</button>
+        <button matRipple class="btn btn-info shadow" [disabled]="isTrain" (click)="trainVendor()" *ngIf="systemConfig.vectorSearch">
+              <ng-container *ngIf="isTrain">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Please Wait...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+               </ng-container>
+            <span *ngIf="!isTrain">Publish to AI</span>
+       </button>
+      <button matRipple class="btn btn-info shadow" [disabled]="isTrain" (click)="textBasedtrainVendor()" *ngIf="!systemConfig.vectorSearch">
+              <ng-container *ngIf="isTrain">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Please Wait...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+               </ng-container>
+            <span *ngIf="!isTrain">Publish to AI</span>
+       </button>
+      </div>
+    </div>
+  </div>
+</div>

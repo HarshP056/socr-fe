@@ -1,0 +1,157 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+      <!-- <div class="sidebar p-3 p-lg-4">sidebar</div> -->
+      <div class="main-content bg-white">
+        <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+          <a routerLink="/business-admin" class="text-decoration-none d-flex align-items-center px-0">
+            <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> Roles &
+              Permissions
+            </h5>
+          </a>
+          <div class="alert alert-warning d-flex align-items-center rounded-0 border-0 p-2" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+            <div class="text-grey-4">
+              Roles and permissions: Defining and assigning specific access rights and capabilities to users based on
+              their designated roles within a system or platform.
+            </div>
+          </div>
+          <hr>
+          <div class="d-flex align-items-center justify-content-between gap-3 px-0 flex-wrap">
+            <select class="form-select w-sm-auto" aria-label="Default select example">
+              <option selected>All Roles</option>
+              <option value="1">Open this select menu</option>
+            </select>
+            <button class="btn btn-info" type="button" data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><img
+                src="./assets/images/plus.svg" class="me-1" alt="add"> New Role</button>
+            <!-- Add New Role (offcanvas)-->
+            <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
+              aria-labelledby="offcanvasWithBothOptionsLabel">
+              <div class="offcanvas-header pt-0 pe-0">
+                <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 pt-3"
+                  id="offcanvasWithBothOptionsLabel">
+                  <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+                    <img src="./assets/images/role-details.png" alt="role">
+                  </div> Role Details
+                </div>
+                <button type="button" class="btn btn-cls" data-bs-dismiss="offcanvas" aria-label="Close"><img
+                    src="./assets/images/x.svg" alt=""></button>
+              </div>
+              <div class="offcanvas-body">
+                <form action="">
+                  <div class="mb-3">
+                    <label for="roleName" class="form-label text-grey-700 fw-medium">Role Name <sup
+                        class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" id="roleName" placeholder="Give Role Name">
+                  </div>
+                  <hr class="dashed">
+                  <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                          Accordion Item #1
+                        </button>
+                      </h2>
+                      <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <strong>This is the first item's accordion body.</strong> It is shown by default, until the
+                          collapse plugin adds the appropriate classes that we use to style each element. These classes
+                          control the overall appearance, as well as the showing and hiding via CSS transitions. You can
+                          modify any of this with custom CSS or overriding our default variables. It's also worth noting
+                          that just about any HTML can go within the <code>.accordion-body</code>, though the transition
+                          does limit overflow.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                          Accordion Item #2
+                        </button>
+                      </h2>
+                      <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <strong>This is the second item's accordion body.</strong> It is hidden by default, until the
+                          collapse plugin adds the appropriate classes that we use to style each element. These classes
+                          control the overall appearance, as well as the showing and hiding via CSS transitions. You can
+                          modify any of this with custom CSS or overriding our default variables. It's also worth noting
+                          that just about any HTML can go within the <code>.accordion-body</code>, though the transition
+                          does limit overflow.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- /Add New Role (offcanvas)-->
+          </div>
+          <div class="table-responsive mt-4 px-0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col"><img src="./assets/images/tag.svg" class="me-1" alt="tag"> Role</th>
+                  <th><img src="./assets/images/type.svg" class="me-1" alt="tag"> Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="fw-semibold text-info d-flex align-items-start"><img src="./assets/images/lock.svg"
+                        class="me-1" alt="locked"> Role Name goes here</span></td>
+                  <td>Role Manager: Oversees financial reconciliation for accuracy and discrepancy resolution.</td>
+                </tr>
+                <tr>
+                  <td><span class="fw-semibold text-info d-flex align-items-start"><img src="./assets/images/lock.svg"
+                        class="me-1" alt="locked"> Role Name goes here</span></td>
+                  <td>Manager: Ensures adherence to regulatory requirements and internal policies within an
+                    organization.</td>
+                </tr>
+                <tr>
+                  <td><span class="fw-semibold text-info d-flex align-items-start"><img src="./assets/images/lock.svg"
+                        class="me-1" alt="locked"> Business Admin</span></td>
+                  <td>Responsible for managing and overseeing the technical and operational aspects of the backend
+                    systems, servers, and databases within an organization.</td>
+                </tr>
+                <tr>
+                  <td><span class="fw-semibold text-info d-flex align-items-start"><img src="./assets/images/lock.svg"
+                        class="me-1" alt="locked"> Admin</span></td>
+                  <td>Admin: Responsible for managing and overseeing administrative tasks, operations, and resources
+                    within an organization.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-end align-items-center gap-3">
+            <div class="d-flex align-items-center gap-1 text-nowrap">
+              Rows per page: <select class="form-select w-sm-auto border-0 text-grey-3 custom px-4"
+                aria-label="Default select example">
+                <option selected>10</option>
+                <option value="1">20</option>
+                <option value="1">30</option>
+                <option value="1">40</option>
+                <option value="1">50</option>
+                <option value="1">100</option>
+              </select>
+            </div>
+            <span class="me-3">1-5 of 5</span>
+            <div class="d-flex align-items-center gap-3">
+              <a href="#" class="text-grey-5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                  fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                </svg></a>
+              <a href="#" class="text-grey-5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                  fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                </svg></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

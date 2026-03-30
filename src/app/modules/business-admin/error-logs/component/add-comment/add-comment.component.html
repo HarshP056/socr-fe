@@ -1,0 +1,41 @@
+<div class="w-6">
+    <div class="modal-body pb-0">
+      <div class="row">
+        <form #form="ngForm">
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label>Resolved By</label>
+              <div class="flex justify-content-center">
+                <input disabled class="custom-input" type="text" name="agent" id="typeahead-http"
+                  placeholder="Enter Resolver" [(ngModel)]="user.email" />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <label>Comment</label>
+              <textarea class="form-control" (keydown)="spaceNotAllowed($event)" name="comment"
+                [(ngModel)]="resolved.comment"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="d-flex flex-grow-1 justify-content-end">
+        <div class="d-flex">
+          <button matRipple class="cancel-btn me-2" (click)="close()">
+            Cancel
+          </button>
+          <button matRipple class="common-btn " [disabled]="isWait || form.invalid" (click)="submit()">
+            <ng-container *ngIf="isWait">
+              <span clas="indicator-progress" [style.display]="'block'">
+                Please wait...{{ " " }}
+                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+              </span>
+            </ng-container>
+            <ng-container *ngIf="!isWait">Save</ng-container>
+            <!-- <ng-container *ngIf="!isWait && editactivity">Update</ng-container> -->
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

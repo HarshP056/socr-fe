@@ -1,0 +1,72 @@
+.canvas-footer {
+  background-color: #f4f5f7;
+  padding: 10px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+::ng-deep .p-dropdown {
+  width: 100%;
+  border: 0px !important;
+}
+.dropdown-border {
+  border: 1px solid #d0d5dd;
+  border-radius: 0.25rem;
+}
+.tables {
+  // width: 850px;s
+  border: 1px solid #dee2e6;
+}
+table {
+  width: 100%;
+  thead {
+    tr {
+      td,
+      th {
+        background: #f1faff;
+        color: #80808f;
+        font-size: 12px !important;
+        padding: 12px 8px !important;
+      }
+    }
+  }
+  tbody {
+    tr {
+      border: none;
+      td {
+        border: 1px solid #dee2e6;
+      }
+      td:first-child {
+        border-left: none;
+      }
+      td:last-child {
+        border-right: none;
+      }
+      th {
+        font-size: 12px !important;
+        padding: 12px 8px !important;
+      }
+    }
+  }
+}
+
+.nav-tab {
+  border-bottom: 1px solid #e4e7ec;
+}
+.nav-tab .nav-link.activeTab {
+  color: #717bbc !important;
+  border-bottom: 1px solid #717bbc;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: #667085 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  &:hover {
+    color: #717bbc !important;
+  }
+}

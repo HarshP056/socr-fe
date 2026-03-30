@@ -1,0 +1,147 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+      <div class="main-content bg-white">
+        <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <a routerLink="/business-admin" class="text-decoration-none d-flex align-items-center px-0">
+                <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> Posted Invoice Data</h5>
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-12 mb-2 px-0">
+            <div
+              class="d-flex align-items-center justify-content-between flex-wrap gap-2 bg-light-2 border border-dashed rounded-3 px-3">
+              <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">
+                <div class="position-relative search-form">
+                  <img src="./assets/images/search.svg" class="ms-2 position-absolute" alt="search icon">
+                  <input type="search" class="form-control py-2" placeholder="Search by SSP Invoice Reference No" [(ngModel)]="searchParams.sspInvoiceReferenceNo" style="width: 300px;">
+                </div>
+                <div class="d-flex align-items-center gap-2 ms-2">
+                  <div>
+                    <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                      <ng-container *ngIf="isLoading">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Searching...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!isLoading">Search</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple [disabled]="resettingLoader" (click)="reset()">
+                      <ng-container *ngIf="resettingLoader">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Resetting...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!resettingLoader">Reset</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="table-responsive mt-4 px-0" *ngIf="postedData?.length && !initialLoader">
+                <table class="table user-management" mat-table [dataSource]="postedData" (matSortChange)="sortChange($event)" matSort matSortDirection="desc" matSortActive="createdDate">
+                  <ng-container matColumnDef="sspInvoiceReferenceNo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Invoice Reference No</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span class="fw-semibold">{{element.sspInvoiceReferenceNo}}</span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="sapInvoiceReferenceNumber">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>SAP Invoice Ref No</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{element.sapInvoiceReferenceNumber}}</span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="vendorInvoiceReferenceNumber">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Vendor Invoice Ref No</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{element.vendorInvoiceReferenceNumber}}</span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="supplierId">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Supplier Id</th>
+                      <td mat-cell *matCellDef="let element">
+                        <div class="d-flex flex-column flex-wrap">
+                          <span class="fw-semibold">{{element.supplierId}}</span>
+                          <span>({{ element.supplierName }})</span>
+                        </div>
+                      </td>
+                    </ng-container>
+                  <ng-container matColumnDef="totalInvoiceAmount">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Amount</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span class="word-break">{{element.totalInvoiceAmount | number : "1.2-2"}}</span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="channel">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Channel</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span class="word-break">{{element.channel}}</span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="invoiceDate">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Invoice Date</th>
+                      <td mat-cell *matCellDef="let element">
+                        <span class="word-break">{{ element?.invoiceDate | date: 'mediumDate' }}</span> <br>
+                        <!-- <span class="word-break">{{ element?.invoiceDate | date:'shortTime' }}</span> -->
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="createdDate">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Created Date</th>
+                      <td mat-cell *matCellDef="let element">
+                        <span class="word-break">{{ element?.createdDate | date: 'mediumDate' }}</span> <br>
+                        <!-- <span class="word-break">{{ element?.createdDate | date:'shortTime' }}</span> -->
+                      </td>
+                    </ng-container>
+
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef disableClear>
+                      <span></span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="d-flex gap-3">
+                        <a class="cursor-pointer" (click)="goToEdit(element.id)" >
+                          <img src="./assets/images/edit-01.svg" alt="edit" title="Edit" />
+                        </a>
+                        <div class="cursor-pointer d-flex flex-column" *ngIf="element?.attachments?.length > 0">
+                          <img  src="./assets/images/attachment.svg" alt=""
+                            matTooltip="View Attachments" matTooltipPosition="above" class="me-2 cursor-pointer" (click)="viewDoc(element)"/>
+                          <!-- <span>{{ element.attachments.length }}</span> -->
+                        </div>
+                    </div>
+                    </td>
+
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <div *ngIf="!initialLoader">
+                  <mat-paginator (page)="onPageChange($event)" [length]='totalElements' [pageIndex]="pageInd"
+                    [pageSize]="queryParams.limit" [pageSizeOptions]="[5, 10, 20, 50, 100]" aria-label="Select page">
+                  </mat-paginator>
+                </div>
+              </div>
+              <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!postedData?.length && !initialLoader">
+                No records found !
+              </div>
+              <div class="center h-100 mt-5" *ngIf="initialLoader">
+                <app-page-loader class="v-center"></app-page-loader>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

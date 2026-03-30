@@ -1,0 +1,1023 @@
+<div class="container-fluid px-0 h-100" style="overflow: hidden;">
+  <div class="wrapper h-calc d-flex justify-content-center h-100">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap h-100">
+      <div class="bg-white w-100 h-100">
+          <div class="d-flex justify-content-between align-items-center mx-0 px-3 py-2" style="border-bottom: 1px solid #ddd6d6;">
+              <div class="d-flex align-items-center">
+                <div>
+                  <a routerLink="/socr-ocr-studio" class="text-decoration-none d-flex align-items-center px-0">
+                    <h5 class="d-flex align-items-center mb-0 fw-semibold"><img src="./assets/images/arrow-left.svg" alt="arrow left"> OCR Studio</h5>
+                  </a>
+                </div>
+                <div class="d-flex align-items-center px-5 gap-2">
+                  <div class="input-group" style="width: 250px !important;">
+                    <label class="input-group-text" for="inputGroupSelect01"  style="border: 1px solid #bdbdbd; border-right: none; font-size: 14px;">Project</label>
+                    <select class="form-select" id="inputGroupSelect01" [(ngModel)]="projectId"  (change)="getProjectData(projectId)"
+                      style="margin-top: 2px;height: 38px;border-top-right-radius: 4px;border-bottom-right-radius: 4px;font-size: 13px;">
+                      <option selected>Choose...</option>
+                      <option *ngFor="let p of project" value="{{p.id}}">{{p.projectNameOrGuid}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2" *ngIf="isAnalyzed">
+                <button matRipple class="btn btn-light shadow text-center cursor-pointer">
+                  <label for="file-upload" style="cursor: pointer;">Upload New Invoice</label>
+                  <input type="file" style="display: none;cursor: pointer;" (change)="onFileSelect($event)" accept=".pdf"
+                    id="file-upload" />
+                </button>
+                <div>
+                  <button matRipple class="btn btn-info shadow" [disabled]="isAnalyzing" (click)="analyzeDocument()">
+                    <ng-container *ngIf="isAnalyzing">
+                      <span clas="indicator-progress" [style.display]="'block'">
+                        Analyzing Document...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </ng-container>
+                    <span *ngIf="!isAnalyzing">Run Analysis</span>
+                  </button>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2" *ngIf="imageData && !isAnalyzing && !isAnalyzed">
+                <button  matRipple class="btn btn-light shadow text-center cursor-pointer">
+                  <label for="file-upload" style="cursor: pointer;">Upload New Invoice</label>
+                  <input type="file" style="display: none;cursor: pointer;" (change)="onFileSelect($event)" accept=".pdf" id="file-upload" />
+                </button>
+                <button matRipple class="btn btn-info shadow" [disabled]="isAnalyzing" (click)="analyzeDocument()">
+                  <ng-container *ngIf="isAnalyzing">
+                    <span clas="indicator-progress" [style.display]="'block'">
+                      Analyzing Document...{{ " " }}
+                      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </ng-container>
+                  <span *ngIf="!isAnalyzing">Run Analysis</span>
+                </button>
+              </div>
+            </div>
+          <!-- Generate div with flex -->
+          <div *ngIf="!isFileUploaded">
+            <div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+              <div class="d-flex flex-column align-items-center justify-content-center cursor-pointer py-4"
+              style="border: 1px dashed #003E76; border-radius: 8px; background: #f8f9fa; width: 400px;">
+              <div class="d-flex justify-content-center">
+                <img style="width: 50px;" src="assets/media/backup-file.png" alt="upload">
+              </div>
+              <label for="file-upload" *ngIf="!isLoading" class="text-center cursor-pointer">
+                <span style="color: #003E76; font-weight: 500;">Click to upload </span> <span>or drag and drop</span></label>
+              <span class="text-center">.pdf file only</span>
+              <input type="file" style="display: none;" (change)="onFileSelect($event)" accept=".pdf" id="file-upload" />
+            </div>
+          </div>
+         </div>
+         <ng-container *ngIf="isLoading && isFileUploaded" style="border:1px solid white">
+          <span class="d-flex justify-content-center" style="border: 1px solid white;">
+             <img style="width: 30%;" src="assets/media/load.gif" alt="">
+          </span>
+        </ng-container>
+        <div *ngIf="isFileUploaded && !isAnalyzed && !isAnalyzing" class="d-flex justify-content-center gap-2" style="height: calc(100% - 56px);">
+          <div class="d-flex justify-content-center w-50" *ngIf="imageData">
+            <div class="pdf-document-viewer w-75">
+              <div class="pdf-document-viewer__header d-flex align-items-center justify-content-between" style="border-top: none;">
+                <div class="d-flex align-items-center justify-content-center gap-1 w-100">
+                  <span class="pdf-document-viewer__header__page-count pe-2">Showing {{currentPage}} of {{totalPages}}</span>
+                  <button class="btn btn-light" (click)="previousPage()" [disabled]="currentPage == 1">
+                    <img src="./assets/images/chevron-left.svg" alt="Previous" />
+                  </button>
+                  <button class="btn btn-light" (click)="nextPage()" [disabled]="currentPage == totalPages">
+                    <img src="./assets/images/chevron-right.svg" alt="Next" />
+                  </button>
+                </div>
+              </div>
+              <div #canContainer1 class="canContainer"
+                style="width: 100%;overflow-y: auto;background: #eff0f1;height: calc(100% - 46px);" id="canCont1">
+                <div class="px-5 mb-1" *ngFor="let elem of canvasList1">
+                  <img *ngIf="imageData" [src]="imageData" alt="Image" style="max-width: 100%; display: block;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="isAnalyzing && !isAnalyzed" >
+          <span class="d-flex justify-content-center">
+             <img style="width: 30%;" src="assets/media/load.gif" alt="">
+          </span>
+        </ng-container>
+         <!-- After Analysing -->
+         <div *ngIf="isAnalyzed" class="d-flex" style="background-color: #eff0f1;height: calc(100% - 56px);">
+          <div class="col-5 h-100 bg-white">
+            <div class="d-flex gap-1 h-100">
+              <div *ngIf="imageData">
+                <div class="pdf-document-viewer h-100">
+                  <div class="pdf-document-viewer__header d-flex align-items-center justify-content-between bg-white" style="border-top: none; border-left: none; border-right: none;">
+                    <div class="d-flex align-items-center justify-content-center gap-1 w-100">
+                      <span class="pdf-document-viewer__header__page-count pe-2">Showing {{currentPage}} of {{totalPages}}</span>
+                      <button class="btn btn-light" (click)="previousPage()" [disabled]="currentPage == 1">
+                      <img src="./assets/images/chevron-left.svg" alt="Previous" />
+                    </button>
+                    <button class="btn btn-light" (click)="nextPage()" [disabled]="currentPage == totalPages">
+                      <img src="./assets/images/chevron-right.svg" alt="Next" />
+                    </button>
+                  </div>
+                </div>
+                <div #canContainer1 class="canContainer" style="width: 100%;overflow-y: auto;background: #eff0f1;height: calc(100% - 46px);" id="canCont1">
+                  <div class="px-5 mb-1" *ngFor="let elem of canvasList1">
+                    <img *ngIf="imageData" [src]="imageData" alt="Image" style="max-width: 100%; display: block;">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-7 pb-2" style="border: 1px solid #ddd6d6;overflow-y: auto;overflow-x: hidden;border-top: none;background: #eff0f1;">
+          <div class="bg-white d-flex justify-content-between align-items-center">
+            <div>
+              <ul class="nav nav-tab">
+                <li class="nav-item me-2">
+                  <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'pre-built-invoice'}"
+                    (click)="setActiveTab('pre-built-invoice')">
+                    <span>
+                      Header Fields
+                    </span>
+                  </a>
+                </li>
+                <li class="nav-item me-2">
+                  <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'Content'}"
+                    (click)="setActiveTab('Content')">
+                    <span>
+                      Content
+                    </span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'business-rules'}"
+                    (click)="setActiveTab('business-rules')">
+                    <span>
+                      Business Rules
+                    </span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'others'}"
+                    (click)="setActiveTab('others')">
+                    <span>
+                      Raw Data
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="fw-bold" style="font-size: 20px; margin-right: 10px;">Confidence: <span [ngClass]="{
+              'text-success': (confidenceScore * 100) >= 95,
+              'text-warning': ((confidenceScore * 100) > 65) && ((confidenceScore * 100) < 95),
+              'text-danger': (confidenceScore * 100 <= 65)
+            }">{{confidenceScore}}%
+              <!-- <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+              mode="determinate" [value]="confidenceScore.confidence * 100" [ngClass]="getProgressBarClass(confidenceScore)">
+            </mat-progress-bar> -->
+          </span></div>
+
+          </div>
+          <div class="h-c-30" *ngIf="selectedTab == 'pre-built-invoice'">
+            <div class="d-flex justify-content-between p-2 mb-2 doc-type-item bg-white">
+              <div *ngIf="fixedfields || dynamicfields">DocType: <span
+                class="fw-bold ps-1">{{docType}}</span>
+            </div>
+             <!-- <div class="fw-bold">Confidence: <span [ngClass]="{
+                'text-success': (confidenceScore * 100) >= 95,
+                'text-warning': ((confidenceScore * 100) > 65) && ((confidenceScore * 100) < 95),
+                'text-danger': (confidenceScore * 100 <= 65)
+              }">{{confidenceScore | number : "1.2-2"}} %</span></div> -->
+            </div>
+
+            <div *ngFor="let item of fieldsArr" class="px-2">
+              <div *ngIf="item.groupType == 'Vendor'" class="mb-2 p-2 bg-white" style="border-radius: 6px;">
+                <label class="fw-bold text-dark mb-1">Vendor</label>
+                <div class="d-flex align-items-center mb-2 px-2 col-12">
+                  <ng-container *ngFor="let vendor of item.data">
+                    <div class="col-4 pe-2" *ngIf="vendor.name == 'VendorId'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Vendor Id</span>  <span
+                        [ngClass]="{
+                          'text-success': (vendor.confidence * 100) >= 95,
+                          'text-warning': ((vendor.confidence * 100) > 65) && ((vendor.confidence * 100) < 95),
+                          'text-danger': (vendor.confidence * 100 <= 65)
+                        }" class="fs-7">
+                    {{ vendor.confidence * 100 | number : "1.2-2" }}%
+                    <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                      mode="determinate" [value]="vendor.confidence * 100" [ngClass]="getProgressBarClass(vendor.confidence)">
+                    </mat-progress-bar>
+                    </span></label>
+                      <div class="d-flex align-items-center w-100" [ngStyle]="{
+                        'border': (vendor.confidence * 100) >= 95 ? '1px solid green' :
+                                  vendor.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                        'border-radius': '6px'
+                      }" >
+                        <input class="fw-semibold form-control" type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}" style="border: none;width: calc(100% - 30px);border-radius: 6px;" />
+                        <div class="d-flex align-items-center justify-content-center" style="width: 30px;">
+                          <img src="./assets/images/search.svg" class="cursor-pointer" style="width: 16px;height: 16px;" matTooltip="Select Vendor" (click)="openVendorPopUp()">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-4 pe-2" *ngIf="vendor.name == 'VendorAddressRecipient' || vendor.name == 'VendorName'">
+                      <label *ngIf="vendor.name == 'VendorAddressRecipient' && isVendorRecipentName" class="w-100 d-flex justify-content-between align-items-center"> <span>Vendor Name</span>  <span
+                        [ngClass]="{
+                          'text-success': (vendor.confidence * 100) >= 95,
+                          'text-warning': ((vendor.confidence * 100) > 65) && ((vendor.confidence * 100) < 95),
+                          'text-danger': ((vendor.confidence * 100) <= 65)
+                        }" class="fs-7">
+                    {{ vendor.confidence * 100 | number : "1.2-2" }}%
+                    <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                      mode="determinate" [value]="vendor.confidence * 100" [ngClass]="getProgressBarClass(vendor.confidence)">
+                    </mat-progress-bar>
+                  </span></label>
+                  <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}"  class="w-100 fw-semibold form-control" *ngIf="vendor.name == 'VendorAddressRecipient' &&  isVendorRecipentName"
+                    [ngStyle]="{
+                    'border': (vendor.confidence * 100) >= 95 ? '1px solid green' :
+                              vendor.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                    'border-radius': '6px'
+                    }" />
+                  <label *ngIf="vendor.name == 'VendorName' && isVendorName" class="w-100 d-flex justify-content-between align-items-center"> <span>Vendor Name</span>  <span
+                    [ngClass]="{
+                      'text-success': (vendor.confidence * 100) >= 95,
+                      'text-warning': ((vendor.confidence * 100) > 65) && ((vendor.confidence * 100) < 95),
+                      'text-danger': ((vendor.confidence * 100) <= 65)
+                    }" class="fs-7">
+                       {{ vendor.confidence * 100 | number : "1.2-2" }}%
+                       <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                       mode="determinate" [value]="vendor.confidence * 100" [ngClass]="getProgressBarClass(vendor.confidence)">
+                     </mat-progress-bar>
+                    </span></label>
+                    <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}"  class="w-100 fw-semibold form-control" *ngIf="vendor.name == 'VendorName' && isVendorName"
+                      [ngStyle]="{
+                        'border': (vendor.confidence * 100) >= 95 ? '1px solid green' :
+                                  vendor.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                        'border-radius': '6px'
+                      }" />
+                    </div>
+                    <div class="col-4 pe-2" *ngIf="vendor.name == 'VendorGST'">
+                      <label  class="w-100 d-flex justify-content-between align-items-center"> <span>Vendor GST</span>  <span
+                        [ngClass]="{
+                          'text-success': (vendor.confidence * 100) >= 95,
+                          'text-warning': ((vendor.confidence * 100) > 65) && ((vendor.confidence * 100) < 95),
+                          'text-danger': ((vendor.confidence * 100) <= 65)
+                        }" class="fs-7">
+                    {{ vendor.confidence * 100 | number : "1.2-2" }}%
+                    <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                    mode="determinate" [value]="vendor.confidence * 100" [ngClass]="getProgressBarClass(vendor.confidence)">
+                  </mat-progress-bar>
+                  </span></label>
+                      <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}"  class="w-100 fw-semibold form-control"
+                      [ngStyle]="{
+                        'border': (vendor.confidence * 100) >= 95 ? '1px solid green' :
+                                  vendor.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                        'border-radius': '6px'
+                      }" />
+                    </div>
+                  </ng-container>
+                </div>
+                <div class="d-flex align-items-center mb-2 px-2 col-12">
+                  <ng-container *ngFor="let vendor of item.data">
+                    <div class="col-12" *ngIf="vendor.name == 'VendorAddress'">
+                      <label  class="w-100 d-flex justify-content-between align-items-center"> <span>Address</span>  <span
+                        [ngClass]="{
+                          'text-success': (vendor.confidence * 100) >= 95,
+                          'text-warning': ((vendor.confidence * 100) > 65) && ((vendor.confidence * 100) < 95),
+                          'text-danger': ((vendor.confidence * 100) <= 65)
+                        }" class="fs-7">
+                          {{ vendor.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="vendor.confidence * 100" [ngClass]="getProgressBarClass(vendor.confidence)">
+                        </mat-progress-bar>
+                     </span></label>
+                      <textarea type="text" rows="3" [(ngModel)]="vendor.value" name="{{vendor.name}}"  class="w-100 fw-semibold p-2"
+                      [ngStyle]="{
+                        'border': (vendor.confidence * 100) >= 95 ? '1px solid green' :
+                                  vendor.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                        'border-radius': '6px'
+                      }"></textarea>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+              <div *ngIf="item.groupType == 'Invoice'" class="mb-2 p-2 bg-white" style="border-radius: 6px;">
+                <label class="fw-bold text-dark mb-1">Invoice</label>
+                <div class="d-flex align-items-center mb-2 px-2 col-12">
+                  <ng-container *ngFor="let inv of item.data">
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'InvoiceId'">
+                      <label  class="w-100 d-flex justify-content-between align-items-center"> <span>Invoice Number</span>  <span
+                        [ngClass]="{
+                          'text-success': (inv.confidence * 100) >= 95,
+                          'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                          'text-danger': ((inv.confidence * 100) <= 65)
+                        }" class="fs-7">
+                          {{ inv.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                        </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" class="w-100 fw-semibold form-control"
+                      [ngStyle]="{
+                        'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                        inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                        'border-radius': '6px'
+                      }" />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'InvoiceDate'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Invoice Date</span>  <span
+                        [ngClass]="{
+                          'text-success': (inv.confidence * 100) >= 95,
+                          'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                          'text-danger': ((inv.confidence * 100) <= 65)
+                        }" class="fs-7">
+                         {{ inv.confidence * 100 | number : "1.2-2" }}%
+                         <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                         mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                       </mat-progress-bar>
+                       </span></label>
+                        <input type="date" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                          [ngStyle]="{
+                            'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                            inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                            'border-radius': '6px'
+                          }"  />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'InvoiceTotal'">
+                      <label class="w-100 d-flex justify-content-between align-items-center "> <div>Invoice Total</div>
+                        <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                          {{ inv.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                            mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                          </mat-progress-bar>
+                        </span>
+                    </label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }"  />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'Currency'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Currency</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                        {{ inv.confidence * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <select *ngIf="inv.type == 'List'" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control ps-1"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }"  >
+                        <option value="">Select</option>
+                        <option *ngFor="let option of inv.options" value="{{option.value}}">{{option.label}}</option>
+                      </select>
+                    </div>
+                  </ng-container>
+                </div>
+                <div class="d-flex align-items-center mb-2 px-2 col-12">
+                  <ng-container *ngFor="let inv of item.data">
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'CGST'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>CGST</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                        {{ inv.confidence * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'SGST'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>SGST</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                        {{ inv.confidence * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'IGST'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>IGST</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                        {{ inv.confidence  * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'TotalTax'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Total Tax</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                        {{ inv.confidence  * 100 | number : "1.2-2"}}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                  </ng-container>
+                </div>
+                <div class="d-flex align-items-center mb-2 px-2 col-12">
+                  <ng-container *ngFor="let inv of item.data">
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'TotalDiscount'">
+                        <label class="w-100 d-flex justify-content-between align-items-center"> <span>Discount</span>  <span
+                              [ngClass]="{
+                                'text-success': (inv.confidence * 100) >= 95,
+                                'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                                'text-danger': ((inv.confidence * 100) <= 65)
+                              }" class="fs-7">
+                          {{ inv.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                        </mat-progress-bar>
+                        </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'Freight'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Freight</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': (inv.confidence * 100) > 65 && (inv.confidence * 100) < 95,
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                        {{ inv.confidence * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                          [ngStyle]="{
+                            'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                            inv.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                            'border-radius': '6px'
+                          }" />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'SubTotal'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Sub Total</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': (inv.confidence * 100) > 65 && (inv.confidence * 100) < 95,
+                              'text-danger': ((inv.confidence * 100) <= 65)
+                            }" class="fs-7">
+                        {{ inv.confidence * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                          [ngStyle]="{
+                            'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                            (inv.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                            'border-radius': '6px'
+                          }" />
+                    </div>
+                    <div class="col-3 pe-2" *ngIf="inv.name == 'Round Off'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Round Off</span>  <span
+                            [ngClass]="{
+                              'text-success': (inv.confidence * 100) >= 95,
+                              'text-warning': ((inv.confidence * 100) > 65) && ((inv.confidence * 100) < 95),
+                              'text-danger': (inv.confidence * 100) <= 65
+                            }" class="fs-7">
+                        {{ inv.confidence  * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                        mode="determinate" [value]="inv.confidence * 100" [ngClass]="getProgressBarClass(inv.confidence)">
+                      </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}"  class="w-100 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': (inv.confidence * 100) >= 95 ? '1px solid green' :
+                          (inv.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2 px-2" *ngIf="ocrData?.lineFields?.length">
+              <div class="p-2 bg-white" style="border-radius: 6px;">
+                <label class="fw-bold text-dark mb-1">Line Items</label>
+                <div class="card p-2" style="overflow-y: auto; background-color: #eff0f1 !important; margin: 10px;">
+                    <table class="table table-borderless table-nowrap w-100" style="background-color: #eff0f1 !important;" *ngIf="ocrData?.lineFields && lineHeaders">
+                      <thead  style="background-color: #eff0f1 !important; border-bottom: 1px solid #ccc;">
+                        <tr>
+                          <th *ngFor="let head of lineHeaders" class="p-1" [ngClass]="{'w-250': head === 'Description'}" style="background-color: #eff0f1 !important;">
+                            <span *ngIf="head != 'ProductCode'">{{head}}</span>
+                            <span *ngIf="head == 'ProductCode'">HSN Code</span>
+                          </th>
+                          <th class="p-1" style="background-color: #eff0f1 !important;" scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody *ngFor="let data of ocrData?.lineFields; index as i" style="background-color: #eff0f1 !important; margin-top: 5px;">
+                        <tr style="background-color: #eff0f1 !important;">
+                          <td *ngFor="let col of lineHeaders" style="background-color: #eff0f1 !important;" class="p-1">
+                            <div *ngFor="let item of data.fields; index as j">
+                              <!-- <span
+                                [ngClass]="{
+                                  'text-success': (item.confidence * 100) >= 95,
+                                  'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                  'text-danger': (item.confidence * 100) <= 65
+                                }">
+                                   {{ item.confidence * 100 | number : "1.2-2" }}%
+                              </span> -->
+                            <input class="form-control" type="text" [(ngModel)]="item.value" *ngIf="item.name == col"
+                            [ngStyle]="{
+                              'border': (item?.confidence * 100) >= 95 ? '1px solid green' :
+                              (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                              'border-radius': '6px'
+                            }" />
+                          </div>
+                        </td>
+                        <td style="background-color: #eff0f1 !important;" class="pt-2">
+                            <div class="d-flex align-items-center">
+                              <span (click)="deleteRow(i)" class="cursor-pointer">
+                                <img src="./assets/media/close.svg" alt="delete" title="Delete" style="width: 20px;" />
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr *ngIf="selectedIndex == i">
+                          <td [colSpan]="lineHeaders.length" style="padding: 0;">
+                            <div class="col-lg-12 bg-light-2 p-2">
+                              <div class="col-12 d-flex flex-row align-items-start">
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">PO Number</label>
+                                    <span class="w-50">{{purchaseOrderNumber}}</span>
+                                  </div>
+                                </div>
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Delivery Date</label>
+                                    <span class="w-50">{{data.poItem?.dlvry_DATE | date: 'MMM dd, yyyy'}}</span>
+                                  </div>
+                                </div>
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Quantity</label>
+                                    <span class="w-50">{{data.poItem?.po_QTY}}&nbsp;{{data.poItem?.po_UOM}}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-12 d-flex flex-row align-items-start">
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Material</label>
+                                    <span class="w-50">{{data.poItem?.mat_CODE}}</span>
+                                  </div>
+                                </div>
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Plant</label>
+                                    <span class="w-50">{{data.poItem?.plant}}</span>
+                                  </div>
+                                </div>
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Unit Price</label>
+                                    <span class="w-50">{{data.poItem?.po_UNT_PRCE}}
+                                    <span *ngIf="data.poItem?.per">&nbsp;per&nbsp;{{data.poItem?.per}}&nbsp;{{data.poItem?.perUOM}}</span></span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-12 d-flex flex-row align-items-start">
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Description</label>
+                                    <span class="w-50">{{data.poItem?.mat_DES}}</span>
+                                  </div>
+                                </div>
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Storage Location</label>
+                                    <span class="w-50">{{data.poItem?.slocation}}</span>
+                                  </div>
+                                </div>
+                                <div class="col-lg-4 gap-2">
+                                  <div class="w-100 d-flex align-items-start">
+                                    <label class="w-50 fw-bold">Net Value</label>
+                                    <span class="w-50">{{data.poItem?.netValue}}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div *ngIf="ocrData?.lineFields" class="d-flex align-items-center bottom-0" style="flex-direction: column;">
+                      <div (click)="addRow()" class="p-1 cursor-pointer" matRipple style="background-color: #4e5ba6; border-radius: 50%; color: white;">
+                        <span><img src="assets/media/add.svg" style="width: 22px;" alt=""></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="px-2">
+                <div class="mb-2 p-2 bg-white" style="border-radius: 6px;">
+                  <label class="fw-bold text-dark mb-1">Purchase Order Details</label>
+                  <ng-container *ngFor="let item of fieldsArr">
+                    <div class="col-12" *ngIf="item.name == 'PurchaseOrder'">
+                      <label class="col-3 w-25 d-flex justify-content-between align-items-center"> <span>Purchase Order</span>  <span
+                            [ngClass]="{
+                              'text-success': (item.confidence * 100) >= 95,
+                              'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                              'text-danger': (item.confidence * 100) <= 65
+                            }" class="fs-7">
+                        {{ item.confidence * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                      </span></label>
+                      <input type="text" [(ngModel)]="item.value" name="{{item.name}}" class="w-25 fw-semibold form-control"
+                        [ngStyle]="{
+                          'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                          (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                  </ng-container>
+                  <div class="d-flex align-items-center mt-2">
+                    <div class="col-6 pe-1">
+                      <ng-container *ngFor="let item of fieldsArr">
+                        <div class="pt-2" *ngIf="item.name == 'PurchaseOrder'">
+                          <label class="col-12 fw-bold text-dark mb-2">Purchase Orders</label>
+                          <table class="w-100 multipleTable mb-2 px-2">
+                            <tbody>
+                              <tr *ngFor="let data of item.valueList; let i = index;">
+                                <td>Order Number</td>
+                                <td>
+                                  <input type="text" [(ngModel)]="item.valueList[i]" name="barCode{{i}}" class="w-100 fw-semibold form-control" style="border-radius: 6px;" />
+                                </td>
+                                <td>
+                                  <div class="d-flex align-items-center">
+                                    <a (click)="deleteOrderNumber(i)" class="cursor-pointer">
+                                      <img src="./assets/images/trash-02.svg" alt="delete" title="Delete" />
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="3">
+                                  <button matRipple class="btn btn-sm btn-info" (click)="addOrderNumber()">
+                                    Add Purchase Order
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </ng-container>
+                    </div>
+                    <div class="col-6 ps-1">
+                      <ng-container *ngFor="let item of fieldsArr">
+                        <div class="pt-2" *ngIf="item.name == 'Barcode'">
+                          <label class="col-12 fw-bold text-dark mb-2">Bar Codes</label>
+                          <table class="w-100 multipleTable mb-2 px-2">
+                            <tbody>
+                              <tr *ngFor="let data of item.valueList; let i = index;">
+                                <td>GRN Number</td>
+                                <td>
+                                  <input type="text" [(ngModel)]="item.valueList[i]" name="barCode{{i}}" class="w-100 fw-semibold form-control"
+                                    [ngStyle]="{
+                                      'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                                      (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                                      'border-radius': '6px'
+                                    }" />
+                                </td>
+                                <td>
+                                  <div class="d-flex align-items-center">
+                                    <a (click)="deleteGRN(i)" class="cursor-pointer">
+                                      <img src="./assets/images/trash-02.svg" alt="delete" title="Delete" />
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="3">
+                                  <button matRipple class="btn btn-sm btn-info" (click)="addGRN()">
+                                    Add GRN
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="px-2">
+                <div class="mb-2 p-2 bg-white" style="border-radius: 6px;">
+                  <label class="fw-bold text-dark mb-1">Other Details</label>
+                  <div class="d-flex align-items-center mb-2">
+                    <ng-container *ngFor="let item of fieldsArr">
+                      <div class="col-4 pe-2" *ngIf="item.name == 'CustomerName' || item.name == 'CustomerAddressRecipient'">
+                        <label class="w-100 d-flex justify-content-between  align-items-center"> <span>Company Name</span>  <span
+                              [ngClass]="{
+                                'text-success': (item.confidence * 100) >= 95,
+                                'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                'text-danger': (item.confidence * 100) <= 65
+                              }" class="fs-7">
+                          {{ item.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                        </span></label>
+                        <input type="text" [(ngModel)]="item.value" name="{{item.name}}" class="w-100 fw-semibold form-control"
+                          [ngStyle]="{
+                            'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                            (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                            'border-radius': '6px'
+                          }" />
+                      </div>
+                      <div class="col-4 pe-2" *ngIf="item.name == 'CompanyGST'">
+                        <label class="w-100 d-flex justify-content-between align-items-center"> <span>Company GST</span>  <span
+                              [ngClass]="{
+                                'text-success': (item.confidence * 100) >= 95,
+                                'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                'text-danger': (item.confidence * 100) <= 65
+                              }" class="fs-7">
+                          {{ item.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+
+                        </span></label>
+                        <input type="text" [(ngModel)]="item.value" name="{{item.name}}" class="w-100 fw-semibold form-control"
+                            [ngStyle]="{
+                              'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                              (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                              'border-radius': '6px'
+                            }" />
+                      </div>
+                      <div class="col-4" *ngIf="item.name == 'CustomerTaxId'">
+                        <label class="w-100 d-flex justify-content-between lign-items-center"> <span>Company TaxId</span>  <span
+                              [ngClass]="{
+                                'text-success': (item.confidence * 100) >= 95,
+                                'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                'text-danger': (item.confidence * 100) <= 65
+                              }" class="fs-7">
+                          {{ item.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                        </span></label>
+                        <input type="text" [(ngModel)]="item.value" name="{{item.name}}"  class="w-100 fw-semibold form-control"
+                            [ngStyle]="{
+                              'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                              (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                              'border-radius': '6px'
+                            }" />
+                      </div>
+                    </ng-container>
+                  </div>
+                  <ng-container *ngFor="let item of fieldsArr">
+                    <div class="col-12" *ngIf="item.name == 'CustomerAddress'">
+                      <label class="w-100 d-flex justify-content-between align-items-center"> <span>Company Address</span>  <span
+                            [ngClass]="{
+                              'text-success': (item.confidence * 100) >= 95,
+                              'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                              'text-danger': (item.confidence * 100) <= 65
+                            }" class="fs-7">
+                        {{ item.confidence  * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                      </span></label>
+                      <textarea type="text" rows="3" [(ngModel)]="item.value" name="{{item.name}}"  class="w-100 fw-semibold p-2"
+                          [ngStyle]="{
+                            'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                            (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                            'border-radius': '6px'
+                          }"></textarea>
+                    </div>
+                  </ng-container>
+                  <div class="d-flex align-items-center mb-2">
+                    <ng-container *ngFor="let item of fieldsArr">
+                      <div class="col-6 pe-2" *ngIf="item.name == 'PAN Number'">
+                        <label class="w-75 d-flex justify-content-between align-items-center"> <span>PAN Number</span>  <span
+                              [ngClass]="{
+                                'text-success': (item.confidence * 100) >= 95,
+                                'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                'text-danger': (item.confidence * 100) <= 65
+                              }" class="fs-7">
+                          {{ item.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                        </span></label>
+                        <input type="text" [(ngModel)]="item.value" name="{{item.name}}" class="w-75 fw-semibold form-control"
+                          [ngStyle]="{
+                            'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                            (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                            'border-radius': '6px'
+                          }" />
+                      </div>
+                      <div class="col-6" *ngIf="item.name == 'MSME No'">
+                        <label class="w-75 d-flex justify-content-between align-items-center  fs-7"> <span>MSME No</span>  <span
+                              [ngClass]="{
+                                'text-success': (item.confidence * 100) >= 95,
+                                'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                'text-danger': (item.confidence * 100) <= 65
+                              }" class="fs-7">
+                          {{ item.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                        </span></label>
+                        <input type="text" [(ngModel)]="item.value" name="{{item.name}}" class="w-75 fw-semibold form-control"
+                            [ngStyle]="{
+                              'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                              (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                              'border-radius': '6px'
+                            }" />
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="d-flex align-items-center mb-2">
+                    <ng-container *ngFor="let item of fieldsArr">
+                      <div class="col-6 pe-2" *ngIf="item.name == 'QRCode'">
+                        <label class="w-100 d-flex justify-content-between align-items-center"> <span>QR Code</span>  <span
+                              [ngClass]="{
+                                'text-success': (item.confidence * 100) >= 95,
+                                'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                'text-danger': (item.confidence * 100) <= 65
+                              }" class="fs-7">
+                          {{ item.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                        </span></label>
+                        <input type="text" [(ngModel)]="item.value" name="{{item.name}}" class="w-100 fw-semibold form-control"
+                            [ngStyle]="{
+                              'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                              (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                              'border-radius': '6px'
+                            }" />
+                      </div>
+                      <div class="col-6" *ngIf="item.name == 'IRN'">
+                        <label class="w-100 d-flex justify-content-between align-items-center"> <span>IRN</span>  <span
+                              [ngClass]="{
+                                'text-success': (item.confidence * 100) >= 95,
+                                'text-warning': ((item.confidence * 100) > 65) && ((item.confidence * 100) < 95),
+                                'text-danger': (item.confidence * 100) <= 65
+                              }" class="fs-7">
+                          {{ item.confidence * 100 | number : "1.2-2" }}%
+                          <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                          mode="determinate" [value]="item.confidence * 100" [ngClass]="getProgressBarClass(item.confidence)">
+                        </mat-progress-bar>
+                        </span></label>
+                        <input type="text" [(ngModel)]="item.value" name="{{item.name}}" class="w-100 fw-semibold form-control"
+                          [ngStyle]="{
+                            'border': ((item?.confidence * 100)) >= 95 ? '1px solid green' :
+                            (item?.confidence * 100) > 65 ? '1px solid yellow' : '1px solid red',
+                            'border-radius': '6px'
+                          }" />
+                      </div>
+                    </ng-container>
+                  </div>
+              </div>
+            </div>
+          </div>
+        <div *ngIf="selectedTab == 'Content'" class="px-2 py-3 h-c-30" >
+                  <div style="overflow-y: auto;">
+                    <div class="px-3 py-2" style="background: #F1FAFF;border: 1px solid #E5EAEE;" *ngIf="mdiTables && mdiTables.length > 0">
+                      <span class="customTitle">Table&nbsp;#{{pageInd + 1}}</span>
+                    </div>
+                    <div class="overflow-x-auto mt-3">
+                      <div class="customTable" *ngIf="mdiTables && mdiTables.length > 0">
+                        <table class="table w-100 mb-0" *ngFor="let table of mdiTables; index as i;" [hidden]="i != pageInd">
+                          <tbody>
+                            <tr *ngFor="let row of table">
+                              <td *ngFor="let column of row">
+                                <span class=" fw-semibold ps-1">{{column}}</span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div>
+                          <mat-paginator [length]="contentTotalLength" [pageIndex]="pageInd" [pageSize]="1" [pageIndex]="page - 1" (page)="onPaginateChange($event)"></mat-paginator>
+                        </div>
+                      </div>
+                      <div class="d-flex justify-content-center align-items-center" *ngIf="!mdiTables || mdiTables.length == 0">
+                        <p>No Records Found.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2 py-3 h-c-30" *ngIf="selectedTab === 'dynamic fields'">
+                  <div *ngFor="let field of dynamicfields" class="mx-2 fix-fields mb-3 pb-2">
+                    <div class="d-flex align-items-center gap-4">
+                      <label style="min-width: fit-content;"class="text-muted w-100 d-flex justify-content-between align-items-cente"> <span>{{field.key.content}}</span>  <span
+                            [ngClass]="{
+                              'text-success': (field.value.confidence * 100) >= 95,
+                              'text-warning': ((field.value.confidence * 100) > 65) && ((field.value.confidence * 100) < 95),
+                              'text-danger': (field.value.confidence * 100) <= 65
+                            }" class="fs-7">
+                        {{ field.value.confidence * 100 | number : "1.2-2" }}%
+                        <mat-progress-bar class="custom-progress-bar" style="flex-wrap: nowrap; text-wrap: nowrap;"
+                              mode="determinate" [value]="field.value.confidence * 100" [ngClass]="getProgressBarClass(field.value.confidence)">
+                            </mat-progress-bar>
+                      </span></label>
+                      <input class="form-control fw-semibold" [(ngModel)]="field.value.content" name="{{field.key.content}}"
+                        [ngStyle]="{
+                          'border': (field.value?.confidence * 100) >= 95 ? '1px solid green' :
+                          field.value?.confidence * 100 > 65 ? '1px solid yellow' : '1px solid red',
+                          'border-radius': '6px'
+                        }" />
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2 py-3 h-c-30" *ngIf="selectedTab === 'business-rules'">
+                  <table class="table table-bordered w-100">
+                    <tbody>
+                      <tr *ngFor="let businessRule of businessRules" style="height: 50px;">
+                        <td style="width: 50%; vertical-align: middle;">
+                          <label class="fw-semibold">{{businessRule.rule}}</label>
+                        </td>
+                        <td style="width: 50%; vertical-align: middle;">
+                          <span *ngIf="businessRule.status && businessRule.status.toUpperCase() == 'SUCCESS'">
+                            <img src="./assets/images/exception-status.svg" alt="Success" />
+                          </span>
+                          <span *ngIf="(businessRule.status && businessRule.status.toUpperCase() != 'SUCCESS') || !businessRule.status">
+                            <img src="./assets/images/no-exception-status.svg" alt="Failed" />
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div *ngIf="selectedTab == 'others'" style="height: calc(100% - 40px);background-color: white;overflow: auto;">
+                  <div class="d-flex gap-3 p-3 col-12 align-items-center"  *ngIf="fixedfields || dynamicfields">
+                    <div>
+                        <ngx-json-viewer [json]="mdiResponse" [expanded]="true"></ngx-json-viewer>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #addVendorView>
+      <app-search-vendor (onclose)="addVendorModal.hide()" (onsubmit)="onSelectVendor($event)"></app-search-vendor>
+    </ng-template>
+
+    <app-basic-modal #addVendorModal (hidden)="addVendorModal.hide()" [heading]="'Select Vendor'"></app-basic-modal>

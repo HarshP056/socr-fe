@@ -1,0 +1,51 @@
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+      <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+        <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+          <img src="./assets/images/openai.svg" alt="role" style="height: 20px;width: 20px;">
+        </div>Azure AI Config
+      </div>
+      <div class="d-flex align-items-center">
+        <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+        alt=""></button>
+      </div>
+  </div>
+  <div class="px-4 py-3" style="height: calc(100% - 25px);overflow-y: auto;">
+            <form #form="ngForm"
+              class="row g-2 w-100">
+              <div class="col-md-12">
+                  <label for="key" class="form-label fw-semibold text-font-dark">API Key</label>
+                  <input [(ngModel)]="azureAI.apiKey" name="apikey" type="text" class="form-control" id="key"
+                    placeholder="Enter API Key">
+              </div>
+              <div class="col-md-12">
+                  <label for="url" class="form-label fw-semibold text-font-dark">API URL</label>
+                  <input [(ngModel)]="azureAI.endpoint" name="endpoint" type="text" class="form-control" id="url"
+                    placeholder="Enter API URL">
+              </div>
+              <div class="col-md-12">
+                <label for="model" class="form-label fw-semibold text-font-dark">Model Name</label>
+                <input [(ngModel)]="azureAI.name" name="name" type="text" class="form-control" id="model"
+                  placeholder="Enter Model Name">
+              </div>
+              <div class="col-md-12">
+                <label for="model" class="form-label fw-semibold text-font-dark">API Version</label>
+                <input [(ngModel)]="azureAI.apiVersion" name="apiVersion" type="text" class="form-control" id="model"
+                  placeholder="Enter Model Name">
+              </div>
+            </form>
+  </div>
+  <div class="canvas-footer d-flex align-items-center justify-content-end">
+    <button (click)="onClose()" class="cancel-btn me-3">
+                Cancel</button>
+    <button matRipple class="common-btn"  [disabled]="isWait || form.invalid" (click)="submit()">
+    <ng-container *ngIf="isWait">
+         <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+         </span>
+    </ng-container>
+    <ng-container *ngIf="!isWait">{{editMode ? "Update" : "Save"}}</ng-container>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,720 @@
+<div class="container-fluid px-0 h-100" style="overflow: hidden;">
+  <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap " style="height: calc(100% - 0px);">
+    <div class="d-flex col-lg-12 h-100">
+      <div class="col-lg-6 h-100">
+        <div class="d-flex align-items-center justify-content-between px-3 py-2">
+          <h6 style="cursor: pointer;margin-bottom: 0;" routerLink="/ocr-q" class="fw-semibold d-flex align-items-center">
+            <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left" (click)="onBack()"> Back
+          </h6>
+          <div *ngIf="invoiceData?.stage != 'New' && invoiceData?.stage != 'PageSeperation'" class="ms-5">
+            <div class="d-flex align-items-center justify-content-center ps-5 py-2">
+              <!-- Add Zoom Out and Zoom in button -->
+              <div class="d-flex align-items-center gap-2">
+                <span>Showing {{currentPage}} of {{totalPages}}</span>
+                <button  class="btn btn-light" (click)="previousPage()" [disabled]="currentPage == 1">
+                  <img src="./assets/images/chevron-left.svg" alt="Previous" />
+                </button>
+                <button  class="btn btn-light" (click)="nextPage()" [disabled]="currentPage == totalPages">
+                  <img src="./assets/images/chevron-right.svg"  alt="Next" />
+                </button>
+              </div>
+              <div class="ms-5">
+                <button class="btn btn-outline-primary" (click)="zoomOut()" [disabled]="scale <= 1">-</button>
+                <button class="btn btn-outline-primary ms-2" (click)="zoomIn()">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-start">
+              <h6 class="mb-0">Stage :</h6> <span class="fw-bold ps-2">{{invoiceData?.stage}}</span>
+            </div>
+            <div class="ps-4 d-flex align-items-center">
+              <img *ngIf="!processing && invoiceData?.stage !== 'Exception' && invoiceData?.stage !== 'Verification' && invoiceData?.stage !== 'Processed'" src="./assets/images/run.svg" alt="" class="me-2 cursor-pointer"
+                matTooltip="Proceed for next stage." (click)="proceedToNextStage()" />
+              <span *ngIf="processing && invoiceData?.stage !== 'Exception' && invoiceData?.stage !== 'Verification' && invoiceData?.stage !== 'Processed'" class="indicator-progress me-2" [style.display]="'block'">
+                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+              </span>
+              <img src="./assets/images/eye.svg" alt="" (click)="getDoc(invoiceData)" matTooltip="View pdf" matTooltipPosition="above" class="cursor-pointer" />
+              <fa-icon [icon]="faSync" *ngIf="invoiceData?.stage === 'Verification' && !isWaiting" class="ms-2 cursor-pointer" (click)="reprocessInvoice()" matTooltip="Re-process Invoice" matTooltipPosition="above"></fa-icon>
+              <ng-container *ngIf="isWaiting">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="center" style="height: calc(100% - 69px);" *ngIf="invoiceData?.stage != 'New' && invoiceData?.stage != 'PageSeperation'">
+          <div #canvasContainer class="col-12 p-2 h-100" style="position: relative;overflow: auto;">
+            <canvas #documentCanvas height="1000" style="display: block;overflow: auto;"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-12" style="height: calc(100% - 40px);"
+          *ngIf="invoiceData?.stage == 'New' || invoiceData?.stage == 'PageSeperation'">
+          <div style="height: 100%;">
+            <div class="d-flex h-100">
+              <div class="px-3 py-2 col-12 h-100">
+                <div class="pdf-document-viewer h-100" *ngIf="imgUrl">
+                  <iframe id="pdfFrame" class="h-100 w-100" [src]="imgUrl | safe" style="border: none"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 h-100" style="border-left: 1px solid #e4e7ec;">
+        <div class="col-lg-12 h-100">
+          <div style="background: #ffff;">
+            <ul class="nav nav-tab" [hidden]="!invoiceData?.stage">
+              <li class="nav-item" [hidden]="invoiceData?.stage == 'New' || invoiceData?.stage == 'PageSeperation'">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'Fields'}" (click)="setActiveTab('Fields')">
+                  <span>
+                    Header Fields
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item" [hidden]="invoiceData?.stage == 'New' || invoiceData?.stage == 'PageSeperation'">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'LineItems'}"
+                  (click)="setActiveTab('LineItems')">
+                  <span>
+                    Line Items
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item" [hidden]="invoiceData?.stage == 'New' || invoiceData?.stage == 'PageSeperation'">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'Content'}"
+                  (click)="setActiveTab('Content')">
+                  <span>
+                    Content
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'Logs'}" (click)="setActiveTab('Logs')"
+                  (click)="openLogs(invoiceData)">
+                  <span>
+                    Logs
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item" *ngIf="invoiceData?.stage != 'New' && invoiceData?.stage != 'PageSeperation'  && invoiceData?.stage != 'DataReconization'">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'business-rules'}" (click)="setActiveTab('business-rules')">
+                  <span>
+                    Business Rules
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item" *ngIf="invoiceData?.stage!=='New' && invoiceData?.stage!=='PageSeperation'">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab === 'Others'}" (click)="setActiveTab('Others')">
+                  <span>
+                    Raw Data
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div [hidden]="selectedTab != 'Fields'" class="position-relative" style="height: calc(100% - 40px);background: #fff;">
+            <div [ngClass]="{'h-calc-50': invoiceData?.stage==='Verification', 'h-100': invoiceData?.stage!=='Verification'}" style="overflow-y: auto;">
+              <div class="p-2 mb-2 doc-type-item">DocType: <span class="fw-bold ps-1">{{docType}}</span></div>
+              <div *ngFor="let item of fieldsArr" class="px-2">
+                <div *ngIf="item.groupType == 'Invoice'" class="fix-fields mb-2 pb-2">
+                  <label class="fw-bold text-dark mb-1">Invoice</label>
+                  <div class="d-flex align-items-center mb-2 px-2 col-12">
+                    <ng-container *ngFor="let inv of item.data">
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'InvoiceId' && inv.ocrFieldCheck">
+                        <label class="w-100">Invoice Number</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'FirstInvoiceNumber' && inv.ocrFieldCheck">
+                        <label class="w-100">First Invoice Number</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'SecondInvoiceNumber' && inv.ocrFieldCheck">
+                        <label class="w-100">Second Invoice Number</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'FinalInvoiceNumber' && inv.ocrFieldCheck">
+                        <label class="w-100">Final Invoice Number</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'InvoiceDate' && inv.ocrFieldCheck">
+                        <label class="w-100">Invoice Date</label>
+                         <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'InvoiceTotal' && inv.ocrFieldCheck">
+                        <label class="w-100">Invoice Total</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'Currency' && inv.ocrFieldCheck">
+                        <label class="w-100">Currency</label>
+                        <select *ngIf="inv.type == 'List'" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (change)="focusBoundingBox(inv.name)" style="border-radius: 4px">
+                         <option value="">Select</option>
+                         <option *ngFor="let option of inv.options" value="{{option.value}}">{{option.label}}</option>
+                        </select>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="d-flex align-items-center mb-2 px-2 col-12">
+                    <ng-container *ngFor="let inv of item.data">
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'TotalDiscount' && inv.ocrFieldCheck">
+                        <label class="w-100">Discount</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'Freight' && inv.ocrFieldCheck">
+                        <label class="w-100">Freight</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'SubTotal' && inv.ocrFieldCheck">
+                        <label class="w-100">Sub Total</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'Round Off' && inv.ocrFieldCheck">
+                        <label class="w-100">Round Off</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="d-flex align-items-center mb-2 px-2 col-12">
+                    <ng-container *ngFor="let inv of item.data">
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'CGST' && inv.ocrFieldCheck">
+                        <label class="w-100">CGST</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'SGST' && inv.ocrFieldCheck">
+                        <label class="w-100">SGST</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px"  />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'IGST' && inv.ocrFieldCheck">
+                        <label class="w-100">IGST</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="inv.name == 'TotalTax' && inv.ocrFieldCheck">
+                        <label class="w-100">Total Tax</label>
+                        <input type="text" [(ngModel)]="inv.value" name="{{inv.name}}" [disabled]="invoiceData?.stage!=='Verification' || inv.disableCheck" class="w-100"
+                         (click)="focusBoundingBox(inv.name)" style="border-radius: 4px" />
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+                <div *ngIf="item.groupType == 'Vendor'" class="fix-fields mb-2 pb-2">
+                  <label class="fw-bold text-dark mb-1">Vendor</label>
+                  <div class="d-flex align-items-center mb-2 px-2 col-12">
+                    <ng-container *ngFor="let vendor of item.data">
+                      <div class="col-4 pe-2" *ngIf="vendor.name == 'VendorId' && vendor.ocrFieldCheck">
+                        <label class="w-100">Vendor Id</label>
+                        <div class="d-flex align-items-center w-100">
+                          <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}" [disabled]="invoiceData?.stage!=='Verification' || vendor.disableCheck" style="border-radius: 4px; width: calc(100% - 25px)"
+                          (click)="focusBoundingBox(vendor.name)" />
+                         <span class="ms-1" *ngIf="invoiceData?.stage === 'Verification'">
+                           <img src="./assets/images/search.svg" class="cursor-pointer" style="width: 16px;height: 16px;" matTooltip="Select Vendor" (click)="openVendorPopUp()"></span>
+                        </div>
+                      </div>
+                      <div class="col-8 pe-2" *ngIf="(vendor.name == 'VendorAddressRecipient' || vendor.name == 'VendorName') && vendor.ocrFieldCheck">
+                        <label class="w-100" *ngIf="vendor.name == 'VendorAddressRecipient' && isVendorRecipentName">Vendor Name</label>
+                        <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}" [disabled]="invoiceData?.stage!=='Verification' || vendor.disableCheck" class="w-100" *ngIf="vendor.name == 'VendorAddressRecipient' && isVendorRecipentName"
+                         (click)="focusBoundingBox(vendor.name)"  style="border-radius: 4px" />
+                        <label class="w-100" *ngIf="vendor.name == 'VendorName' && isVendorName">Vendor Name</label>
+                        <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}" [disabled]="invoiceData?.stage!=='Verification' || vendor.disableCheck" class="w-100" *ngIf="vendor.name == 'VendorName' && isVendorName"
+                         (click)="focusBoundingBox(vendor.name)"  style="border-radius: 4px" />
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="d-flex align-items-center mb-2 px-2 col-12">
+                    <ng-container *ngFor="let vendor of item.data">
+                      <div class="col-9 pe-2" *ngIf="vendor.name == 'VendorAddress' && vendor.ocrFieldCheck">
+                        <label class="w-100">Address</label>
+                        <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}" [disabled]="invoiceData?.stage!=='Verification' || vendor.disableCheck" class="w-100"
+                         class="w-100"  (click)="focusBoundingBox(vendor.name)"  style="border-radius: 4px" />
+                      </div>
+                      <div class="col-3 pe-2" *ngIf="vendor.name == 'VendorGST' && vendor.ocrFieldCheck">
+                        <label class="w-100">Vendor GST</label>
+                        <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}" [disabled]="invoiceData?.stage!=='Verification' || vendor.disableCheck" class="w-100"
+                          (click)="focusBoundingBox(vendor.name)"  style="border-radius: 4px" />
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="d-flex align-items-center mb-2 px-2 col-12">
+                    <ng-container *ngFor="let vendor of item.data">
+                      <div class="col-9 pe-2" *ngIf="vendor.name == 'VendorVatID'">
+                        <label class="w-100">Vendor Vat ID</label>
+                        <input type="text" [(ngModel)]="vendor.value" name="{{vendor.name}}" [disabled]="invoiceData?.stage!=='Verification' || vendor.disableCheck" class="w-100"
+                         class="w-100"  (click)="focusBoundingBox(vendor.name)"  style="border-radius: 4px" />
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+              <div *ngFor="let item of fieldsArr" class="px-2">
+                <div *ngIf="item.groupType != 'Invoice' && item.groupType != 'Vendor' && item.name != 'Barcode'">
+                  <div *ngIf="item.ocrFieldCheck" class="d-flex align-items-center mb-3">
+                    <label class="col-3 fw-bold text-dark" style="word-break: break-all;" *ngIf="item.name == 'CustomerTaxId' && item.ocrFieldCheck">CompanyTaxId</label>
+                    <label class="col-3 fw-bold text-dark" style="word-break: break-all;" *ngIf="item.name == 'CustomerName' && item.ocrFieldCheck">CompanyName</label>
+                    <label class="col-3 fw-bold text-dark" style="word-break: break-all;" *ngIf="item.name == 'CustomerAddress' && item.ocrFieldCheck">CompanyAddress</label>
+                    <label class="col-3 fw-bold text-dark" style="word-break: break-all;" *ngIf="item.name == 'CustomerAddressRecipient' && item.ocrFieldCheck">CompanyAddressRecipient</label>
+                    <label class="col-3 fw-bold text-dark" style="word-break: break-all;" *ngIf="item.name !== 'CustomerTaxId' && item.name !== 'CustomerName' && item.name !== 'CustomerAddress' && item.name !== 'CustomerAddressRecipient' && item.ocrFieldCheck">{{item.name}}</label>
+
+                    <input type="text" *ngIf="(item.type == 'String' || item.type == 'Number') && item.ocrFieldCheck" [(ngModel)]="item.value" name="{{item.name}}" [disabled]="invoiceData?.stage!=='Verification' || item.disableCheck"
+                    (click)="focusBoundingBox(item.name)"
+                    [ngClass]="{'max-content' : item.name == 'MSME No' || item.name == 'PAN Number' || item.name == 'CustomerTaxId' || item.name == 'CompanyGST' || item.name == 'PreviousUnpaidBalance' || item.name == 'AmountDue' || item.name == 'PurchaseOrder',
+                      'col-6': item.name == 'PaymentTerm' || item.name == 'IRN' || item.name == 'ShippingAddressRecipient' || item.name == 'CustomerName',
+                      'col-9': item.name != 'MSME No' && item.name != 'PAN Number' && item.name != 'CustomerTaxId' && item.name != 'CompanyGST' && item.name != 'PreviousUnpaidBalance' && item.name != 'AmountDue'
+                       && item.name != 'PurchaseOrder' && item.name != 'PaymentTerm' && item.name != 'IRN' && item.name != 'ShippingAddressRecipient' && item.name != 'CustomerName'}"
+                       style="border-radius: 4px" />
+
+                    <span class="ms-1" *ngIf="(invoiceData?.stage === 'Verification' || item.disableCheck) && item.name == 'PurchaseOrder' && item.ocrFieldCheck">
+                      <img src="./assets/images/search.svg" class="cursor-pointer" style="width: 16px;height: 16px;" matTooltip="Select PO" (click)="openPOPopUp()">
+                    </span>
+
+                    <select *ngIf="item.type == 'List' && item.ocrFieldCheck" [(ngModel)]="item.value" name="{{item.name}}" [disabled]="invoiceData?.stage!=='Verification' || item.disableCheck"
+                      (change)="focusBoundingBox(item.name)" style="border-radius: 4px" class="col-4">
+                      <option value="">Select</option>
+                      <option *ngFor="let option of item.options" value="{{option.value}}">{{option.label}}</option>
+                    </select>
+
+                    <input type="text" name="{{item.name}}" *ngIf="item.type == 'Date' && item.ocrFieldCheck" class="w-sm-auto" style="border-radius: 4px" #dp="bsDatepicker" bsDatepicker [(ngModel)]="item.value" [bsConfig]="{
+                      showWeekNumbers: false,
+                      dateInputFormat: 'DD MMM YYYY'
+                    }" (ngModelChange)="onDateRangeSelected()" placement="top" placeholder="Select" [disabled]="invoiceData?.stage!=='Verification' || item.disableCheck"
+                     (click)="focusBoundingBox(item.name)" />
+                     
+                    <ng-container *ngIf="item.type == 'Checkbox' && item.ocrFieldCheck">
+                      <div class="d-flex flex-wrap align-items-center gap-1 me-3">
+                        <input type="checkbox" [checked]="item.value == 'true'" name="{{item.name}}" (change)="onChangeCheckBox($event, item)" [disabled]="invoiceData?.stage!=='Verification' || item.disableCheck" />
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+              <!-- <div *ngFor="let item of fieldsArr" class="px-2">
+                <div class="pt-2" style="border-top: 2px solid #e4e7ec;"
+                 *ngIf="(item.name == 'Barcode' && invoiceData?.stage =='Verification') || (item.name == 'Barcode' && invoiceData?.stage !== 'Verification' && (item.valueList && item.valueList.length > 0))">
+                  <label class="col-12 fw-bold text-dark mb-2">Bar Codes</label>
+                  <table class="w-50 multipleTable mb-3 mx-2">
+                    <tbody>
+                      <tr *ngFor="let data of item.valueList; let i = index;">
+                        <td>GRN Number</td>
+                        <td>
+                          <input type="text" [(ngModel)]="data.amount" name="amount{{i}}" class="w-100" style="border-radius: 4px;" *ngIf="invoiceData?.stage === 'Verification'" />
+                          <span *ngIf="invoiceData?.stage !== 'Verification'">{{data.amount}}</span>
+                        </td>
+                        <td *ngIf="invoiceData?.stage === 'Verification'">
+                          <div class="d-flex align-items-center">
+                            <a (click)="deleteGRN(i)" class="cursor-pointer">
+                              <img src="./assets/images/trash-02.svg" alt="delete" title="Delete" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr *ngIf="invoiceData?.stage === 'Verification'">
+                        <td colspan="3">
+                          <button matRipple class="btn btn-sm btn-light" (click)="addGRN()">
+                            Add GRN
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div> -->
+              <div *ngFor="let item of fieldsArr" class="px-2">
+                <div class="pt-2" style="border-top: 2px solid #e4e7ec;"
+                 *ngIf="(item.name == 'Barcode' && invoiceData?.stage =='Verification') || (item.name == 'Barcode' && invoiceData?.stage !== 'Verification' && (item.valueList && item.valueList.length > 0))">
+                  <label class="col-12 fw-bold text-dark mb-2">Bar Codes</label>
+                  <table class="w-50 multipleTable mb-3 mx-2">
+                    <tbody>
+                      <tr *ngFor="let data of item.valueList; let i = index;">
+                        <td>GRN Number</td>
+                        <td>
+                          <input type="text" [(ngModel)]="data.amount" (blur)="onAddingBarcodeList($event)" name="grnAmount{{i}}" class="w-100" style="border-radius: 4px;" *ngIf="invoiceData?.stage === 'Verification'" />
+                          <span *ngIf="invoiceData?.stage !== 'Verification'">{{data.amount}}</span>
+                        </td>
+                        <td *ngIf="invoiceData?.stage === 'Verification'">
+                          <div class="d-flex align-items-center">
+                            <a (click)="deleteGRN(i)" class="cursor-pointer">
+                              <img src="./assets/images/trash-02.svg" alt="delete" title="Delete" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr *ngIf="invoiceData?.stage === 'Verification'">
+                        <td colspan="3">
+                          <button matRipple class="btn btn-sm btn-light" (click)="addGRN()">
+                            Add GRN
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- <div *ngFor="let item of fieldsArr" class="px-2">
+                <div class="pt-2" style="border-top: 2px solid #e4e7ec;"
+                 *ngIf="(item.name == 'PurchaseOrder' && invoiceData?.stage =='Verification') || (item.name == 'PurchaseOrder' && invoiceData?.stage !== 'Verification' && (item.valueList && item.valueList.length > 0))">
+                  <label class="col-12 fw-bold text-dark mb-2">Purchase Orders</label>
+                  <table class="w-50 multipleTable mb-2 mx-2">
+                    <tbody>
+                      <tr *ngFor="let data of item.valueList; let i = index;">
+                        <td>Order Number</td>
+                        <td>
+                          <input type="text" [(ngModel)]="data.amount" name="amount{{i}}" class="w-100" style="border-radius: 4px;" *ngIf="invoiceData?.stage === 'Verification'" />
+                          <span *ngIf="invoiceData?.stage !== 'Verification'">{{data.amount}}</span>
+                        </td>
+                        <td *ngIf="invoiceData?.stage === 'Verification'">
+                          <div class="d-flex align-items-center">
+                            <a (click)="deleteOrderNumber(i)" class="cursor-pointer">
+                              <img src="./assets/images/trash-02.svg" alt="delete" title="Delete" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr *ngIf="invoiceData?.stage === 'Verification'">
+                        <td colspan="3">
+                          <button matRipple class="btn btn-sm btn-light" (click)="addOrderNumber()">
+                            Add Purchase Order
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div> -->
+              <div *ngFor="let item of fieldsArr" class="px-2">
+                <div *ngIf="hasGRN()">
+                  <div class="pt-2" style="border-top: 2px solid #e4e7ec;"
+                    *ngIf="(item.name == 'PurchaseOrder' && invoiceData?.stage =='Verification') || (item.name == 'PurchaseOrder' && invoiceData?.stage !== 'Verification' && (item.valueList && item.valueList.length > 0))">
+                    <label class="col-12 fw-bold text-dark mb-2">Purchase Orders</label>
+                    <table class="w-50 multipleTable mb-2 mx-2">
+                      <tbody>
+                        <tr *ngFor="let data of item.valueList; let i = index;">
+                          <td>Order Number</td>
+                          <td>
+                            <input type="text" [(ngModel)]="data.amount" (blur)="onAddingPOList($event)" name="poAmount{{i}}" class="w-100" style="border-radius: 4px;" *ngIf="invoiceData?.stage === 'Verification'" />
+                            <span *ngIf="invoiceData?.stage !== 'Verification'">{{data.amount}}</span>
+                          </td>
+                          <td *ngIf="invoiceData?.stage === 'Verification'">
+                            <div class="d-flex align-items-center">
+                              <a (click)="deleteOrderNumber(i)" class="cursor-pointer">
+                                <img src="./assets/images/trash-02.svg" alt="delete" title="Delete" />
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr *ngIf="invoiceData?.stage === 'Verification'">
+                          <td colspan="3">
+                            <button matRipple class="btn btn-sm btn-light" (click)="addOrderNumber()">
+                              Add Purchase Order
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="invoiceData?.stage==='Verification'" class="pb-2 d-flex justify-content-end pe-3 position-absolute bottom-0 w-100">
+              <button matRipple class="common-btn me-2" [disabled]="isWait3" (click)="checkRules()">
+                <ng-container *ngIf="isWait3">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait3">Check Rules</ng-container>
+              </button>
+              <button matRipple class="common-btn me-2" type="button" [disabled]="isWait" (click)="onSaveVerification()">
+                <ng-container *ngIf="isWait">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait">Save</ng-container>
+              </button>
+              <button matRipple class="common-btn me-2" type="button" [disabled]="isWait2" (click)="onSaveVerificationProcess()">
+                <ng-container *ngIf="isWait2">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait2">Save & Update</ng-container>
+              </button>
+            </div>
+          </div>
+          <div [hidden]="selectedTab != 'LineItems'" style="height: calc(100% - 40px);" class="position-relative px-2 pt-2">
+            <div class="position-relative" [ngClass]="{'h-calc-50': invoiceData?.stage==='Verification', 'h-100': invoiceData?.stage!=='Verification'}">
+              <div class="text-left pb-2" style="background: #F3F6F9;">
+                <span class="customTitle">Line Items</span>
+              </div>
+              <div [ngClass]="{'h-calc-75': invoiceData?.stage==='Verification', 'h-calc-30': invoiceData?.stage!=='Verification'}" style="overflow-y: auto;">
+                <table class="table customTable w-100" *ngIf="ocrData?.lineFields && lineHeaders">
+                  <thead>
+                    <tr>
+                      <th *ngFor="let head of lineHeaders" [ngClass]="{'w-250': head === 'Description'}">
+                        <span *ngIf="head != 'ProductCode'">{{head}}</span>
+                        <span *ngIf="head == 'ProductCode'">HSN Code</span>
+                      </th>
+                      <th scope="col" *ngIf="invoiceData?.stage === 'Verification'"></th>
+                    </tr>
+                  </thead>
+                  <tbody *ngFor="let data of ocrData?.lineFields; index as i">
+                    <tr>
+                      <td *ngFor="let col of lineHeaders">
+                        <div *ngFor="let item of data.fields; index as j">
+                          <input class="customInput" type="text" [(ngModel)]="item.value" *ngIf="item.name == col && invoiceData?.stage === 'Verification' && col !== 'Position'" />
+                          <span *ngIf="item.name == col && invoiceData?.stage !== 'Verification' && col !== 'Position' && col !== 'Description'">{{item.value}}</span>
+                          <span *ngIf="item.name == col && invoiceData?.stage !== 'Verification' && col === 'Description'" [matTooltip]="item.value && item.value.length > 60 ? item.value : ''" matTooltipPosition="above">
+                            {{item.value && item.value.length > 60 ? item.value.substring(0, 60) + "..." : item.value}}
+                          </span>
+                          <a *ngIf="item.name == col && col === 'Position'" (click)="toggleLineItem(i)" class="cursor-pointer fw-bold text-decoration-none">
+                            {{item.value}}
+                          </a>
+                        </div>
+                      </td>
+                      <td *ngIf="invoiceData?.stage==='Verification'">
+                        <div class="d-flex align-items-center">
+                          <a (click)="deleteRow(i)" class="cursor-pointer">
+                            <img src="./assets/images/trash-02.svg" alt="delete" title="Delete" />
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="selectedIndex == i">
+                      <td [colSpan]="invoiceData?.stage==='Verification' ? lineHeaders.length + 1 : lineHeaders.length" style="padding: 0;">
+                        <div class="col-lg-12 bg-light-2 p-2">
+                          <div class="col-12 d-flex flex-row align-items-start">
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">PO Number</label>
+                                <span class="w-50">{{data.identifiedPoNo}}</span>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Delivery Date</label>
+                                <span class="w-50">{{data.poItem?.dlvry_DATE | date: 'MMM dd, yyyy'}}</span>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Quantity</label>
+                                <span class="w-50">{{data.poItem?.po_QTY}}&nbsp;{{data.poItem?.po_UOM}}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12 d-flex flex-row align-items-start">
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Material</label>
+                                <span class="w-50">{{data.poItem?.mat_CODE}}</span>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Plant</label>
+                                <span class="w-50">{{data.poItem?.plant}}</span>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Unit Price</label>
+                                <span class="w-50">{{data.poItem?.po_UNT_PRCE}}
+                                <span *ngIf="data.poItem?.per">&nbsp;per&nbsp;{{data.poItem?.per}}&nbsp;{{data.poItem?.perUOM}}</span></span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12 d-flex flex-row align-items-start">
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Description</label>
+                                <span class="w-50">{{data.poItem?.mat_DES}}</span>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Storage Location</label>
+                                <span class="w-50">{{data.poItem?.slocation}}</span>
+                              </div>
+                            </div>
+                            <div class="col-lg-4 gap-2">
+                              <div class="w-100 d-flex align-items-start">
+                                <label class="w-50 fw-bold">Net Value</label>
+                                <span class="w-50">{{data.poItem?.netValue}}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="invoiceData?.stage==='Verification' && ocrData?.lineFields" class="d-flex justify-content-start bottom-0 position-absolute">
+                <button (click)="addRow()" matRipple class="btn btn-info shadow">
+                  <span>Add</span>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="invoiceData?.stage==='Verification'" class="d-flex justify-content-end pe-3 pb-2 position-absolute bottom-0 w-100">
+              <button matRipple class="common-btn me-2" [disabled]="isWait3" (click)="checkRules()">
+                <ng-container *ngIf="isWait3">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait3">Check Rules</ng-container>
+              </button>
+              <button matRipple class="common-btn me-2" [disabled]="isWait" (click)="onSaveVerification()">
+                <ng-container *ngIf="isWait">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait">Save</ng-container>
+              </button>
+              <button matRipple class="common-btn me-2" [disabled]="isWait2" (click)="onSaveVerificationProcess()">
+                <ng-container *ngIf="isWait2">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait2">Save & Update</ng-container>
+              </button>
+            </div>
+          </div>
+          <div [hidden]="selectedTab != 'Content'" style="height: calc(100% - 65px);" class="position-relative" >
+            <div class="" [ngClass]="{'h-calc-50': invoiceData?.stage==='Verification', 'h-100': invoiceData?.stage!=='Verification'}" style="overflow-y: auto;">
+              <div class="px-3 py-2" style="background: #F3F6F9;" *ngIf="mdiTables && mdiTables.length > 0">
+                <span class="customTitle">Table&nbsp;#{{pageInd + 1}}</span>
+              </div>
+              <div class="px-3 overflow-x-auto">
+                <div class="customTable" *ngIf="mdiTables && mdiTables.length > 0">
+                  <table class="table w-100 mb-0" *ngFor="let table of mdiTables; index as i;" [hidden]="i != pageInd">
+                    <tbody>
+                      <tr *ngFor="let row of table">
+                        <td *ngFor="let column of row">
+                          <span>{{column}}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div>
+                    <mat-paginator [length]="contentTotalLength" [pageIndex]="pageInd" [pageSize]="1" [pageIndex]="page - 1" (page)="onPaginateChange($event)"></mat-paginator>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center align-items-center" *ngIf="!mdiTables || mdiTables.length == 0">
+                  <p>No Records Found.</p>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="invoiceData?.stage==='Verification'" class="d-flex justify-content-end pe-3 pb-2 position-absolute bottom-0 w-100">
+              <button matRipple class="common-btn me-2" [disabled]="isWait3" (click)="checkRules()">
+                <ng-container *ngIf="isWait3">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait3">Check Rules</ng-container>
+              </button>
+              <button matRipple class="common-btn me-2" [disabled]="isWait" (click)="onSaveVerification()">
+                <ng-container *ngIf="isWait">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait">Save</ng-container>
+              </button>
+              <button matRipple class="common-btn me-2" [disabled]="isWait2" (click)="onSaveVerificationProcess()">
+                <ng-container *ngIf="isWait2">
+                  <span clas="indicator-progress" [style.display]="'block'">
+                    Please wait...{{ " " }}
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="!isWait2">Save & Update</ng-container>
+              </button>
+            </div>
+          </div>
+          <div [hidden]="selectedTab != 'Logs'" style="height: calc(100% - 65px);">
+            <div class="d-flex h-100" (click)="openLogs(invoiceData)">
+            </div>
+          </div>
+          <div [hidden]="selectedTab != 'Others'" style="height: calc(100% - 65px);background-color: white;overflow: auto;">
+            <div class="d-flex gap-3 p-3 col-12 align-items-center">
+              <div *ngIf="mdiResponse">
+                  <!-- <div class="text-grey-3 fw-medium d-flex align-items-center gap-2">
+                    <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+                      <img src="./assets/images/role-details.png" alt="role">
+                    </div>MDI Response
+                  </div> -->
+                  <ngx-json-viewer [json]="mdiResponse" [expanded]="true"></ngx-json-viewer>
+                  <!-- <pre>{{mdiResponse | json}}</pre> -->
+              </div>
+              <!-- <div class="d-flex align-items-center">
+                <span class="d-flex gap-2">
+                  <img src="./assets/images/eye.svg" alt="" matTooltip="View Response" matTooltipPosition="above" (click)="openXmlDialog()"
+                    class="me-2 cursor-pointer" />
+                  <img src="./assets/images/download.svg" alt="" matTooltip="Download Response" (click)="downloadXML()"
+                    matTooltipPosition="above" class="me-2 cursor-pointer" />
+                </span>
+              </div> -->
+            </div>
+          </div>
+          <div class="px-2 py-3 h-c-30" *ngIf="selectedTab === 'business-rules'">
+              <table class="table table-bordered w-100">
+                <tbody>
+                  <tr *ngFor="let businessRule of businessRules" style="height: 50px;">
+                    <td style="width: 50%; vertical-align: middle;">
+                      <label>{{businessRule.rule}}</label>
+                    </td>
+                    <td style="width: 50%; vertical-align: middle;">
+                      <span *ngIf="businessRule.status && businessRule.status.toUpperCase() == 'SUCCESS'">
+                        <img src="./assets/images/exception-status.svg" alt="Success" />
+                      </span>
+                      <span *ngIf="(businessRule.status && businessRule.status.toUpperCase() != 'SUCCESS') || !businessRule.status">
+                        <img src="./assets/images/no-exception-status.svg" alt="Failed" />
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #addVendorView>
+  <app-search-vendor (onclose)="addVendorModal.hide()"
+  (onsubmit)="onSelectVendor($event)"></app-search-vendor>
+</ng-template>
+
+<app-basic-modal #addVendorModal (hidden)="addVendorModal.hide()" [heading]="'Select Vendor'"></app-basic-modal>
+
+<ng-template #addPOView>
+  <app-search-po (onclose)="addPOModal.hide()" (onsubmit)="onSelectPO($event)"></app-search-po>
+</ng-template>
+
+<app-basic-modal #addPOModal (hidden)="addPOModal.hide()" [heading]="'Select PO'"></app-basic-modal>
+

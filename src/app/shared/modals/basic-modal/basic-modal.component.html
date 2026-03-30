@@ -1,0 +1,24 @@
+<ng-template #modalTemplate>
+  <div class="modal-header new-modal-header b-b-0">
+    <div class="heading">
+      <span *ngIf="heading === 'Add Email'">
+        <img src="./assets/media/addemail.svg" alt="">
+      </span>
+      <span *ngIf="heading === 'Error Log'">
+        <img src="./assets/images/role-details.png" alt="role">
+      </span>
+      <span *ngIf="heading === 'Change Password'">
+        <img src="./assets/media/change-password.svg" alt="">
+      </span>
+      <span class="modalheading ms-2">
+        {{ heading }}
+      </span>
+    </div>
+    <div class="close-btn">
+      <button type="button" class="tee-btn tee-btn-flat closebtn" (click)="hidden.emit()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <ng-container *ngTemplateOutlet="templateRef"></ng-container>
+</ng-template>

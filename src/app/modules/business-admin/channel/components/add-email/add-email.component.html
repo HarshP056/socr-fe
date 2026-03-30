@@ -1,0 +1,86 @@
+<div class="w-7">
+  <div class="modal-body p-4">
+    <div class="row">
+      <form #form="ngForm">
+        <div class="d-flex align-item-center justify-content-center">
+          <div class="mt-4">
+            <div class="pargraph">What kind of email channel are you looking to add?</div>
+            <div class="d-flex align-item-center justify-content-center">
+              <span class="choose mt-1">Choose an option below</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center gap-2 mt-4">
+          <div class="form-check d-flex align-items-center justify-content-center gap-2"
+            style="background: #DBEAFE;; height: 40px; width: 160px;border-radius: 5px;">
+            <input [checked]="emailTypeCheckbox === 'oathemail'" (click)="onChange('oathemail')"
+              class="form-check-input cursor-pointer mb-1" type="radio" name="flexRadioDefault"
+              id="flexRadioDefault1" />
+            <label class="form-check-label mb-0 cursor-pointer" for="flexRadioDefault1">
+              Oauth Email Type
+            </label>
+          </div>
+          <div class="form-check d-flex align-items-center justify-content-center gap-2"
+            style="background: #F5F8FA;; height: 40px;width: 160px;border-radius: 5px;">
+            <input [checked]="emailTypeCheckbox === 'basicemail'" (click)="onChange('basicemail')"
+              class="form-check-input cursor-pointer mb-1" type="radio" name="flexRadioDefault"
+              id="flexRadioDefault2" />
+            <label class="form-check-label mb-0 cursor-pointer" for="flexRadioDefault2">
+              Basic Email Type
+            </label>
+          </div>
+
+        </div>
+
+        <div *ngIf="showEmailDropdown" class="d-flex align-items-center justify-content-center flex-column gap-2 mt-4">
+          <div class="dropdown-border">
+            <p-dropdown appendTo="body" name="email" (onChange)="onChangeClient($event)" [options]="outhDetails"
+              placeholder="Select Clients" optionDisabled="inactive" optionLabel="name" [required]="true"></p-dropdown>
+          </div>
+          <!-- <select [(ngModel)]="selectedData" (change)="onChangeClient($event)" class="form-select w-sm-auto py-2"
+            aria-label="Default select example">
+            <option disabled selected value="">All Clients</option>
+            <option [ngValue]="item" *ngFor="let item of outhDetails">{{item.name}}</option>
+          </select> -->
+          <div class="col-md-4" *ngIf="showUserEmail">
+            <label for="" class="form-label">User Email</label>
+            <input [(ngModel)]="userEmail" type="text" class="form-control" name="userEmail" />
+          </div>
+        </div>
+
+
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex flex-grow-1 justify-content-end" *ngIf="!showSubmitSection">
+      <div class="d-flex">
+        <button class="cancel-btn me-3" (click)="close()">
+          Cancel
+        </button>
+        <button matRipple class="common-btn" (click)="changeEmailSection()">
+          Continue
+        </button>
+      </div>
+    </div>
+    <div class="d-flex flex-grow-1 justify-content-end" *ngIf="showSubmitSection">
+      <div class="d-flex">
+        <button class="cancel-btn me-3" (click)="close()">
+          Cancel
+        </button>
+        <button matRipple class="common-btn" [disabled]="isWait || form.invalid" (click)="submit()">
+          <ng-container *ngIf="isWait">
+            <span clas="indicator-progress" [style.display]="'block'">
+              Please wait...{{ " " }}
+              <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+            </span>
+          </ng-container>
+          <ng-container *ngIf="!isWait && editChannel === 'new'">Save</ng-container>
+          <ng-container *ngIf="!isWait && editChannel === 'edit'">Update</ng-container>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

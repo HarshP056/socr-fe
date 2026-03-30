@@ -1,0 +1,118 @@
+<div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+  <div class="main-content bg-white w-100">
+    <div class="row mx-0 pt-3 pt-lg-4">
+      <div class="p-4 pt-0">
+        <div class="col-sm-12">
+          <a (click)="onBack()" class="text-decoration-none d-flex align-items-center px-0" style="cursor: pointer;">
+            <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> OCR Profile
+            </h5>
+          </a>
+          <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+            <div class="text-grey-4">
+              Tailoring optical character recognition settings for optimal document analysis
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <hr class="mt-2">
+        </div>
+        <form #form="ngForm">
+          <div class="row">
+            <div class="col-xl-4 mb-3">
+              <label for="" class="form-label fw-semibold text-font-dark">Engine Type</label>
+              <select name="engineType" [(ngModel)]="ocrProfileObject.engineType" class="form-select"
+                aria-label="Default select example">
+                <option value="FCI">FCI</option>
+                <option value="SOCR">SOCR</option>
+              </select>
+            </div>
+          </div>
+          <hr class="dashed mt-0">
+          <div class="row" *ngIf="ocrProfileObject.engineType === 'FCI'">
+            <div class="col-xl-6 mb-3" >
+              <label for="" class="form-label fw-semibold text-font-dark">URL</label>
+              <input name="url" [(ngModel)]="ocrProfileObject.url" type="text" class="form-control" id="">
+              <p class="text-grey-4 mt-1 mb-1">A specific URL or web address that allows communication between different
+                software applications or systems</p>
+            </div>
+            <div class="col-xl-6 mb-3">
+              <label for="" class="form-label fw-semibold text-font-dark">Auth</label>
+              <input name="auth" [(ngModel)]="ocrProfileObject.auth" type="text" class="form-control" id="">
+              <p class="text-grey-4 mt-1 mb-1">A specific Authentication that allows communication between different
+                software applications or systems</p>
+            </div>
+          </div>
+          <hr class="dashed mt-0" *ngIf="ocrProfileObject.engineType === 'FCI'">
+          <div class="row">
+            <!-- <div class="col-xl-4 mb-3">
+              <label for="" class="form-label fw-semibold text-font-dark">OCR Profile ID <span
+                  class="red-fg">pending</span>
+              </label>
+              <input name="ocrProfileId" disabled [(ngModel)]="ocrProfileObject.ocrProfileId" type="text"
+                class="form-control" id="" placeholder="Enter the OCR Profile ID">
+            </div> -->
+
+            <div class="col-xl-4 mb-3">
+              <label for="" class="form-label fw-semibold text-font-dark">OCR Profile Name</label>
+                  <input name="projectName" [(ngModel)]="ocrProfileObject.name" type="text" class="form-control" id=""
+                  placeholder="Enter Project Name">
+            </div>
+            <div class="col-xl-4 mb-3">
+              <label for="" class="form-label fw-semibold text-font-dark">Host</label>
+              <input name="host" [(ngModel)]="ocrProfileObject.host" type="text" class="form-control" id=""
+                placeholder="Enter the Host">
+            </div>
+            <div class="col-xl-4" *ngIf="ocrProfileObject.engineType === 'FCI'">
+              <label for="" class="form-label fw-semibold text-font-dark">Batch Name</label>
+              <input name="batchName" [(ngModel)]="ocrProfileObject.batchName" type="text" class="form-control" id=""
+                placeholder="Enter the Batch Name">
+            </div>
+            <div class="col-xl-4">
+              <label for="" class="form-label fw-semibold text-font-dark">Project ID</label>
+                    <input name="projectId" [(ngModel)]="ocrProfileObject.projectId" type="text" class="form-control"
+                      id="">
+            </div>
+            <div class="col-xl-4" *ngIf="ocrProfileObject.engineType === 'FCI'">
+              <label for="" class="form-label fw-semibold text-font-dark">Owner ID</label>
+              <input name="ownerId" [(ngModel)]="ocrProfileObject.ownerId" type="text" class="form-control"
+                id="">
+            </div>
+
+            <div class="col-xl-4 mb-3" *ngIf="ocrProfileObject.engineType === 'FCI'">
+              <label for="" class="form-label fw-semibold text-font-dark">Project GUID</label>
+              <input name="projectNameOrGuid" [(ngModel)]="ocrProfileObject.projectNameOrGuid" type="text"
+                class="form-control" id="">
+            </div>
+            <div class="col-xl-4 mb-3" *ngIf="ocrProfileObject.engineType === 'FCI'">
+              <label for="" class="form-label fw-semibold text-font-dark">Role Type</label>
+              <input name="roleType" [(ngModel)]="ocrProfileObject.roleType" type="text" class="form-control" id=""
+                placeholder="Enter the Role Type">
+            </div>
+            <div class="col-xl-4 mb-3" *ngIf="ocrProfileObject.engineType === 'FCI'">
+              <label for="" class="form-label fw-semibold text-font-dark">Station Type</label>
+              <input name="stationType" [(ngModel)]="ocrProfileObject.stationType" type="text" class="form-control"
+                id="" placeholder="Enter the Station Type">
+            </div>
+          </div>
+          <hr class="dashed my-2">
+          <div class="d-flex align-items-center justify-content-end">
+            <button (click)="onBack()" class="cancel-btn me-3">
+              Cancel
+            </button>
+            <button matRipple class="common-btn" [disabled]="isWait || form.invalid" (click)="submit()">
+              <ng-container *ngIf="isWait">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isWait && editMode === 'new'">Save</ng-container>
+              <ng-container *ngIf="!isWait && editMode === 'edit'">Update</ng-container>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

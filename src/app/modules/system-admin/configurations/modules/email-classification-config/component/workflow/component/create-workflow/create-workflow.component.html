@@ -1,0 +1,92 @@
+<div class="main-content bg-white w-100">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+      <div class="col-sm-12 mb-3">
+        <a [routerLink]="['/system-admin/configurations/email-classification/', emailClassifierId, 'workflows']" class="text-decoration-none d-flex align-items-center px-0">
+          <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">Back to {{emailClassifier?.name}} Workflows</h5>
+        </a>
+        <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+          <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+          <div class="text-grey-4">
+            Defining Email Classifier Workflow.
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-12 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark my-0">Workflow Name</label>
+          <input type="text" class="form-control input-border" [(ngModel)]="workflow.name" placeholder="Enter workflow name" />
+        </div>
+        <div class="col-md-12 mb-3">
+          <label for="desc" class="form-label fw-semibold text-font-dark my-0">Workflow Type</label>
+          <select class="form-control input-border" [(ngModel)]="workflow.type">
+            <option value="">Select</option>
+            <option value="AI Generative Response">AI Generative Response</option>
+            <option value="Create Ticket">Create Ticket</option>
+            <option value="OCR">OCR Pipeline</option>
+          </select>
+        </div>
+        <div class="col-md-12 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-semibold my-0">Conditions</h5>
+            <p class="my-0 cursor-pointer d-flex align-items-center gap-2 text-primary" (click)="addCondition()">
+              <fa-icon [icon]="faAdd"></fa-icon>
+              Add Condition
+            </p>
+          </div>
+          <div *ngFor="let condition of workflow.conditions; let i=index" class="mb-3">
+            <div class="d-flex align-items-center gap-3">
+              <p class="my-0" *ngIf="workflow.conditions.length > 1 && i > 0">OR</p>
+              <select class="form-control input-border" [(ngModel)]="condition.name" (change)="setConditionType(condition.name, i)">
+                <option value="">Select Condition</option>
+                <option *ngFor="let wfCondition of workFlowConditions" value="{{wfCondition.name}}">{{wfCondition.name}}</option>
+              </select>
+              <select class="form-control input-border" [(ngModel)]="condition.type">
+                <option value="">Select Type</option>
+                <option value="boolean">Boolean</option>
+                <option value="string">String</option>
+              </select>
+              <select class="form-control input-border" [(ngModel)]="condition.value" *ngIf="condition.type == 'boolean'">
+                <option value="">Select Value</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+              <input type="text" class="form-control input-border" [(ngModel)]="condition.value" placeholder="Enter values" *ngIf="condition.type == 'string'" />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="workflow.default" id="flexCheckChecked">
+            <label class="form-check-label text-dark" for="flexCheckChecked">
+              Mark As Default
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="row mt-3">
+          <div class="d-flex align-items-center justify-content-end">
+            <button routerLink="/system-admin/configurations" class="cancel-btn me-3">
+              Cancel
+            </button>
+            <button matRipple class="common-btn" [disabled]="isWait" (click)="submit()">
+              <ng-container *ngIf="isWait">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isWait && editMode === 'new'">Create Workflow</ng-container>
+              <ng-container *ngIf="!isWait && editMode === 'edit'">Update Workflow</ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="center h-100" *ngIf="initialLoader">
+        <app-page-loader class="v-center"></app-page-loader>
+      </div>
+    </div>
+  </div>
+</div>

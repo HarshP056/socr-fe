@@ -1,0 +1,22 @@
+<ng-template #modalTemplate>
+  <div class="modal-header new-modal-header b-b-0">
+    <div class="heading">{{ title }}</div>
+    <div class="close-btn">
+      <button class="tee-btn tee-btn-flat closebtndelete" (click)="hidden.emit()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div class="modal-body new-modal-body w-400px">
+    <div class="content center">{{ content }}</div>
+  </div>
+  <div class="modal-footer new-modal-footer">
+    <button class="dangerbtn" [disabled]="isLoading" (click)="yes.emit()">
+      <span *ngIf="isLoading">
+        <i class="fa fa-spin fa-spinner p-0"></i>
+      </span>
+      {{ isLoading ? "" : deleteBtnText }}
+    </button>
+    <button class="cancel-btn" (click)="no.emit()">No</button>
+  </div>
+</ng-template>

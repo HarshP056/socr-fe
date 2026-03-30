@@ -1,0 +1,151 @@
+<!-- Add New Role (offcanvas)-->
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+    <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+      <span *ngIf="editMode === 'new'">Create Job</span>
+      <span *ngIf="editMode === 'edit'">Update Job</span>
+    </div>
+    <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+        alt=""></button>
+  </div>
+  <div class="px-4 py-3" style="height: calc(100% - 25px);overflow-y: auto;">
+    <!-- form -->
+    <form #jobform="ngForm">
+      <div class="row g-2 w-100">
+        <div class="col-md-12">
+          <label for="clientSecret" class="form-label required">Job Type</label>
+          <div class="dropdown-border w-100">
+            <p-dropdown [disabled]="enableJobType" [(ngModel)]="quartzJobs.skJob" name="skJob" optionLabel="value"
+              optionValue="key" [options]="jobTypeList" [required]="true" placeholder="Select Job Type"
+              optionDisabled="inactive"></p-dropdown>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <label for="clientSecret" class="form-label required">Cron Type</label>
+          <div class="dropdown-border w-100">
+            <p-dropdown (onChange)="onChange($event)" [(ngModel)]="quartzJobs.cronType" name="cronType"
+              [options]="cronTypeList" [required]="true" placeholder="Select Crone Type"
+              optionDisabled="inactive"></p-dropdown>
+          </div>
+        </div>
+        <div class="col-md-12" *ngIf="showCronExpression">
+          <label for="cronExpession" class="form-label required">Cron Expession</label>
+          <input (change)="onChangePattern($event)" required type="text" class="form-control" name="cronExpession"
+            [(ngModel)]="quartzJobs.cronExpession">
+          <span class="text-grey">
+            {{convertedPattern}}
+          </span>
+        </div>
+        <div *ngIf="showAllField">
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Day Of Month</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown [required]="true" [(ngModel)]="quartzJobs.dayOfMonth" name="dayOfMonth" [options]="monthList"
+                placeholder="Select Month" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Day Of Week</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown [required]="true" [(ngModel)]="quartzJobs.dayOfWeek" name="dayOfWeek" [options]="weekList"
+                placeholder="Select Week" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Hour</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.hour" [options]="hourList"
+                name="hour" placeholder="Select Hour" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="cronExpession" class="form-label required">Minute</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.minute" [options]="minuteList"
+                name="minute" placeholder="Select Minute" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="montyhlyDropdownItem">
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Day Of Month</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown [required]="true" [(ngModel)]="quartzJobs.dayOfMonth" name="dayOfMonth" [options]="monthList"
+                placeholder="Select Month" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Hour</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.hour" [options]="hourList"
+                name="hour" placeholder="Select Hour" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="cronExpession" class="form-label required">Minute</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.minute" [options]="minuteList"
+                name="minute" placeholder="Select Minute" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="weeklyDropdownItem">
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Day Of Week</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown [required]="true" [(ngModel)]="quartzJobs.dayOfWeek" name="dayOfWeek" [options]="weekList"
+                placeholder="Select Week" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Hour</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.hour" [options]="hourList"
+                name="hour" placeholder="Select Hour" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="cronExpession" class="form-label required">Minute</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.minute" [options]="minuteList"
+                name="minute" placeholder="Select Minute" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="dailDropDownItem">
+          <div class="col-md-12">
+            <label for="clientSecret" class="form-label required">Hour</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.hour" [options]="hourList"
+                name="hour" placeholder="Select Hour" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="cronExpession" class="form-label required">Minute</label>
+            <div class="dropdown-border w-100">
+              <p-dropdown appendTo="body" [required]="true" [(ngModel)]="quartzJobs.minute" [options]="minuteList"
+                name="minute" placeholder="Select Minute" optionDisabled="inactive"></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- form -->
+  </div>
+  <div class="canvas-footer d-flex align-items-center justify-content-end">
+    <button (click)="onClose()" class="cancel-btn me-3">
+      Cancel
+    </button>
+    <button matRipple class="common-btn" [disabled]="isWait || jobform.invalid" (click)="submit()">
+      <ng-container *ngIf="isWait">
+        <span clas="indicator-progress" [style.display]="'block'">
+          Please wait...{{ " " }}
+          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+      </ng-container>
+      <ng-container *ngIf="!isWait && editMode === 'new'">Save</ng-container>
+      <ng-container *ngIf="!isWait && editMode === 'edit'">Update</ng-container>
+    </button>
+  </div>
+</div>
+<!-- /Add New Role (offcanvas)-->

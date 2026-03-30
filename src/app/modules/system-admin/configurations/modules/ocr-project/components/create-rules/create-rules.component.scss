@@ -1,0 +1,13 @@
+:host ::ng-deep .monaco-editor .margin {
+    background: #e0f2fe !important;
+    color: #98a2b3 !important;
+    width: 65px !important;
+    display: flex !important;
+    justify-content: center !important;
+    padding-top: 10px;
+  }
+  
+  :host ::ng-deep .monaco-editor .overflow-guard {
+    color: #98a2b3 !important;
+    font-size: 5px !important;
+  }

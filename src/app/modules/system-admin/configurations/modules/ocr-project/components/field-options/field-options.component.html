@@ -1,0 +1,76 @@
+<div class="pb-5 position-relative h-100">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+      <div class="text-grey-3 fw-medium d-flex align-items-center gap-2 py-3 ps-3">
+          <div class="icon-box icon-box-primary rounded-3 p-2 p-xxl-2 position-relative">
+              <img src="./assets/images/role-details.png" alt="role">
+          </div>Field Options
+      </div>
+      <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close">
+          <img src="./assets/images/x.svg" alt="">
+      </button>
+  </div>
+  <div class="col-lg-12 col-xxl-12 d-flex justify-content-between px-4 py-3">
+      <div class="col-md-4 pe-2">
+          <label for="label" class="form-label fw-semibold text-font-dark">Option Label</label>
+          <input type="text" name="label" [(ngModel)]="fieldOption.label" class="form-control py-2">
+      </div>
+      <div class="col-md-4 pe-2">
+        <label for="value" class="form-label fw-semibold text-font-dark">Option Value</label>
+        <input type="text" name="value" [(ngModel)]="fieldOption.value" class="form-control py-2">
+      </div>
+      <div class="col-md-4 d-flex flex-column">
+        <label class="form-label fw-semibold text-font-dark">&nbsp;</label>
+        <button class="btn btn-info shadow d-flex align-items-center" (click)="addOptions()" style="width: max-content;">
+            <img src="./assets/images/plus.svg" class="me-1" alt="" />
+            Add
+        </button>
+      </div>
+  </div>
+  <div class="px-4" style="overflow-y: auto;">
+      <div class="row">
+          <div class="col-lg-12 col-xxl-12">
+              <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                  <form #saveOCRLineItem="ngForm">
+                      <table class="table table-bordered user-management mb-0">
+                          <thead>
+                              <tr>
+                                  <th scope="col" style="width: 250px;">
+                                      <span>label</span>
+                                  </th>
+                                  <th scope="col">
+                                      <span>Value</span>
+                                  </th>
+                                  <th scope="col"></th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let data of fieldOptions; let i=index">
+                                
+                                <td>
+                                    {{data.label}}
+                                </td>
+                                <td>
+                                    {{data.value}}
+                                </td>
+                                <td style="width: 50px">
+                                    <a class="cursor-pointer" (click)="removeOptions(i)">
+                                        <img src="./assets/images/trash-02.svg" alt="delete" />
+                                    </a>
+                                </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="offcanvas-footer position-absolute bottom-0 bg-light px-3 py-2 w-100">
+      <div>
+          <div class="d-flex align-items-center gap-1" style="float: right;">
+              <button type="button" class="btn btn-light px-3 me-2" mat-dialog-close>Cancel</button>
+              <button type="button" class="btn btn-info px-5" (click)="saveOption()">Save</button>
+          </div>
+      </div>
+  </div>
+</div>

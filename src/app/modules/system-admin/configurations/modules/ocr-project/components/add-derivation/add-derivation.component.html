@@ -1,0 +1,53 @@
+
+<div class="pb-5" style="height: calc(100% - 50px);">
+  <div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+    <div class="text-grey-3 d-flex align-items-center gap-2 py-3 ps-3">
+      <span style="font-weight: 800; font-size: large;"> Derivation</span>
+
+    </div>
+    <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close"><img src="./assets/images/x.svg"
+        alt=""></button>
+  </div>
+  <div>
+      <div class="card flex justify-content-center m-4" style=" border: none; width: 80%;">
+          <p-dropdown [(ngModel)]="derivation.type"  name="project" [options]="type" optionLabel="name" optionValue="id" [showClear]="true" placeholder="Select Type"></p-dropdown>
+      </div>
+
+      <div *ngIf="derivation.type === 'vendorIdDerivation' || derivation.type === 'poLine' || derivation.type === 'KeyValue'"
+          class="card flex justify-content-center m-4" style=" border: none; width: 80%;" >
+          <label class="mb-1" for="dataField"> Data Field</label>
+          <input class="form-control" type="text" name="dataField" [(ngModel)]="derivation.dataField">
+      </div>
+
+      <div *ngIf="derivation.type === 'fixed'"
+          class="card flex justify-content-center m-4" style=" border: none; width: 80%;" >
+          <label class="mb-1" for="fixedValue"> Value</label>
+          <input class="form-control" type="text" name="fixedValue" [(ngModel)]="derivation.fixedValue">
+      </div>
+
+      <div *ngIf="derivation.type === 'KeyValue'"
+          class="card flex justify-content-center m-4" style=" border: none; width: 80%;" >
+          <label class="mb-1" for="key"> Key</label>
+          <input class="form-control" type="text" name="key" [(ngModel)]="derivation.key">
+      </div>
+
+      <div *ngIf="derivation.type === 'vendorIdDerivation' || derivation.type === 'poLine' || derivation.type === 'KeyValue'"
+          class="d-flex gap-3 align-items-center" style="margin-left: 26px;">
+          <label class="form-label text-font-dark" for="checkRule"> Check Rule</label>
+          <div class="form-check">
+              <input id="checkRule" name="checkRule" [(ngModel)]="derivation.checkRule" type="checkbox" class="form-check-input">
+          </div>
+      </div>
+  </div>
+
+  <div class="offcanvas-footer position-absolute bottom-0 bg-light px-3 py-2 w-100">
+    <div>
+      <div class="d-flex align-items-center gap-1" style="padding-right: 10px; justify-content: flex-end;">
+        <button type="button" class="btn btn-light px-3 me-2" mat-dialog-close>Cancel</button>
+        <button [disabled]="derivation.type == null" type="button" class="btn btn-info px-3"
+         (click)="addDerivation()">Add</button>
+      </div>
+    </div>
+  </div>
+
+</div>

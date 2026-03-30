@@ -1,0 +1,31 @@
+<div class="container-fluid px-0 h-100">
+  <div class="wrapper h-100 d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+      <!-- sidebar -->
+      <div class="sidebar p-3 p-lg-4 pe-lg-5" *ngIf="showSidebar">
+        <div class="pe-lg-3">
+          <h5 class="fw-semibold"> Administration </h5>
+          <p class="text-grey-4">"Application administration involves managing and overseeing the operation,
+            configuration, and maintenance of application."</p>
+          <div class="w-100">
+            <div class="nav v-navs flex-column nav-pills pt-4" id="v-pills-tab" role="tablist"
+              aria-orientation="vertical">
+              <button [routerLink]="item.link" routerLinkActive="active" *ngFor="let item of menu"
+                class="nav-link text-start d-flex align-items-center mb-3" id="v-pills-Configurations-tab"
+                data-bs-toggle="pill" data-bs-target="#v-pills-Configurations" type="button" role="tab"
+                aria-controls="v-pills-Configurations" aria-selected="true">
+                <img [src]="item.icon">
+                <!-- <img src="./assets/images/database-dark.png" class="inactive"> -->
+                <span class="ms-2"> {{item.name}}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- sidebar -->
+      <div class="main-content bg-white">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

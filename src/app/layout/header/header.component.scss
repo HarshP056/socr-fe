@@ -1,0 +1,59 @@
+.dp {
+  width: 2.375rem;
+  height: 2.375rem;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0.625rem;
+  color: #003E76;
+  background-color: #F0F9FF;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dropdown-dp {
+  width: 36px !important;
+  height: 36px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #003E76;
+  background-color: #F0F9FF;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mat-item {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  height: 30px;
+  color: #464e5f !important;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.mat-item-header {
+  // width: fit-content;
+  display: flex;
+  align-items: center;
+  height: 74px;
+  border-bottom: 1px solid #e0e3e7;
+  cursor: default;
+}
+
+.mat-mdc-menu-item-text {
+  display: flex !important;
+}
+
+::ng-deep.mat-menu-panel {
+  max-width: none !important;
+}
+.profile {
+  .userName:hover {
+    color: #fff !important;
+  }
+}

@@ -1,0 +1,119 @@
+<!-- settings tab -->
+<div class="tab-pane" id="v-pills-Settings" role="tabpanel" aria-labelledby="v-pills-Settings-tab" tabindex="0">
+  <div class="row mx-0 p-3 p-lg-4">
+    <div class="col-sm-12 mb-4">
+      <h5 class="fw-semibold"> System Settings </h5>
+      <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-4" role="alert">
+        <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+        <div class="text-grey-4">
+          Configure and manage application parameters, preferences, and options to optimize system behavior and performance according to your needs.
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-lg-6 col-xxl-3 my-4">
+          <a routerLink="spring-job" class="text-decoration-none">
+            <div class="d-flex align-items-start">
+              <div class="icon-box-warning p-2 p-xxl-3 position-relative rounded-3">
+                <img width="29" src="./assets/images/login_SSO.png" alt="Spring Job Role">
+              </div>
+              <div class="ms-xxl-3 ms-3 mt-xxl-0">
+                <h6 class="text-grey-3 mb-1 fw-semibold">Spring Jobs </h6>
+                <p class="text-grey-4 fw-normal my-0">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ducimus?
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-sm-12 col-lg-6 col-xxl-3 my-4">
+          <a class="text-decoration-none" routerLink="cron-logs">
+            <div class="d-flex align-items-start">
+              <div class="icon-box icon-box-light p-2 p-xxl-3 position-relative rounded-3">
+                <img style="width: 29px;" src="./assets/images/cron-job-icon.svg" alt="Cron Job" />
+              </div>
+              <div class="ms-xxl-3 ms-3 mt-xxl-0">
+                <h6 class="text-grey-3 mb-1 fw-semibold">Cron Jobs</h6>
+                <p class="text-grey-4 fw-normal my-0">
+                  Control and secure cron access
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-sm-12 col-lg-6 col-xxl-3 my-4">
+          <a routerLink="system-properties" class="text-decoration-none">
+            <div class="d-flex align-items-start">
+              <div class="icon-box icon-box-primary p-2 p-xxl-3 position-relative rounded-3">
+                <img src="./assets/images/management.png" alt="others">
+              </div>
+              <div class="ms-xxl-3 ms-3 mt-xxl-0">
+                <h6 class="text-grey-3 mb-1 fw-semibold">Application Properties</h6>
+                <p class="text-grey-4 fw-normal my-0">Lorem ipsum dolor sit amet consectetur. Quam
+                  pellentesque hac.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-sm-12 col-lg-6 col-xxl-3 my-4">
+          <a routerLink="logical-system" class="text-decoration-none">
+            <div class="d-flex align-items-start">
+              <div class="icon-box icon-box-voilet p-2 p-xxl-3 position-relative rounded-3">
+                <img src="./assets/images/system.svg" alt="others">
+              </div>
+              <div class="ms-xxl-3 ms-3 mt-xxl-0">
+                <h6 class="text-grey-3 mb-1 fw-semibold">Systems</h6>
+                <p class="text-grey-4 fw-normal my-0"> Logical Systems</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-sm-12 col-lg-6 col-xxl-3 my-4" *ngIf="user.role === 'SuperAdmin'">
+          <a routerLink="license-config" class="text-decoration-none">
+            <div class="d-flex align-items-start">
+              <div class="icon-box icon-box-voilet-dark p-2 p-xxl-3 position-relative rounded-3">
+                <img src="./assets/images/license.svg" alt="others">
+              </div>
+              <div class="ms-xxl-3 ms-3 mt-xxl-0">
+                <h6 class="text-grey-3 mb-1 fw-semibold">License Config</h6>
+                <p class="text-grey-4 fw-normal my-0">License Configuration</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-sm-12 col-lg-6 col-xxl-3 my-4" *ngIf="user.role === 'SuperAdmin'">
+          <a routerLink="admin-email-config" class="text-decoration-none">
+            <div class="d-flex align-items-start">
+              <div class="icon-box icon-box-voilet-dark px-3 position-relative rounded-3" style="padding-top: 10px; padding-bottom: 10px;">
+                <!-- <img src="./assets/images/license.svg" alt="others"> -->
+                <fa-icon [icon]="faEnvelope" style="font-size: 26px;"></fa-icon>
+              </div>
+              <div class="ms-xxl-3 ms-3 mt-xxl-0">
+                <h6 class="text-grey-3 mb-1 fw-semibold">Admin Email Config</h6>
+                <p class="text-grey-4 fw-normal my-0">Admin Email Configuration</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-sm-12 col-lg-6 col-xxl-3 my-4">
+          <a routerLink="socr-system-config" class="text-decoration-none">
+            <div class="d-flex align-items-start">
+              <div class="icon-box icon-box-success p-2 p-xxl-3 position-relative rounded-3">
+                <img src="./assets/images/skey-system-config.svg" alt="others">
+              </div>
+              <div class="ms-xxl-3 ms-3 mt-xxl-0">
+                <h6 class="text-grey-3 mb-1 fw-semibold">System Config</h6>
+                <p class="text-grey-4 fw-normal my-0">System Configuration</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /settings tab -->

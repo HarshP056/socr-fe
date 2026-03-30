@@ -1,0 +1,83 @@
+<div class="w-7">
+  <div class="modal-body p-4">
+    <div class="row">
+      <form #form="ngForm">
+        <div class="d-flex flex-column justify-content-between">
+            <div class="d-flex align-item-center justify-content-between">
+              <div class="pe-2 py-2 d-flex flex-row align-items-center">
+                <label class="form-label me-2">Field</label>
+                <input
+                  type="text"
+                  name="field"
+                  placeholder="Enter Field here"
+                  class="form-control"
+                  [(ngModel)]="items.field"
+                  #text{{i}}="ngModel"
+                  (keydown)="spaceNotAllowed($event)"
+                  required
+                />
+              </div>
+              <div class="pe-2 py-2 d-flex flex-row align-items-center w-50">
+                <label class="form-label me-2">Type</label>
+                <p-dropdown
+                  appendTo="body"
+                  name="email"
+                  class="w-100"
+                  [options]="fieldTypes"
+                  [(ngModel)]="items.type"
+                  placeholder="Select Clients"
+                  [required]="true"
+                ></p-dropdown>
+              </div>
+            </div>
+            <div>
+              <div
+                class="pe-2 py-2 d-flex flex-row align-items-center w-50"
+                *ngIf="items.type === 'Fixed'"
+              >
+                <label class="form-label me-2">Value</label>
+                <input
+                  type="text"
+                  placeholder="Enter Field here"
+                  class="form-control py-2"
+                  name="value"
+                  [(ngModel)]="items.value"
+                  #text{{i}}="ngModel"
+                  (keydown)="spaceNotAllowed($event)"
+                  required
+                />
+              </div>
+              <div
+                class="pe-2 py-2"
+                *ngIf="items.type === 'Regular Expression'"
+              >
+                <label class="form-label me-2">Regular Expression</label>
+                <textarea
+                  type="text"
+                  name="regex"
+                  placeholder="Enter Field here"
+                  class="form-control py-2"
+                  [(ngModel)]="items.value"
+                  #text{{i}}="ngModel"
+                  (keydown)="spaceNotAllowed($event)"
+                  required
+                >
+                </textarea>
+              </div>
+            </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div
+      class="d-flex flex-grow-1 justify-content-end">
+      <div class="d-flex">
+        <button class="cancel-btn me-3" (click)="close()">Cancel</button>
+        <button matRipple class="common-btn" (click)="saveItemData()">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="d-flex pt-0 pe-0 border-bottom align-items-start justify-content-between">
+  <ul class="nav nav-tab">
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{activeTab:selectedTab ===1}" (click)="onTabchange(1)">
+        <span>
+          Microsoft Help Docs
+        </span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{activeTab:selectedTab ===2}" (click)="onTabchange(2)">
+        <span>
+          Google Help Docs
+        </span>
+      </a>
+    </li>
+  </ul>
+  <button type="button" class="btn btn-cls" aria-label="Close" (click)="closeDialog()"><img src="./assets/images/x.svg"
+    alt=""></button>
+</div>
+<div class="h-100">
+  <ng-container *ngIf="selectedTab === 1">
+    <div class="pdf-document-viewer h-100" >
+      <iframe id="pdfFrame" class="h-100 w-100" src="./assets/media/pdfs/Microsoft OAuth2.0 Authentication.pdf" style="border: none"></iframe>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="selectedTab === 2">
+    <div class="pdf-document-viewer h-100" >
+      <iframe id="pdfFrame" class="h-100 w-100" src="./assets/media/pdfs/Google OAuth2.0 Authentication.pdf" style="border: none"></iframe>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,144 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+      <div class="main-content bg-white">
+        <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+          <a routerLink="/business-admin" class="text-decoration-none d-flex align-items-center px-0">
+            <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> User
+              Management</h5>
+          </a>
+          <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+            <div class="text-grey-4">
+              User management involves the administration and control of user access, permissions, and
+              privileges within a system or platform to ensure secure and appropriate usage.
+              <a class="fw-semibold">Click Here</a> to download the template for bulk user
+              import
+            </div>
+          </div>
+          <div class="col-lg-12 mb-2 px-0">
+            <div
+              class="d-flex align-items-center justify-content-between flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 px-3">
+              <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">
+                <div class="position-relative search-form">
+                  <img src="./assets/images/search.svg" class="ms-2 position-absolute" alt="search icon">
+                  <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by User Name/Email" [(ngModel)]="searchParams.query">
+                </div>
+                <div>
+                  <p-dropdown appendTo="body" name="email" [options]="rolesOptions" [(ngModel)]="searchParams.role"
+                    placeholder="Select Role" [required]="true"></p-dropdown>
+                </div>
+                <div class="d-flex align-items-center gap-2 ms-2">
+                  <div>
+                    <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                      <ng-container *ngIf="isLoading">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Searching...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!isLoading">Search</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple [disabled]="resettingLoader" (click)="reset()">
+                      <ng-container *ngIf="resettingLoader">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Resetting...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!resettingLoader">Reset</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 text-nowrap pb-3 pt-0 pt-lg-3" >
+                <div>
+                  <!-- <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3"><svg
+                      xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path
+                        d="M6.6665 13.3333L9.99984 10M9.99984 10L13.3332 13.3333M9.99984 10V17.5M16.6665 13.9524C17.6844 13.1117 18.3332 11.8399 18.3332 10.4167C18.3332 7.88536 16.2811 5.83333 13.7498 5.83333C13.5677 5.83333 13.3974 5.73833 13.3049 5.58145C12.2182 3.73736 10.2119 2.5 7.9165 2.5C4.46472 2.5 1.6665 5.29822 1.6665 8.75C1.6665 10.4718 2.36271 12.0309 3.48896 13.1613"
+                        stroke="#717BBC" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg> <span class="ms-1"> Import Users</span></button> -->
+                  <button class="btn btn-info shadow" type="button" (click)="openDialog('')"
+                    aria-controls="offcanvasWithBothOptions"  *ngIf="user.role !== 'BusinessAdmin'"><img src="./assets/images/plus.svg" class="me-1" alt="add">
+                    New User</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="table-responsive mt-4 px-0" *ngIf="users?.length && !initialLoader">
+                <table class="table user-management" mat-table [dataSource]="users">
+                  <ng-container matColumnDef="firstName">
+                    <th mat-header-cell *matHeaderCellDef>User </th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="d-flex align-items-center flex-wrap">
+                        <div class="icon-box icon-box-table p-3 icon-box-warning rounded-3 position-relative">
+                          <span class="text-uppercase fw-bold fs-6">{{element.firstName.substring(0,
+                            1)}}{{element.lastName.substring(0, 1)}}</span>
+                        </div>
+                        <div class="ms-xxl-3 ms-3">
+                          <p class="text-info-dark fw-semibold mb-2">{{element.firstName}}&nbsp;{{element.lastName}}</p>
+                          <p class="text-grey-4 mb-0">{{element.email}}</p>
+                        </div>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="role">
+                    <th mat-header-cell *matHeaderCellDef>Role</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span class="fw-semibold">{{element.role}}</span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span class="word-break">Active</span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef [hidden]="user.role === 'BusinessAdmin'">Actions</th>
+                    <td mat-cell *matCellDef="let element" [hidden]="user.role === 'BusinessAdmin'">
+                      <div class="text-start">
+                        <img src="./assets/images/more-vertical.svg" #ddTrigger="matMenuTrigger"
+                          [matMenuTriggerFor]="dd" class="cursor-pointer">
+                        <mat-menu #dd="matMenu" [overlapTrigger]="false">
+                          <div class="dropdown">
+                            <div class="action-frame">
+                              <div class="mx-3 cursor-pointer" (click)="openDialog(element.id)">Edit</div>
+                              <hr class="hr-line text-gray-400" />
+                              <div class="mx-3 cursor-pointer" (click)="deleteUser(element.id)">Remove</div>
+                            </div>
+                          </div>
+                        </mat-menu>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <div *ngIf="!initialLoader">
+                  <mat-paginator (page)="onPageChange($event)" [length]='totalElements' [pageIndex]="pageInd"
+                    [pageSize]="queryParams.limit" [pageSizeOptions]="[5, 10, 20, 50, 100]" aria-label="Select page">
+                  </mat-paginator>
+                </div>
+              </div>
+              <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!users?.length && !initialLoader">
+                No records found !
+              </div>
+              <div class="center h-100 mt-5" *ngIf="initialLoader">
+                <app-page-loader class="v-center"></app-page-loader>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

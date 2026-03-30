@@ -1,0 +1,20 @@
+.no-overflow {
+  white-space: no-wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.channel.active {
+  border-bottom: 2px solid #026aa2;
+  color: #026aa2;
+  padding-bottom: 10px;
+}
+li {
+  line-height: 28px;
+}
+ul { list-style: none; }
+p-dropdown div.p-dropdown {min-width: 100% !important;}
+.form-control:focus {box-shadow: none;}
+tr > td, tr > th {
+    padding: 10px !important;
+}
+li.activeLeftMenu {background-color: #e2f5ff; padding-top: 5px; padding-bottom: 5px; border: 1px solid #c4e0ee;}

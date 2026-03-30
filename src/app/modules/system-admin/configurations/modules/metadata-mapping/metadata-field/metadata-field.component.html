@@ -1,0 +1,224 @@
+<div class="bg-white px-4">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+      <div class="col-sm-12">
+        <div
+          (click)="onBack()"
+          class="text-decoration-none d-flex align-items-center px-0 cursor-pointer"
+        >
+          <h5 class="fw-semibold">
+            <img
+              src="./assets/images/arrow-left.svg"
+              class="me-1"
+              alt="arrow left"
+            />
+            Metadata Field Mapping
+          </h5>
+        </div>
+        <div class="row my-2 d-flex align-items-center">
+          <div class="col-4">
+            <label
+              for="fieldMapping"
+              class="form-label fw-semibold text-font-dark"
+              >Field Mapping Name</label
+            >
+            <input
+              type="text"
+              name="fieldMapping"
+              id="fieldMapping"
+              class="form-control py-2"
+              #input
+              [(ngModel)]="ocrFieldsObject.name"
+              (input)="checkName = false"
+            />
+            <small style="color:red" *ngIf="this.checkName">Please enter Field Mapping Name</small>
+          </div>
+          <div class="col-4"></div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <nav>
+          <div class="nav nav-underline" id="nav-tab" role="tablist">
+            <button
+              class="nav-link px-2 active"
+              id="nav-header-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-header"
+              type="button"
+              role="tab"
+              aria-controls="nav-header"
+              aria-selected="true"
+            >
+              Fields
+            </button>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div
+            class="tab-pane fade show active"
+            id="nav-header"
+            role="tabpanel"
+            aria-labelledby="nav-header-tab"
+            tabindex="0"
+          >
+            <div
+              class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 my-3"
+              role="alert"
+            >
+              <img src="./assets/images/bulb.svg" class="me-2" alt="bilb" />
+              <div class="text-grey-4">
+                Defining data extraction areas to utilize information
+                effectively.
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-9 col-xxl-9">
+                <div
+                  class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0"
+                >
+                <form #saveOcrFieldData="ngForm">
+                  <table class="table table-bordered user-management mb-0">
+                    <thead>
+                      <tr>
+                        <th scope="col">
+                          <span class="text-uppercase">Data Field</span>
+                        </th>
+                        <th scope="col">
+                          <span class="text-uppercase">Table Field</span>
+                        </th>
+                        <th scope="col">
+                          <span class="text-uppercase">Type</span>
+                        </th>
+                        <th scope="col">
+                          <span class="text-uppercase">XML Field</span>
+                        </th>
+                        <th scope="col">
+                          <span class="text-uppercase">Table Column</span>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of ocrFieldsObject.items; let i=index">
+                        <td>
+                          <input
+                            type="text"
+                            name="field{{i}}"
+                            #field="ngModel"
+                            class="form-control py-2"
+                            [(ngModel)]="data.dataField"
+                            required
+                          />
+                          <small style="color:red" *ngIf="!field.value && (field?.dirty || field?.touched)">Please enter Field</small>
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            name="tableField{{i}}"
+                            #tableField="ngModel"
+                            class="form-control py-2"
+                            [(ngModel)]="data.tableField"
+                            required
+                          />
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown
+                                appendTo="body"
+                                name="types{{i}}"
+                                #type="ngModel"
+                                [options]="types"
+                                [(ngModel)]="data.type"
+                                placeholder="Select Type"
+                                [required]="true"
+                              ></p-dropdown>
+                            </div>
+                            <select
+                              *ngIf="data.type === 'Date'"
+                              class="form-select select-warning w-sm-auto ps-2 py-1 small"
+                              aria-label="Default select example"
+                            >
+                              <option selected>yy-mm-dd</option>
+                              <option selected>mm-yy-dd</option>
+                            </select>
+                          </div>
+                          <small style="color:red" *ngIf="!type.value && (type?.dirty || type?.touched)">Please select Type</small>
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            name="xmlField{{i}}"
+                            #xmlFieldData="ngModel"
+                            class="form-control py-2"
+                            [(ngModel)]="data.xmlField"
+                            required
+                          />
+                          <small style="color:red" *ngIf="!xmlFieldData.value && (xmlFieldData?.dirty || xmlFieldData?.touched)">Please enter Field</small>
+                        </td>
+                        <td>
+                          <input
+                            type="checkbox"
+                            name="enable{{i}}"
+                            #enable="ngModel"
+                            class="py-2"
+                            [(ngModel)]="data.enable" />
+                        </td>
+                        <td style="width: 50px">
+                          <a class="cursor-pointer" (click)="removeItem(data)"
+                            ><img
+                              src="./assets/images/trash-02.svg"
+                              alt="delete"
+                          /></a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="4">
+                          <button class="btn btn-info shadow" (click)="addFields()">
+                            <img
+                              src="./assets/images/plus.svg"
+                              class="me-1"
+                              alt="add"
+                            />
+                            Add New
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="nav-lineItems"
+            role="tabpanel"
+            aria-labelledby="nav-lineItems-tab"
+            tabindex="0"
+          >
+
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="d-flex align-items-center justify-content-end">
+            <button (click)="onBack()" class="cancel-btn me-3">
+              Cancel
+            </button>
+            <button matRipple class="common-btn" [disabled]="isWait || !saveOcrFieldData.valid" (click)="submit()">
+              <ng-container *ngIf="isWait">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isWait && editMode==='new'">Save</ng-container>
+              <ng-container *ngIf="!isWait && editMode==='edit'">Update</ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

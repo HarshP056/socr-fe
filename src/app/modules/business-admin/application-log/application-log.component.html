@@ -1,0 +1,93 @@
+<!-- <div class="container-fluid px-0 h-100">
+  <div class="wrapper h-calc d-flex justify-content-center h-100">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap"> -->
+      <div class="main-content bg-white w-100">
+        <div class="row mx-0 pb-0 px-lg-4 pt-lg-3">
+          <h5 style="cursor: pointer;" routerLink="/system-admin/system-logs" class="fw-semibold">
+            <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">
+            Application Log
+          </h5>
+          <div class="col-lg-12 px-0">
+            <div class="table-responsive mt-4 px-0" *ngIf="application?.length && !initialLoader">
+              <table (matSortChange)="sortChange($event)" matSort matSortDirection="desc" matSortActive="dateTime"
+                class="mb-0 table user-management" mat-table [dataSource]="application">
+                <ng-container matColumnDef="fromEmail">
+                  <th mat-header-cell *matHeaderCellDef>id</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">{{element.id}}</p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>ID</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-info fw-semibold my-0">{{element.id}}</p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="dateTime">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Date</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">{{element.dateTime | date:'medium'}}</p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="title">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Title </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">{{element.title}}</p>
+                  </td>
+                </ng-container>
+
+
+
+                <ng-container matColumnDef="type">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Type</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="fw-semibold">{{element.type}}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Description</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span>{{element.description}}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="apiPath">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Api Path</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span>{{element.apiPath}}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Name</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span>{{element.name}}</span>
+                  </td>
+                </ng-container>
+
+
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+              <div *ngIf="!initialLoader">
+                <mat-paginator showFirstLastButtons [length]="total" [pageSize]="size" (page)="onPaginateChange($event)"
+                  [pageIndex]="page - 1" [pageSizeOptions]="limits" (page)="pageEvent = $event">
+                </mat-paginator>
+              </div>
+            </div>
+            <div class="center d-flex flex-column align-items-center mt-5"
+              *ngIf="!application?.length && !initialLoader">
+              <!-- <img src="./assets/media/icons/not-found.svg" alt="" /> -->
+              No records found !
+            </div>
+            <div class="center h-100 mt-5" *ngIf="initialLoader">
+              <app-page-loader class="v-center"></app-page-loader>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- </div>
+  </div>
+</div> -->

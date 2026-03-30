@@ -1,0 +1,151 @@
+<div class="main-content w-100 d-flex justify-content-center">
+  <div class="row mx-0 pt-3 pt-lg-4 bg-white" style="width: 85%;">
+    <div class="p-4 pt-0">
+      <div class="col-sm-12 mb-3">
+        <a routerLink="/business-admin/posted-invoice-data" class="text-decoration-none d-flex align-items-center px-0">
+          <!-- <h5 class="fw-semibold" *ngIf="editMode === 'new'"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">Create RFP AI Prompt</h5> -->
+          <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">Invoice Posted Data</h5>
+        </a>
+        <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+          <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+          <!-- <div class="text-grey-4" *ngIf="editMode === 'new'">
+            Defining RFP AI Prompt.
+          </div> -->
+          <div class="text-grey-4">
+            Defining Invoice Posted Data.
+          </div>
+        </div>
+      </div>
+      <span class="py-4" style="font-size: 16px;font-weight: 600;">Header Fields</span>
+      <div class="row mt-4 mb-4">
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">SSP Invoice Reference No</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.sspInvoiceReferenceNo">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="maxTokens" class="form-label fw-semibold text-font-dark">SAP Invoice Reference Number</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.sapInvoiceReferenceNumber"  placeholder="model">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="maxTokens" class="form-label fw-semibold text-font-dark">Vendor Invoice Reference Number</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.vendorInvoiceReferenceNumber"  placeholder="model">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="role" class="form-label fw-semibold text-font-dark">Client Id</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.clientId">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="maxTokens" class="form-label fw-semibold text-font-dark">Channel</label>
+          <p-dropdown optionLabel="name" optionValue="value"
+            [(ngModel)]="postedInvoiceData.channel" name="creditMemo" [options]="channels"
+            placeholder="Select Logical System" optionDisabled="inactive"></p-dropdown>        </div>
+        <div class="col-md-2 mb-3">
+          <label for="role" class="form-label fw-semibold text-font-dark">Supplier Id</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.supplierId">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">Supplier Name</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.supplierName">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="role" class="form-label fw-semibold text-font-dark">Purchase Order Number</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.poNumber">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">Invoice Amount</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.totalInvoiceAmount">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">Currency</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.currency">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">Created Date</label>
+          <div type="text" class="form-control">{{postedInvoiceData.createdDate | date:'MM-dd-yyyy HH:mm a'}}</div>
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">Invoice Date</label>
+          <div type="text" class="form-control">{{postedInvoiceData.invoiceDate | date:'MM-dd-yyyy HH:mm a' }}</div>
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">Year</label>
+          <input type="text" class="form-control" [(ngModel)]="postedInvoiceData.year">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark">Credit Memo</label>
+          <p-dropdown optionLabel="name" optionValue="value"
+            [(ngModel)]="postedInvoiceData.creditMemo" name="creditMemo" [options]="creditMemos"
+            placeholder="Select Logical System" optionDisabled="inactive"></p-dropdown>
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="maxTokens" class="form-label fw-semibold text-font-dark">System</label>
+          <p-dropdown optionLabel="systemId" optionValue="systemId"
+            [(ngModel)]="postedInvoiceData.logicalSystem" name="system" [options]="logicalSystems"
+            placeholder="Select Logical System" optionDisabled="inactive"></p-dropdown>
+        </div>
+      </div>
+
+      <span style="font-size: 16px;font-weight: 600;">Line Fields</span>
+
+      <div class="row mt-4">
+        <table class="table user-management" mat-table [dataSource]="postedInvoiceData.postedInvoiceLineItems">
+
+          <ng-container matColumnDef="itemText">
+            <th mat-header-cell *matHeaderCellDef> Item Text </th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.itemText }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef> Quantity </th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.quantity | number : "1.2-2"}}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="unitPrice">
+            <th mat-header-cell *matHeaderCellDef> Unit Price </th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.unitPrice | number : "1.2-2"}}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="companyCode">
+            <th mat-header-cell *matHeaderCellDef> Company Code </th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.companyCode }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="costCenter">
+            <th mat-header-cell *matHeaderCellDef> Cost Center </th>
+            <td mat-cell *matCellDef="let element">
+                <div class="d-flex flex-column flex-wrap">
+                  <span class="fw-semibold">{{ element.costCenter }}</span>
+                  <span>({{ element.costCenterDesc }})</span>
+                </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="glAccountCode">
+            <th mat-header-cell *matHeaderCellDef> GL Account </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex flex-column flex-wrap">
+                <span class="fw-semibold">{{ element.glAccountCode }}</span>
+                <span>({{ element.glAccountDesc }})</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <div class="center h-100" *ngIf="initialLoader">
+        <app-page-loader class="v-center"></app-page-loader>
+      </div>
+    </div>
+  </div>
+</div>

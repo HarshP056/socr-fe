@@ -1,0 +1,45 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+      <div class="bg-white w-100">
+        <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+          <a routerLink="/system-admin/system-settings" class="text-decoration-none d-flex align-items-center px-0 py-3">
+            <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">System Configurations</h5>
+          </a>
+          <div class="w-50 border rounded px-0 ms-5 mt-3">
+            <div class="col-md-12 py-2 border-bottom px-0">
+              <mat-slide-toggle class="px-4" [(ngModel)]="systemConfig.enable" [checked]="systemConfig.enable"
+                (change)="getToggle($event)">
+                <span class="ps-2">Enable S1 Portal</span>
+              </mat-slide-toggle>
+            </div>
+            <!-- <div class="col-md-12 py-2 border-bottom">
+              <mat-slide-toggle class="px-4" [(ngModel)]="systemConfig.mdiBarcodeRecognitionEnable" [checked]="systemConfig.mdiBarcodeRecognitionEnable"
+                (change)="getToggle($event)">
+                <span class="ps-2">Use MDI for Bar Code Recognition</span>
+              </mat-slide-toggle>
+            </div> -->
+            <div class="col-md-12 py-2 border-bottom">
+              <mat-slide-toggle class="px-4" [(ngModel)]="systemConfig.barcodeEnable" [checked]="systemConfig.barcodeEnable"
+                (change)="getToggle($event)">
+                <span class="ps-2">Enable Bar Code</span>
+              </mat-slide-toggle>
+            </div>
+            <div class="col-md-12 py-2 border-bottom">
+              <mat-slide-toggle class="px-4" [(ngModel)]="systemConfig.qrCodeEnable" [checked]="systemConfig.qrCodeEnable"
+                (change)="getToggle($event)">
+                <span class="ps-2">Enable QR Code</span>
+              </mat-slide-toggle>
+            </div>
+            <div class="col-md-12 py-2 border-bottom">
+              <mat-slide-toggle class="px-4" [(ngModel)]="systemConfig.vectorSearch" [checked]="systemConfig.vectorSearch"
+                (change)="getToggle($event)">
+                <span class="ps-2">Enable Vector Search</span>
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

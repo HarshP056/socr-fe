@@ -1,0 +1,116 @@
+<div class="container-fluid px-0">
+  <div class="wrapper h-calc d-flex justify-content-center">
+    <div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+      <div class="main-content bg-white">
+        <div class="row mx-0 p-3 p-lg-4 pt-lg-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <a routerLink="/business-admin" class="text-decoration-none d-flex align-items-center px-0">
+                <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> GST</h5>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-12 mb-2 px-0">
+            <div
+              class="d-flex align-items-center justify-content-between flex-wrap gap-2 bg-light-2 border border-dashed rounded-3 px-3">
+              <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">
+                <div class="position-relative search-form">
+                  <img src="./assets/images/search.svg" class="ms-2 position-absolute" alt="search icon">
+                  <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by GST Number" [(ngModel)]="searchQueryParams.gstNo">
+                </div>
+                <div class="card flex justify-content-center" style="border: none;">
+                  <p-dropdown name="system" [options]="systems" optionValue="systemId" optionLabel="systemId" [showClear]="true" placeholder="Select System" [(ngModel)]="searchQueryParams.logicalSystem"></p-dropdown>
+                </div>
+                <div class="d-flex align-items-center gap-2 ms-2">
+                  <div>
+                    <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                      <ng-container *ngIf="isLoading">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Searching...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!isLoading">Search</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple [disabled]="resettingLoader" (click)="reset()">
+                      <ng-container *ngIf="resettingLoader">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Resetting...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!resettingLoader">Reset</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 text-nowrap pb-3 pt-0 pt-lg-3">
+                <div>
+                  <button class="btn btn-info shadow" type="button" (click)="openDialog('')"
+                    aria-controls="offcanvasWithBothOptions"><img src="./assets/images/plus.svg" class="me-1" alt="add">
+                    Add GST</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="table-responsive mt-4 px-0" *ngIf="gstList?.length && !initialLoader">
+                <table class="table user-management" mat-table [dataSource]="gstList">
+                  <ng-container matColumnDef="gstNo">
+                      <th mat-header-cell *matHeaderCellDef>GST No</th>
+                      <td mat-cell *matCellDef="let element">
+                        <span class="fw-semibold">{{element.gstNo}}</span>
+                      </td>
+                    </ng-container>
+
+                  <ng-container matColumnDef="logicalSystem">
+                    <th mat-header-cell *matHeaderCellDef>System</th>
+                    <td mat-cell *matCellDef="let element">
+                      <span class="word-break">{{element.logicalSystem}}</span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="text-start">
+                        <img src="./assets/images/more-vertical.svg" #ddTrigger="matMenuTrigger"
+                          [matMenuTriggerFor]="dd" class="cursor-pointer">
+                        <mat-menu #dd="matMenu" [overlapTrigger]="false">
+                          <div class="dropdown">
+                            <div class="action-frame">
+                              <div class="mx-3 cursor-pointer" (click)="openDialog(element.id)">Edit</div>
+                              <hr class="hr-line text-gray-400" />
+                              <div class="mx-3 cursor-pointer" (click)="deleteGST(element.id)">Remove</div>
+                            </div>
+                          </div>
+                        </mat-menu>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <div *ngIf="!initialLoader">
+                  <mat-paginator (page)="onPageChange($event)" [length]='totlaElements' [pageIndex]="pageInd"
+                    [pageSize]="searchQueryParams.limit" [pageSizeOptions]="[5, 10, 20, 50, 100]" aria-label="Select page">
+                  </mat-paginator>
+                </div>
+              </div>
+              <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!gstList?.length && !initialLoader">
+                No records found !
+              </div>
+              <div class="center h-100 mt-5" *ngIf="initialLoader">
+                <app-page-loader class="v-center"></app-page-loader>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

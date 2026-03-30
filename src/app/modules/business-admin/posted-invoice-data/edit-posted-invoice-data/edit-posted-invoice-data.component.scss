@@ -1,0 +1,76 @@
+.tab-main-frame {
+  height: 40px;
+  margin-top: 0rem;
+  // margin-bottom: 13px;
+  cursor: pointer;
+}
+
+.activeTab {
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+
+.tab-text {
+  font-weight: 400;
+  font-size: 14px;
+  color: #026AA2;
+}
+
+.errorTab {
+  margin-right: 2rem;
+}
+
+.In-ProcessTab {
+  margin-right: 2rem;
+}
+
+.ProcessedTab {
+  margin-right: 2rem;
+}
+
+.CompletedTab {
+  margin-right: 2rem;
+}
+
+.AuditTab {
+  margin-right: 2rem;
+}
+
+.activeMe {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  color: #026aa2;
+  border-bottom: 3px solid #026aa2;
+  cursor: pointer;
+}
+
+.vendorList {
+  background: linear-gradient(0deg, #FFFFFF, #FFFFFF), linear-gradient(0deg, #E5EAEE, #E5EAEE);
+  padding: 15px 27px;
+}
+
+.sticky-header {
+  position: sticky !important;
+  top: -1px !important;
+}
+
+.table.user-management.fields>tbody>tr>td {
+  padding: 5px;
+  vertical-align: middle;
+}
+
+.table.user-management.fields>thead>tr>th {
+  padding: 5px;
+}
+
+.py-1-5 {padding: 6px !important;}
+::ng-deep .p-dropdown-panel {
+  max-height: 300px; /* Adjust as needed */
+}

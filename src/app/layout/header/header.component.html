@@ -1,0 +1,111 @@
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg bg-white" style="position: sticky;top: 0;z-index: 999;box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);">
+  <div class="container-fluid custom">
+    <a class="navbar-brand" routerLink="/dashboard"><img src="./assets/images/logo1.png" alt="logo"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse py-lg-0 py-4" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5 position-relative gap-2">
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" routerLink="/dashboard"
+            routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M13 9V3h8v6zM3 13V3h8v10zm10 8V11h8v10zM3 21v-6h8v6z"/></svg>
+            <span style="margin-top: 2px;">Dashboard</span></a>
+        </li>
+        <li class="nav-item" *ngIf="user.role !== 'VerificationUser'">
+          <a class="nav-link d-flex align-items-center gap-2" routerLink="/ocr-q" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m12 21.05l-9-7l1.65-1.25L12 18.5l7.35-5.7L21 14.05zM12 16L3 9l9-7l9 7z"/></svg>
+            <span style="margin-top: 2px;">SKEY-Q</span> </a>
+        </li>
+        <li class="nav-item" style="padding-top: 2px;">
+          <a class="nav-link d-flex align-items-center gap-2" routerLink="/socr-ocr-q" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m12 21.05l-9-7l1.65-1.25L12 18.5l7.35-5.7L21 14.05zM12 16L3 9l9-7l9 7z"/></svg>
+            <span>SOCR-Q</span> </a>
+        </li>
+        <li class="nav-item" style="padding-top: 2px;" *ngIf="user.role !== 'VerificationUser'">
+          <a class="nav-link d-flex align-items-center gap-2" routerLink="/socr-ocr-studio" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M2 5v14h12v-2h-2c-1.11 0-2-.89-2-2V9c0-1.11.89-2 2-2h2V5m0 2v2h2V7m-2 2h-2v6h2m0 0v2h2v-2M5 7h2c1.11 0 2 .89 2 2v6c0 1.11-.89 2-2 2H5c-1.11 0-2-.89-2-2V9c0-1.11.89-2 2-2m12 0v10h2v-4h1v1h1v3h2v-3h-1v-2h1V8h-1V7M5 9v6h2V9m12 0h2v2h-2Z"/></svg>
+            <span>SOCR Studio</span> </a>
+        </li>
+        <li class="nav-item" *ngIf="user.role === 'SuperAdmin' || user.role === 'SystemAdmin' || user.role === 'BusinessAdmin' || user.role !== 'VerificationUser'">
+          <a class="nav-link d-flex align-items-center gap-2" routerLink="/business-admin" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 2h4a2 2 0 0 1 2 2v2h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8c0-1.11.89-2 2-2h4V4c0-1.11.89-2 2-2m4 4V4h-4v2z"/></svg>
+            <span style="margin-top: 2px;">Business Admin</span> </a>
+        </li>
+        <li class="nav-item" *ngIf="user.role === 'SuperAdmin' || user.role === 'SystemAdmin' || user.role !== 'VerificationUser'">
+          <a class="nav-link d-flex align-items-center gap-2" routerLink="/system-admin" routerLinkActive="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h6v2H7a1 1 0 0 0 0 2h10a1 1 0 0 0 0-2h-4v-2h6a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3m1 11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1Z"/></svg>
+            <span style="margin-top: 2px;">System Admin</span></a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center gap-3 mt-lg-0 mt-4 cursor-pointer">
+        <a (click)="openAlertLogs()">
+          <div class="p-2 rounded-3 position-relative" style="background-color: #F0F9FF;">
+            <span class="position-absolute notifications badge rounded-pill bg-danger">
+              {{alertLogCount}}
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48" style="color: #003E76; font-size: 24px;">
+              <path fill="currentColor" d="M11.5 19v8.75c0 .174-.036.346-.107.505L8.639 34.5h30.724l-2.756-6.245a1.25 1.25 0 0 1-.106-.505V19c0-6.904-5.596-12.5-12.5-12.5S11.5 12.096 11.5 19M18 37H8.254a2.25 2.25 0 0 1-2.058-3.158L9 27.487V19c0-8.284 6.716-15 15-15s15 6.716 15 15v8.487l2.804 6.355A2.25 2.25 0 0 1 39.746 37H30v1a6 6 0 0 1-12 0zm9.5 0h-7v1a3.5 3.5 0 1 0 7 0z"/>
+            </svg>
+          </div>
+        </a>
+        <div>
+          <span [matMenuTriggerFor]="menu" class="dp">{{user.name.substring(0,2).toUpperCase()}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- /Navigation -->
+
+<mat-menu class="mt-1" #menu="matMenu">
+  <button class="mat-item-header" mat-menu-item>
+    <div class="d-flex align-items-center">
+      <div class="dropdown-dp me-2">{{user.name.substring(0,2).toUpperCase()}}</div>
+      <div class="flex flex-col">
+        <div class="my-0.5" style="color: #344054;">{{user.name}}</div>
+        <div class="fs-7 my-0.5" style="color: #667085;">{{user.email}}</div>
+      </div>
+    </div>
+  </button>
+  <button class="mat-item" mat-menu-item style="cursor: default;">
+    <div class="d-flex align-items-center">
+      <span class="text-grey fw-bold fs-7">MY PROFILE</span>
+    </div>
+  </button>
+  <button class="mat-item" mat-menu-item style="cursor: default;">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path
+          d="M13.3334 14V12.6667C13.3334 11.9594 13.0525 11.2811 12.5524 10.781C12.0523 10.281 11.374 10 10.6667 10H5.33341C4.62617 10 3.94789 10.281 3.4478 10.781C2.9477 11.2811 2.66675 11.9594 2.66675 12.6667V14M10.6667 4.66667C10.6667 6.13943 9.47284 7.33333 8.00008 7.33333C6.52732 7.33333 5.33341 6.13943 5.33341 4.66667C5.33341 3.19391 6.52732 2 8.00008 2C9.47284 2 10.6667 3.19391 10.6667 4.66667Z"
+          stroke="#80808F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="fs-6">View profile</span>
+    </div>
+  </button>
+  <button class="mat-item cursor-pointer" mat-menu-item (click)="changePassword()">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <img src="./assets/images/change-password.svg">
+      <span class="fs-6">Change Password</span>
+    </div>
+  </button>
+  <mat-divider></mat-divider>
+  <button (click)="logout()" class="mat-item" mat-menu-item>
+    <div class="d-flex align-items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path
+          d="M6 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6M10.6667 11.3333L14 8M14 8L10.6667 4.66667M14 8H6"
+          stroke="#80808F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="fs-6">Log Out</span>
+    </div>
+  </button>
+</mat-menu>
+
+<ng-template #password>
+  <app-change-password></app-change-password>
+</ng-template>
+
+<app-basic-modal #comment (hidden)="comment.hide()" heading="Change Password"></app-basic-modal>

@@ -1,0 +1,151 @@
+<div class="main-content bg-white w-100">
+        <div class="row mx-0 pb-0 px-lg-4 pt-lg-3">
+          <h5 style="cursor: pointer" routerLink="/system-admin/system-logs" class="fw-semibold">
+            <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left" />
+            File Logs
+          </h5>
+                <div action=""
+              class="d-flex align-items-center justify-content-between flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 px-3">
+              <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">
+                <input type="search" class="form-control w-sm-auto py-2" placeholder="Search By Channel"
+                  [(ngModel)]="queryParams.channelName">
+                <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by Doc ID"
+                  [(ngModel)]="queryParams.docId">
+                <input type="search" class="form-control w-sm-auto py-2" placeholder="Search by File Name"
+                  [(ngModel)]="queryParams.fileName">
+                <div class="dropdown-border">
+                  <p-dropdown [(ngModel)]="queryParams.status" name="status" [options]="statusList"
+                    placeholder="Select Status" optionDisabled="inactive" optionLabel="name"
+                    optionValue="value"></p-dropdown>
+                </div>
+               <div class="searchBox cursor-pointer">
+                <input type="text" class="w-100 border-0" placeholder="Search By Date" #dp="bsDaterangepicker"
+                  bsDaterangepicker [bsConfig]="{
+                      showWeekNumbers: false,
+                      rangeInputFormat: 'DD MMM,YYYY'
+                    }" [(ngModel)]="queryParams.dateRange" (ngModelChange)="onDateRangeSelected()"
+                  [maxDate]="maxDate" readonly name="dateRange" style="font-size: 0.9rem;" />
+                <div>
+                  <img (click)="dp.toggle()" *ngIf="!queryParams.dateRange?.length" src="./assets/media/calendar.svg"
+                    alt="" />
+                  <span *ngIf="queryParams.dateRange?.length" class="cursor-pointer crossicon" (click)="removeDate()">
+                    <span>
+                      <i class="bi bi-x-lg"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+                <div class="d-flex align-items-center gap-2 ms-2">
+                  <div>
+                    <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                      <ng-container *ngIf="isLoading">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Searching...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!isLoading">Search</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple
+                      [disabled]="resettingLoader" (click)="reset()">
+                      <ng-container *ngIf="resettingLoader">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Resetting...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!resettingLoader">Reset</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+      
+          <div class="col-lg-12 px-0">
+            <div class="table-responsive mt-4 px-0" *ngIf="fileLogs?.length && !initialLoader">
+              <table (matSortChange)="sortChange($event)" matSort matSortDirection="desc"
+                matSortActive="createdDateTime" class="mb-0 table user-management" mat-table [dataSource]="fileLogs">
+                <ng-container matColumnDef="channelName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Channel
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-info fw-semibold my-0">
+                      {{ element.channelName }}
+                    </p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="fileName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    File Name
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">
+                      {{ element.fileName }}
+                    </p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="docId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Doc ID
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">
+                      {{ element.docId }}
+                    </p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="processedDateTime">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Processed Date Time
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p class="text-grey-4 my-0 text-truncate table-title">{{ element.processedDateTime | date : "medium" }}</p>
+                  </td>
+                </ng-container>
+                 <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Status
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span>{{ element.status }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="reason">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                    Reason
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span>{{ element.reason }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="d-flex gap-4 align-items-center">
+                      <img src="./assets/images/eye.svg" alt="" (click)="getDoc(element)" matTooltip="View pdf" matTooltipPosition="above" class="me-2 cursor-pointer"
+                        *ngIf="element.attachment" />
+                    </div>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              </table>
+              <div *ngIf="!initialLoader">
+                <mat-paginator showFirstLastButtons [length]="totalElements" [pageSize]="limit" (page)="onPaginateChange($event)"
+                  [pageIndex]="page - 1" [pageSizeOptions]="limits" (page)="pageEvent = $event">
+                </mat-paginator>
+              </div>
+            </div>
+            <div class="center d-flex flex-column align-items-center mt-5" *ngIf="!fileLogs?.length && !initialLoader">
+              No records found !
+            </div>
+            <div class="center h-100 mt-5" *ngIf="initialLoader">
+              <app-page-loader class="v-center"></app-page-loader>
+            </div>
+          </div>
+        </div>
+      </div>

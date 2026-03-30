@@ -1,0 +1,55 @@
+<div class="mb-3 cursor-pointer d-flex justify-content-between fixed-header">
+  <ul class="nav nav-tab">
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{activeTab:selectedTab ===1}" (click)="onTabchange(1)">
+        <span>
+          PDF Viewer
+        </span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{activeTab:selectedTab ===2}" (click)="onTabchange(2)">
+        <span>
+          Downloads
+        </span>
+      </a>
+    </li>
+  </ul>
+  <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close">
+    <img src="./assets/images/x.svg" alt="">
+  </button>
+</div>
+<div class="h-100">
+  <ng-container *ngIf="selectedTab === 1">
+    <div class="pdf-document-viewer h-100" *ngIf="urlSafe">
+      <iframe id="pdfFrame" class="h-100 w-100" [src]="urlSafe | safe" style="border: none"></iframe>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="selectedTab === 2">
+    <div class="table-responsive mt-4 px-4">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Item</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of attachments; let i=index">
+            <td>{{i+1}}</td>
+            <td>{{item.filename}}</td>
+            <td >
+              <!-- <a  class="cursor-pointer" target="_blank" class="cursor-pointer" (click)="getDoc(item.documentId)" [href]="downloadFile" [download]="item.fileName">
+                <img src="./assets/images/download.svg">
+              </a> -->
+              <div class="cursor-pointer" (click)="getDoc(item)">
+                <img src="./assets/images/download.svg">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,1526 @@
+<div class="wrapper-content d-flex justify-content-center w-100 flex-wrap">
+  <div class="main-content bg-white w-100">
+    <div class="row mx-0 pt-3">
+      <div class="px-3">
+        <div class="col-sm-12">
+          <div class="d-flex justify-content-between mb-2">
+            <div>
+              <a (click)="onBack()" class="text-decoration-none d-flex align-items-center px-0"
+                style="cursor: pointer;">
+                <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> OCR Project Creation </h5>
+              </a>
+            </div>
+            <div>
+              <div class="d-flex align-items-center justify-content-end">
+                <button (click)="onBack()" class="cancel-btn me-3">
+                  Cancel
+                </button>
+                <button matRipple class="common-btn" [disabled]="isWait" (click)="submit()">
+                  <ng-container *ngIf="isWait">
+                    <span clas="indicator-progress" [style.display]="'block'">
+                      Please wait...{{ " " }}
+                      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="!isWait && editMode === 'new'">Save</ng-container>
+                  <ng-container *ngIf="!isWait && editMode === 'edit'">Update</ng-container>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-2" role="alert">
+            <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+            <div class="text-grey-4">
+              Tailoring optical character recognition settings for optimal document analysis
+            </div>
+          </div>
+          <div class="d-flex d-flex-row mt-2 justify-content-between">
+            <div class="w-100 tab-main-frame">
+              <div class="activeTab d-flex flex-row justify-content-between">
+                <div class="activeTab item-tab">
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('overViewTab')"
+                    [ngClass]="{ activeMe: activeTab === 'overViewTab' }">Overview
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('headerFieldsTab')"
+                    [ngClass]="{ activeMe: activeTab === 'headerFieldsTab' }">Header Fields
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('lineItemFieldsTab')"
+                    [ngClass]="{ activeMe: activeTab === 'lineItemFieldsTab' }">Line Item Fields
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('customFields')"
+                    [ngClass]="{ activeMe: activeTab === 'customFields' }">Custom Fields
+                  </div>
+                  <div *ngIf="!isWait && editMode === 'edit'" class="errorTab tab-text activeTab"
+                    (click)="setActiveTab('rulesTab')" [ngClass]="{ activeMe: activeTab === 'rulesTab' }">Rules
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('llmRulesTab')"
+                    [ngClass]="{ activeMe: activeTab === 'llmRulesTab' }">LLM Rules
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('derivationTab')"
+                    [ngClass]="{ activeMe: activeTab === 'derivationTab' }">Derivation
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('businessRule')"
+                    [ngClass]="{ activeMe: activeTab === 'businessRule' }">Business Rules
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('preferencesTab')"
+                    [ngClass]="{ activeMe: activeTab === 'preferencesTab' }">Preferences
+                  </div>
+                  <div class="errorTab tab-text activeTab" (click)="setActiveTab('lineItemConfigTab')"
+                    [ngClass]="{ activeMe: activeTab === 'lineItemConfigTab' }">Line Item Configuration
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <hr class="mt-2">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- overview tab -->
+        <div *ngIf="activeTab==='overViewTab'">
+          <div>
+            <form #form="ngForm">
+              <div class="row">
+                <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">Project Name</label>
+                  <input name="projectNameOrGuid" [(ngModel)]="ocrProfileObject.projectNameOrGuid" type="text"
+                    class="form-control">
+                </div>
+
+                <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">Page Size</label>
+                  <input name="projectSize" [(ngModel)]="ocrProfileObject.pageSize" type="number" min="1"
+                    class="form-control" oninput="this.value =
+                    !!this.value && Math.abs(this.value) >= 1 ? Math.abs(this.value) : null">
+                </div>
+
+                <!-- <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">URL</label>
+                  <input name="url" [(ngModel)]="ocrProfileObject.url" type="text" class="form-control">
+                  <p class="text-grey-4 mt-1 mb-1">A specific URL or web address that allows communication between
+                    different
+                    software applications or systems</p>
+                </div> -->
+                <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">MDI Model Type</label>
+                  <select name="mdiModelType" class="form-select" [(ngModel)]="ocrProfileObject.mdiModelType">
+                    <option value="">Select Model Type</option>
+                    <option value="{{item.value}}" *ngFor="let item of modelTypes">{{item.name}}</option>
+                  </select>
+                </div>
+                <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">MDI Model Version</label>
+                  <select name="mdiModelVersion" class="form-select" [(ngModel)]="ocrProfileObject.mdiModelVersion">
+                    <option value="">Select Model Version</option>
+                    <option value="{{item.value}}" *ngFor="let item of modelVersions">{{item.name}}</option>
+                  </select>
+                </div>
+                <!-- <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">Auth</label>
+                  <input name="auth" [(ngModel)]="ocrProfileObject.auth" type="text" class="form-control">
+                </div> -->
+                <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">System</label>
+                  <select name="logicalSystem" class="form-select" [(ngModel)]="ocrProfileObject.logicalSystem">
+                    <option value="">Select System</option>
+                    <option value="{{item.systemId}}" *ngFor="let item of systems">{{item.systemId}}</option>
+                  </select>
+                </div>
+
+                <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">Engine Type</label>
+                  <select name="engineType" [(ngModel)]="ocrProfileObject.engineType" class="form-select"
+                    aria-label="Default select example">
+                    <option value="FCI">FCI</option>
+                    <option value="SOCR">SOCR</option>
+                  </select>
+                </div>
+
+                <div class="col-xl-6 mb-3">
+                  <label for="" class="form-label fw-semibold text-font-dark">Indexing Type</label>
+                  <select name="indexingType" class="form-select" [(ngModel)]="ocrProfileObject.indexingType">
+                    <option value="">Select Indexing Type</option>
+                    <option value="{{item}}" *ngFor="let item of indexingType">{{item}}</option>
+                  </select>
+                </div>
+
+                <div class="d-flex align-items-center">
+                  <div class="d-flex gap-2 align-items-center">
+                    <label for="autoVerification" class="form-label fw-semibold text-font-dark my-0">Auto Verification</label>
+                    <div class="form-check">
+                      <input id="autoVerification" name="autoVerification" [(ngModel)]="ocrProfileObject.auto"
+                        type="checkbox" class="form-check-input">
+                    </div>
+                  </div>
+                  <div class="ms-5 d-flex gap-2 align-items-center">
+                    <label for="mandatoryFieldsCheck" class="form-label fw-semibold text-font-dark my-0">Mandatory Fields Validation</label>
+                    <div class="form-check">
+                      <input id="mandatoryFieldsCheck" name="mandatoryFieldsCheck" [(ngModel)]="ocrProfileObject.mandatoryFieldsCheck"
+                        type="checkbox" class="form-check-input">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="dashed my-2">
+              <!-- <div class="d-flex align-items-center justify-content-end">
+                <button (click)="onBack()" class="cancel-btn me-3">
+                  Cancel
+                </button>
+                <button matRipple class="common-btn" [disabled]="isWait || form.invalid" (click)="submit()">
+                  <ng-container *ngIf="isWait">
+                    <span clas="indicator-progress" [style.display]="'block'">
+                      Please wait...{{ " " }}
+                      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="!isWait && editMode === 'new'">Save</ng-container>
+                  <ng-container *ngIf="!isWait && editMode === 'edit'">Update</ng-container>
+                </button>
+              </div> -->
+            </form>
+          </div>
+        </div>
+        <!-- Business Rule -->
+        <div *ngIf="activeTab==='businessRule'">
+          <div class="py-3">
+            <form #form="ngForm">
+              <div class="row d-flex">
+                <div class="d-flex gap-3 align-items-center col-md-3">
+                  <label for="digitalSignature" class="form-label fw-semibold text-font-dark m-0">Digital
+                    Signature</label>
+                  <div class="form-check">
+                    <input id="digitalSignature" name="digitalSignature" [(ngModel)]="ocrProfileObject.digitalSignature"
+                      type="checkbox" class="form-check-input">
+                  </div>
+                </div>
+                <div class="d-flex gap-3 align-items-center col-md-4">
+                  <label for="stamp" class="form-label fw-semibold text-font-dark m-0">Stamp and Physical
+                    Signature</label>
+                  <div class="form-check">
+                    <input id="stamp" name="stamp" [(ngModel)]="ocrProfileObject.stamp" type="checkbox"
+                      class="form-check-input">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div *ngIf="activeTab==='headerFieldsTab'">
+          <div class="row">
+            <div class="col-lg-12 col-xxl-12">
+              <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0"
+                style="overflow: auto;max-height: 600px;">
+                <form #saveOcrFieldData="ngForm">
+                  <table class="table table-bordered user-management fields mb-0">
+                    <thead class="sticky-header" style="z-index: 99;">
+                      <tr>
+                        <th scope="col">
+                          <span></span>
+                        </th>
+                        <th scope="col">
+                          <span>Mandatory Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>OCR Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>Disable Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>SOCR Studio Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>SKEY Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>SOCR Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>MDI Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>ERP</span>
+                        </th>
+                        <th scope="col">
+                          <span>Type</span>
+                        </th>
+                        <th scope="col">
+                          <span>Options</span>
+                        </th>
+                        <th scope="col">
+                          <span>Date Format</span>
+                        </th>
+                        <th scope="col">
+                          <span>Date Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Thousand Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Decimal Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Max Int Allowed</span>
+                        </th>
+                        <th scope="col">
+                          <span>Max Decimal Allowed</span>
+                        </th>
+                        <th scope="col">
+                          <span>Rules</span>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- <tr *ngFor="let data of ocrProfileObject.items | filterTable: 'H'; let i=index"> -->
+                        <tr *ngFor="let data of ocrProfileObject.headerMappings; let i=index">
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="enable{{i}}" #enable="ngModel" class="py-2"
+                            [(ngModel)]="data.enable" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="mandatoryField{{i}}" #mandatoryField="ngModel" class="py-2"
+                            [(ngModel)]="data.mandatoryField" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="ocrField{{i}}" #ocrField="ngModel" class="py-2"
+                            [(ngModel)]="data.ocrField" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="disableFields{{i}}" #disableFields="ngModel" class="py-2"
+                            [(ngModel)]="data.disableFields" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 80px;">
+                            <input type="checkbox" name="socrStudioField{{i}}" #socrStudioField="ngModel" class="py-2"
+                            [(ngModel)]="data.socrStudioField" />
+                          </div>
+                        </td>
+                        <td>
+                          <input type="text" name="skeyField{{i}}" #skeyField="ngModel" class="form-control py-1-5"
+                             [(ngModel)]="data.skeyField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!skeyField.value && (skeyField?.dirty || skeyField?.touched)">Please
+                            enter Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="dataField{{i}}" #dataFieldData="ngModel" class="form-control py-1-5"
+                             [(ngModel)]="data.dataField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!dataFieldData.value && (dataFieldData?.dirty || dataFieldData?.touched)">Please
+                            enter Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="xmlField{{i}}" #xmlFieldData="ngModel" class="form-control py-1-5"
+                             [(ngModel)]="data.xmlField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!xmlFieldData.value && (xmlFieldData?.dirty || xmlFieldData?.touched)">Please enter
+                            Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="erp{{i}}" #erpField="ngModel" class="form-control py-1-5"
+                            [(ngModel)]="data.erp" style="width: 150px;" />
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="types{{i}}" #type="ngModel" [options]="types" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [(ngModel)]="data.type" placeholder="Select Type" [required]="true"></p-dropdown>
+                            </div>
+                          </div>
+                          <small style="color:red" *ngIf="!type.value && (type?.dirty || type?.touched)">Please select
+                            Type</small>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row" style="width: 150px;" *ngIf="data.type === 'List'">
+                            <div (click)="openOptionDialog(data)" class="ps-2 cursor-pointer text-info" *ngIf="!data.optionValue || data.optionValue.length == 0">
+                              +&nbsp;Add Options
+                            </div>
+                            <div (click)="openOptionDialog(data)" class="cursor-pointer text-info" *ngIf="data.optionValue && data.optionValue.length > 0">
+                              {{data.optionValue[0].label}}
+                              <span *ngIf="data.optionValue.length > 1">, +{{data.optionValue.length - 1}}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="dateFormat{{i}}" #dateFormat="ngModel" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [options]="dateFormats" optionLabel="name" optionValue="value"
+                                [(ngModel)]="data.dateFormat" placeholder="Select Format" [required]="true"
+                                *ngIf="data.type === 'Date'"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="dateSeparator{{i}}" #dateSeparator="ngModel" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [options]="dateSeparators" optionLabel="name" optionValue="value"
+                                [(ngModel)]="data.dateSeparator" placeholder="Select Separator" [required]="true"
+                                *ngIf="data.type === 'Date'"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="ts{{i}}" #ts="ngModel" [options]="separator" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                optionLabel="name" optionValue="value" [(ngModel)]="data.ts" [required]="true"
+                                *ngIf="data.type === 'Number'" placeholder="Select Thousand Separator">
+                              </p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="ds{{i}}" #ds="ngModel" [options]="separator" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                optionLabel="name" optionValue="value" [(ngModel)]="data.ds" [required]="true"
+                                *ngIf="data.type === 'Number'" placeholder="Select Decimal Separator"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <input type="number" name="maxint{{i}}" [(ngModel)]="data.maxIntNo"
+                                class="form-control py-1-5" *ngIf="data.type === 'Number'" style="width: 100px;">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <input type="number" name="maxDecimalNo{{i}}" [(ngModel)]="data.maxDecimalNo"
+                                class="form-control py-1-5" *ngIf="data.type === 'Number'" style="width: 100px;">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <p-multiSelect appendTo="body" name="rules{{i}}" #type="ngModel" [options]="rulesList" autoWidth="false" [style]="{'width':'200px'}"
+                            optionLabel="fieldName" optionValue="id" [(ngModel)]="data.rules" placeholder="Select Type"
+                            [required]="true"></p-multiSelect>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px">
+                            <a class="cursor-pointer" (click)="removeHeaderItem(i)">
+                              <img src="./assets/images/trash-02.svg" alt="delete" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="4">
+                          <button class="btn btn-info shadow" (click)="addFields('H')">
+                            <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                            Add New
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="activeTab==='customFields'">
+          <div class="row">
+            <div class="col-lg-12 col-xxl-12">
+              <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0"
+                style="overflow: auto;max-height: 600px;">
+                <form #saveOcrFieldData="ngForm">
+                  <table class="table table-bordered user-management fields mb-0">
+                    <thead class="sticky-header" style="z-index: 99;">
+                      <tr>
+                        <th scope="col">
+                          <span></span>
+                        </th>
+                        <th scope="col">
+                          <span>Mandatory Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>OCR Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>Disable Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>SOCR Studio Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>SKEY Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>SOCR Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>MDI Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>ERP</span>
+                        </th>
+                        <th scope="col">
+                          <span>Type</span>
+                        </th>
+                        <th scope="col">
+                          <span>Options</span>
+                        </th>
+                        <th scope="col">
+                          <span>Date Format</span>
+                        </th>
+                        <th scope="col">
+                          <span>Date Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Thousand Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Decimal Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Max Int Allowed</span>
+                        </th>
+                        <th scope="col">
+                          <span>Max Decimal Allowed</span>
+                        </th>
+                        <th scope="col">
+                          <span>Rules</span>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of ocrProfileObject.customMappings; let i=index">
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="enable{{i}}" #enable="ngModel" class="py-2"
+                            [(ngModel)]="data.enable" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="mandatoryField{{i}}" #mandatoryField="ngModel" class="py-2"
+                            [(ngModel)]="data.mandatoryField" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="ocrField{{i}}" #ocrField="ngModel" class="py-2"
+                            [(ngModel)]="data.ocrField" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="disableFields{{i}}" #disableFields="ngModel" class="py-2"
+                            [(ngModel)]="data.disableFields" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 80px;">
+                            <input type="checkbox" name="socrStudioField{{i}}" #socrStudioField="ngModel" class="py-2"
+                            [(ngModel)]="data.socrStudioField" />
+                          </div>
+                        </td>
+                        <td>
+                          <input type="text" name="skeyField{{i}}" #skeyField="ngModel" class="form-control py-1-5"
+                             [(ngModel)]="data.skeyField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!skeyField.value && (skeyField?.dirty || skeyField?.touched)">Please
+                            enter Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="dataField{{i}}" #dataFieldData="ngModel" class="form-control py-1-5"
+                             [(ngModel)]="data.dataField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!dataFieldData.value && (dataFieldData?.dirty || dataFieldData?.touched)">Please
+                            enter Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="xmlField{{i}}" #xmlFieldData="ngModel" class="form-control py-1-5"
+                             [(ngModel)]="data.xmlField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!xmlFieldData.value && (xmlFieldData?.dirty || xmlFieldData?.touched)">Please enter
+                            Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="erp{{i}}" #erpField="ngModel" class="form-control py-1-5"
+                            [(ngModel)]="data.erp" style="width: 150px;" />
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="types{{i}}" #type="ngModel" [options]="types" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [(ngModel)]="data.type" placeholder="Select Type" [required]="true"></p-dropdown>
+                            </div>
+                          </div>
+                          <small style="color:red" *ngIf="!type.value && (type?.dirty || type?.touched)">Please select
+                            Type</small>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row" style="width: 150px;" *ngIf="data.type === 'List'">
+                            <div (click)="openOptionDialog(data)" class="ps-2 cursor-pointer text-info" *ngIf="!data.optionValue || data.optionValue.length == 0">
+                              +&nbsp;Add Options
+                            </div>
+                            <div (click)="openOptionDialog(data)" class="cursor-pointer text-info" *ngIf="data.optionValue && data.optionValue.length > 0">
+                              {{data.optionValue[0].label}}
+                              <span *ngIf="data.optionValue.length > 1">, +{{data.optionValue.length - 1}}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="dateFormat{{i}}" #dateFormat="ngModel" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [options]="dateFormats" optionLabel="name" optionValue="value"
+                                [(ngModel)]="data.dateFormat" placeholder="Select Format" [required]="true"
+                                *ngIf="data.type === 'Date'"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="dateSeparator{{i}}" #dateSeparator="ngModel" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [options]="dateSeparators" optionLabel="name" optionValue="value"
+                                [(ngModel)]="data.dateSeparator" placeholder="Select Separator" [required]="true"
+                                *ngIf="data.type === 'Date'"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="ts{{i}}" #ts="ngModel" [options]="separator" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                optionLabel="name" optionValue="value" [(ngModel)]="data.ts" [required]="true"
+                                *ngIf="data.type === 'Number'" placeholder="Select Thousand Separator">
+                              </p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="ds{{i}}" #ds="ngModel" [options]="separator" autoWidth="false" [style]="{'min-width':'100px', 'width': '100px'}"
+                                optionLabel="name" optionValue="value" [(ngModel)]="data.ds" [required]="true"
+                                *ngIf="data.type === 'Number'" placeholder="Select Decimal Separator"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <input type="number" name="maxint{{i}}" [(ngModel)]="data.maxIntNo"
+                                class="form-control py-1-5" *ngIf="data.type === 'Number'" style="width: 100px;">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <input type="number" name="maxDecimalNo{{i}}" [(ngModel)]="data.maxDecimalNo"
+                                class="form-control py-1-5" *ngIf="data.type === 'Number'" style="width: 100px;">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <p-multiSelect appendTo="body" name="rules{{i}}" #type="ngModel" [options]="rulesList" autoWidth="false" [style]="{'width':'200px'}"
+                            optionLabel="fieldName" optionValue="id" [(ngModel)]="data.rules" placeholder="Select Type"
+                            [required]="true"></p-multiSelect>
+                        </td>
+                        <td>
+                          <div class="gap-2 d-flex align-items-center justify-content-center" style="width: 50px">
+                            <a class="cursor-pointer" (click)="editCustomFields(data)">
+                              <img src="./assets/images/edit-01.svg" alt="edit" />
+                            </a>
+                            <a class="cursor-pointer" (click)="removeCustomFields(i)">
+                              <img src="./assets/images/trash-02.svg" alt="delete" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="4">
+                          <button class="btn btn-info shadow" (click)="addCustomFields()">
+                            <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                            Add New
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="activeTab==='lineItemFieldsTab'">
+          <div class="row">
+            <div class="col-lg-12 col-xxl-12">
+              <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0"
+                style="overflow: auto;max-height: 600px;">
+                <form #saveOCRLineItem="ngForm">
+                  <table class="table table-bordered user-management fields mb-0">
+                    <thead class="sticky-header" style="z-index: 99;">
+                      <tr>
+                        <th scope="col">
+                          <span></span>
+                        </th>
+                        <th scope="col">
+                          <span>Mandatory Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>OCR Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>Disable Field</span>
+                       </th>
+                        <th scope="col">
+                          <span>SOCR Studio Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>SKEY Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>SOCR Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>MDI Fields</span>
+                        </th>
+                        <th scope="col">
+                          <span>ERP</span>
+                        </th>
+                        <th scope="col">
+                          <span>Type</span>
+                        </th>
+                        <th scope="col">
+                          <span>Options</span>
+                        </th>
+                        <th scope="col">
+                          <span>Date Format</span>
+                        </th>
+                        <th scope="col">
+                          <span>Date Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Thousand Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Decimal Separator</span>
+                        </th>
+                        <th scope="col">
+                          <span>Max Int Allowed</span>
+                        </th>
+                        <th scope="col">
+                          <span>Max Decimal Allowed</span>
+                        </th>
+                        <th scope="col">
+                          <span>Rules</span>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+                      <tr style="cursor: move;" cdkDrag cdkDragLockAxis="y" cdkDragHandle
+                        *ngFor="let data of ocrProfileObject.lineMappings; let i=index;">
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="enable{{i}}" #enable="ngModel" class="py-2"
+                            [(ngModel)]="data.enable" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="mandatoryField{{i}}" #mandatoryField="ngModel" class="py-2"
+                            [(ngModel)]="data.mandatoryField" style="width: 50px;" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="ocrField{{i}}" #ocrField="ngModel" class="py-2"
+                            [(ngModel)]="data.ocrField" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px;">
+                            <input type="checkbox" name="disableFields{{i}}" #disableFields="ngModel" class="py-2"
+                            [(ngModel)]="data.disableFields" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 80px;">
+                            <input type="checkbox" name="socrStudioField{{i}}" #socrStudioField="ngModel" class="py-2"
+                            [(ngModel)]="data.socrStudioField" />
+                          </div>
+                        </td>
+                        <td>
+                          <input type="text" name="lineItemSkeyField{{i}}" #lineItemSkeyField="ngModel"
+                             class="form-control py-1-5" [(ngModel)]="data.skeyField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!lineItemSkeyField.value && (lineItemSkeyField?.dirty || lineItemSkeyField?.touched)">Please
+                            enter Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="lineItemDataField{{i}}" #lineItemDataField="ngModel"
+                             class="form-control py-1-5" [(ngModel)]="data.dataField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!lineItemDataField.value && (lineItemDataField?.dirty || lineItemDataField?.touched)">Please
+                            enter Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="lineItemXmlField{{i}}" #lineItemXmlField="ngModel"
+                             class="form-control py-1-5" [(ngModel)]="data.xmlField" required style="width: 150px;" />
+                          <small style="color:red"
+                            *ngIf="!lineItemXmlField.value && (lineItemXmlField?.dirty || lineItemXmlField?.touched)">Please
+                            enter Field</small>
+                        </td>
+                        <td>
+                          <input type="text" name="lineItemerp{{i}}" #lineItemerp="ngModel" class="form-control py-1-5"
+                             [(ngModel)]="data.erp" style="width: 150px;" />
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="lineItemtypes{{i}}" #lineItemtypes="ngModel"
+                                [options]="types" [(ngModel)]="data.type" placeholder="Select Type" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [required]="true"></p-dropdown>
+                            </div>
+                          </div>
+                          <small style="color:red"
+                            *ngIf="!lineItemtypes.value && (lineItemtypes?.dirty || lineItemtypes?.touched)">Please
+                            select Type</small>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row" style="width: 150px;" *ngIf="data.type === 'List'">
+                            <div (click)="openOptionDialog(data)" class="ps-2 cursor-pointer text-info" *ngIf="!data.optionValue || data.optionValue.length == 0">
+                              +&nbsp;Add Options
+                            </div>
+                            <div (click)="openOptionDialog(data)" class="cursor-pointer text-info" *ngIf="data.optionValue && data.optionValue.length > 0">
+                              {{data.optionValue[0].label}}
+                              <span *ngIf="data.optionValue.length > 1">, +{{data.optionValue.length - 1}}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="dateFormat{{i}}" #dateFormat="ngModel"
+                                [options]="dateFormats" optionLabel="name" optionValue="value" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [(ngModel)]="data.dateFormat" placeholder="Select Format" [required]="true"
+                                *ngIf="data.type === 'Date'"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="dateSeparator{{i}}" #dateSeparator="ngModel"
+                                [options]="dateSeparators" optionLabel="name" optionValue="value" [style]="{'min-width':'100px', 'width': '100px'}"
+                                [(ngModel)]="data.dateSeparator" placeholder="Select Separator" [required]="true"
+                                *ngIf="data.type === 'Date'"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="ts{{i}}" #ts="ngModel" [options]="separator" [style]="{'min-width':'100px', 'width': '100px'}"
+                                optionLabel="name" optionValue="value" [(ngModel)]="data.ts" [required]="true"
+                                *ngIf="data.type === 'Number'" placeholder="Select Thousand Separator"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <p-dropdown appendTo="body" name="ds{{i}}" #ds="ngModel" [options]="separator" [style]="{'min-width':'100px', 'width': '100px'}"
+                                optionLabel="name" optionValue="value" [(ngModel)]="data.ds" [required]="true"
+                                *ngIf="data.type === 'Number'" placeholder="Select Decimal Separator"></p-dropdown>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <input type="number" name="maxint{{i}}" [(ngModel)]="data.maxIntNo" style="width: 100px;"
+                                class="form-control py-1-5" style="min-width: 120px;" *ngIf="data.type === 'Number'">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex flex-row align-items-center">
+                            <div class="me-2">
+                              <input type="number" name="maxDecimalNo{{i}}" [(ngModel)]="data.maxDecimalNo" style="width: 100px;"
+                                class="form-control py-1-5" style="min-width: 120px;" *ngIf="data.type === 'Number'">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <p-multiSelect appendTo="body" name="rules{{i}}" #type="ngModel" [options]="rulesList" [style]="{'width':'200px'}"
+                            optionLabel="fieldName" optionValue="id" [(ngModel)]="data.rules" placeholder="Select Type"
+                            [required]="true"></p-multiSelect>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center justify-content-center" style="width: 50px">
+                            <a class="cursor-pointer" (click)="removeLineItem(i)"><img src="./assets/images/trash-02.svg"
+                              alt="delete" /></a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="4">
+                          <button class="btn btn-info shadow" (click)="addFields('L')">
+                            <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                            Add New
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="activeTab==='rulesTab'">
+          <div>
+            <div class="row" *ngIf="!rulesList || rulesList.length == 0">
+              <div class="col-lg-12 col-xxl-12">
+                <div class="px-0">
+                  <div class="d-flex flex-column justify-content-center">
+                    <div style="display: flex; justify-content:center;"><img src="./assets/images/rules-image.png"
+                        alt=""></div>
+                    <div style="display: flex;justify-content:center;align-items: center; gap: 10px;">
+                      <button class="btn btn-info shadow" (click)="openDialog('')">
+                        <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                        Create Rule
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="rulesList && rulesList.length > 0">
+              <div class=" d-flex gap-3 col-lg-12 col-xxl-12 mt-2 mb-2">
+                <button class="btn btn-info shadow" (click)="openDialog('')">
+                  <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                  Create Rule
+                </button>
+              </div>
+              <div class="col-lg-12 col-xxl-12">
+                <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                  <table class="table table-bordered user-management mb-0">
+                    <thead>
+                      <tr>
+                        <th scope="col">
+                          <span>Name</span>
+                        </th>
+                        <th scope="col">
+                          <span>Type</span>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of rulesList;">
+                        <td>
+                          <span>{{data.fieldName}}</span>
+                        </td>
+                        <td>
+                          <span>{{data.type}}</span>
+                        </td>
+                        <td style="width: 100px">
+                          <div class="d-flex gap-2">
+                            <a class="cursor-pointer" (click)="openDialog(data.id)">
+                              <img src="./assets/images/edit-01.svg" alt="edit" />
+                            </a>
+                            <a class="cursor-pointer" (click)="removeRule(data)">
+                              <img src="./assets/images/trash-02.svg" alt="delete" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="activeTab==='derivationTab'">
+          <div>
+            <div class="row" *ngIf="!ocrProfileObject.dataDerivation || ocrProfileObject.dataDerivation.length == 0">
+              <div class="col-lg-12 col-xxl-12">
+                <div class="px-0">
+                  <div class="d-flex flex-column justify-content-center">
+                    <div style="display: flex; justify-content:center;"><img src="./assets/images/rules-image.png"
+                        alt=""></div>
+                    <div style="display: flex;justify-content:center;align-items: center; gap: 10px;">
+                      <button class="btn btn-info shadow" (click)="openDerivationDialog('','','new')">
+                        <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="ocrProfileObject.dataDerivation && ocrProfileObject.dataDerivation.length > 0">
+              <div class=" d-flex gap-3 col-lg-12 col-xxl-12 mt-2 mb-2">
+                <button class="btn btn-info shadow" (click)="openDerivationDialog('','','new')">
+                  <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                  Add
+                </button>
+              </div>
+              <div class="col-lg-12 col-xxl-12">
+                <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                  <table class="table table-bordered user-management mb-0">
+                    <thead>
+                      <tr>
+                        <th scope="col">
+                          <span>Type</span>
+                        </th>
+                        <th scope="col">
+                          <span>Data Field</span>
+                        </th>
+                        <th scope="col">
+                          <span>Value</span>
+                        </th>
+                        <th scope="col">
+                          <span>Key</span>
+                        </th>
+                        <th scope="col">
+                          <span>Check Rule</span>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of ocrProfileObject.dataDerivation; index as i">
+                        <td>
+                          <span>{{item.type}}</span>
+                        </td>
+                        <td>
+                          <span>{{item.dataField}}</span>
+                        </td>
+                        <td>
+                          <span>{{item.fixedValue}}</span>
+                        </td>
+                        <td>
+                          <span>{{item.key}}</span>
+                        </td>
+                        <td>
+                          <span>{{item.checkRule}}</span>
+                        </td>
+                        <td style="width: 100px">
+                          <div class="d-flex gap-3">
+                            <a class="cursor-pointer" (click)="openDerivationDialog(item,i,'edit')">
+                                <img src="./assets/images/edit-01.svg" alt="edit" />
+                            </a>
+                            <a class="cursor-pointer" (click)="deleteRow(i)">
+                              <img src="./assets/images/trash-02.svg" alt="delete" />
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="activeTab=== 'preferencesTab' ">
+          <!-- <div class="col-xl-5 mb-3">
+            <label for="" class="form-label fw-semibold text-font-dark">Purchase Order</label>
+            <input name="purchaseOrder" [(ngModel)]="ocrProfileObject.poNumberField" type="text" class="form-control">
+          </div> -->
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">Line Item Determiniation Config</label>
+            <div class="d-flex flex-wrap align-items-center gap-5">
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="amount" [(ngModel)]="ocrProfileObject.poLineConfig.amount" />
+                <span>Amount</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="description" [(ngModel)]="ocrProfileObject.poLineConfig.description" />
+                <span>Description</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="quantity" [(ngModel)]="ocrProfileObject.poLineConfig.quantity" />
+                <span>Quantity</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="unit" [(ngModel)]="ocrProfileObject.poLineConfig.unit" />
+                <span>Unit</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="unitPrice" [(ngModel)]="ocrProfileObject.poLineConfig.unitPrice" />
+                <span>Unit Price</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">Fraud Detection Config</label>
+            <div class="d-flex flex-wrap align-items-center gap-5">
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="amount" [(ngModel)]="ocrProfileObject.fraudDetectionEnable" />
+                <span>Fraud Detection</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">GL Account Auto Coding Config</label>
+            <div class="d-flex flex-wrap align-items-center gap-5">
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="amount" [(ngModel)]="ocrProfileObject.glAccountAutoCodingEnable" />
+                <span>GL Account Auto Coding</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">Cost Center Auto Coding Config</label>
+            <div class="d-flex flex-wrap align-items-center gap-5">
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="amount" [(ngModel)]="ocrProfileObject.costCenterAutoCodingEnable" />
+                <span>Cost Center Auto Coding</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">Vendor GSTIN Config</label>
+            <div class="d-flex flex-wrap align-items-center gap-5">
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="amount1" [(ngModel)]="ocrProfileObject.checkVendorGSTIn" />
+                <span>Vendor GSTIN</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">First Page Vendor Enabled</label>
+            <div class="d-flex flex-wrap align-items-center gap-5">
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="amount" [(ngModel)]="ocrProfileObject.firstPageVendorEnabled" />
+                <span>First Page Vendor Enabled</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">Valid PO</label>
+            <div class="d-flex flex-wrap align-items-center gap-5">
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" name="amount2" [(ngModel)]="ocrProfileObject.validPo" />
+                <span>Valid PO</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">Default Currency</label>
+            <div class="col-3 pe-2">
+              <div class="dropdown-border w-100">
+                <p-dropdown optionLabel="name" optionValue="value"
+                  [(ngModel)]="ocrProfileObject.defaultCurrency" name="docRangeType" [options]="currencies"
+                  placeholder="Select Currency"></p-dropdown>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-bottom mt-3"></div>
+
+          <div class="col-xl-12 my-3">
+            <label for="" class="form-label fw-semibold text-font-dark">PO Limit To</label>
+            <div class="col-3 pe-2">
+              <input [(ngModel)]="ocrProfileObject.poLimit" type="number" class="form-control" min="0"
+                name="poLimit"
+                oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"
+                placeholder="Enter limit or 0 for no limit"/>
+              <small class="form-text text-muted">Set to 0 to disable the limit</small>
+            </div>
+         </div>
+
+        <div class="border-bottom mt-3"></div>
+
+          <div class="row py-2 mt-1 gap-5">
+            <div class="col-xl-3 d-flex flex-column gap-3">
+              <div>
+                <label for="" class="form-label fw-semibold text-font-dark">Mutliple PO Config</label>
+                <div *ngFor="let item of poList;index as i" class="d-flex align-item-center gap-2">
+                  <input class="form-control my-2" type="text" name="item{{i}}" [(ngModel)]="item.poName">
+                  <span (click)="onDeletePO(i)" class="cursor-pointer d-flex" matTooltip="Delete"
+                        matTooltipPosition="above">
+                        <img class="me-1" width="15" src="./assets/media/trash.svg" />
+                      </span>
+                    </div>
+              </div>
+              <div>
+                <button class="btn btn-primary btn-sm" (click)="onAddPO()">+ Add New</button>
+              </div>
+            </div>
+            <div class="col-xl-3 d-flex flex-column gap-3">
+              <div>
+                <label for="" class="form-label fw-semibold text-font-dark">Mutliple GRN Config</label>
+                <div *ngFor="let item of grnList;index as i" class="d-flex align-item-center gap-2">
+                  <input class="form-control my-2" type="text" name="item{{i}}" [(ngModel)]="item.grnName">
+                  <span (click)="onDeleteGRN(i)" class="cursor-pointer d-flex" matTooltip="Delete"
+                        matTooltipPosition="above">
+                        <img class="me-1" width="15" src="./assets/media/trash.svg" />
+                      </span>
+                    </div>
+              </div>
+              <div>
+                <button class="btn btn-primary btn-sm" (click)="onAddGRN()">+ Add New</button>
+              </div>
+            </div>
+            <div class="col-xl-3 d-flex flex-column gap-3">
+              <div>
+                <label for="" class="form-label fw-semibold text-font-dark">Country Currency Mapping</label>
+                <div *ngFor="let item of ocrProfileObject.mappedCountryCurrency;index as i" class="d-flex align-item-center gap-2">
+                  <input class="form-control my-2" type="text" name="name{{i}}" [(ngModel)]="item.name" placeholder="Enter Country">
+                  <input class="form-control my-2" type="text" name="value{{i}}" [(ngModel)]="item.value" placeholder="Enter Currency">
+                  <span (click)="onDeleteCountry(i)" class="cursor-pointer d-flex" matTooltip="Delete"
+                        matTooltipPosition="above">
+                        <img class="me-1" width="15" src="./assets/media/trash.svg" />
+                      </span>
+                    </div>
+              </div>
+              <div>
+                <button class="btn btn-primary btn-sm" (click)="onAddCountry()">+ Add New</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="activeTab=== 'lineItemConfigTab'">
+          <form #form="ngForm">
+            <div class="row py-3">
+              <div class="col-xl-6 mb-3">
+                <label for="" class="form-label fw-semibold text-font-dark">Model Name</label>
+                <input name="modelName" [(ngModel)]="ocrProfileObject.openAiLineItemDetermineConfig.modelName" type="text"
+                  class="form-control">
+              </div>
+              <div class="col-xl-6 mb-3">
+                <label for="" class="form-label fw-semibold text-font-dark">Open AI Key</label>
+                <div class="d-flex" style="position: relative;">
+                  <input [type]="showAPIKey ? 'text' : 'password'" name="appID" class="form-control"
+                    [(ngModel)]="ocrProfileObject.openAiLineItemDetermineConfig.openAiKey"/>
+                  <span style="position: absolute;right: 0;top: 11px;" class="d-flex align-item-center">
+                    <img [cdkCopyToClipboard]="ocrProfileObject.openAiLineItemDetermineConfig.openAiKey" class="px-2 cursor-pointer"
+                      src="./assets/images/content-copy-outline.svg" />
+                    <img *ngIf="!showAPIKey" img src="./assets/images/eye.svg" matTooltip="View" alt=""
+                      class="me-3 cursor-pointer" (click)="showAPIKey = !showAPIKey">
+                    <img *ngIf="showAPIKey" img src="./assets/images/eye-off-outline.svg" matTooltip="Hide" alt=""
+                      class="me-3 cursor-pointer" (click)="showAPIKey = !showAPIKey">
+                  </span>
+              </div>
+              </div>
+              <div class="col-xl-6 mb-3">
+                <label for="" class="form-label fw-semibold text-font-dark">Temperature</label>
+                <input name="temperature" [(ngModel)]="ocrProfileObject.openAiLineItemDetermineConfig.temperature" type="text" class="form-control">
+              </div>
+              <div class="col-xl-6 mb-3">
+                <label for="" class="form-label fw-semibold text-font-dark">Response Format</label>
+                <select class="form-control" name="response"  id="response" [(ngModel)]="ocrProfileObject.openAiLineItemDetermineConfig.responseFormat">
+                  <option value="" disabled selected>Select Response Format</option>
+                  <option value="json_object"  [selected]="ocrProfileObject.openAiLineItemDetermineConfig.responseFormat === 'json_object'">json_object</option>
+                  <option value="json_schema"  [selected]="ocrProfileObject.openAiLineItemDetermineConfig.responseFormat === 'json_schema'">json_schema</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <nav>
+                <div class="nav nav-underline" id="nav-tab" role="tablist">
+                  <button class="nav-link px-2 active tab-text" id="nav-instructionList-tab" data-bs-toggle="tab" data-bs-target="#nav-instructionList"
+                    type="button" role="tab" aria-controls="nav-instructionList" aria-selected="true">
+                    Instruction List
+                  </button>
+                  <button class="nav-link px-2 tab-text" id="nav-contentDetails-tab" data-bs-toggle="tab" data-bs-target="#nav-contentDetails"
+                    type="button" role="tab" aria-controls="nav-contentDetails" aria-selected="true">
+                    Content Details
+                  </button>
+                  <button class="nav-link px-2 tab-text" id="nav-responseFormatDetails-tab" data-bs-toggle="tab" data-bs-target="#nav-responseFormatDetails"
+                    type="button" role="tab" aria-controls="nav-responseFormatDetails" aria-selected="true">
+                    Response Format Details
+                  </button>
+                </div>
+              </nav>
+              <form #savePromptData="ngForm">
+                <div class="tab-content" id="nav-tabContent">
+                  <div class="tab-pane fade show active mt-3" id="nav-instructionList" role="tabpanel" aria-labelledby="nav-instructionList-tab"
+                    tabindex="0">
+                    <div class="row">
+                      <div class="col-lg-9 col-xxl-9">
+                        <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                          <table class="table table-bordered user-management mb-0">
+                            <thead>
+                              <tr>
+                                <th scope="col">
+                                  <span class="text-uppercase">Instruction List</span>
+                                </th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let data of instructionList; let i=index">
+                                <td>
+                                  <input type="text" name="metaprompt{{i}}" #metaprompt="ngModel" class="form-control py-2"
+                                    [(ngModel)]="data.name" required />
+                                  <small style="color:red" *ngIf="!metaprompt.value && (metaprompt?.dirty || metaprompt?.touched)">Please
+                                      enter prompt</small>
+                                </td>
+                                <td style="width: 50px">
+                                  <a class="cursor-pointer" (click)="removeInstruction(i)"><img src="./assets/images/trash-02.svg"
+                                      alt="delete" /></a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="2">
+                                  <button class="btn btn-info shadow" (click)="addInstruction()">
+                                    <img src="./assets/images/plus.svg" alt="add" />
+                                    Add New
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade mt-3" id="nav-contentDetails" role="tabpanel" aria-labelledby="nav-contentDetails-tab"
+                    tabindex="1">
+                    <div class="row">
+                      <div class="col-lg-9 col-xxl-9">
+                        <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                          <table class="table table-bordered user-management mb-0">
+                            <thead>
+                              <tr>
+                                <th scope="col">
+                                  <span class="text-uppercase">Content Details</span>
+                                </th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let data of contentDetails; let i=index">
+                                <td>
+                                  <input type="text" name="context{{i}}" #context="ngModel" class="form-control py-2"
+                                    [(ngModel)]="data.name" required />
+                                  <small style="color:red" *ngIf="!context.value && (context?.dirty || context?.touched)">Please
+                                    enter context</small>
+                                </td>
+                                <td style="width: 50px">
+                                  <a class="cursor-pointer" (click)="removeContentDetails(i)"><img
+                                      src="./assets/images/trash-02.svg" alt="delete" /></a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="2">
+                                  <button class="btn btn-info shadow" (click)="addContentDetails()">
+                                    <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                                    Add New
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade mt-3" id="nav-responseFormatDetails" role="tabpanel" aria-labelledby="nav-responseFormatDetails-tab"
+                  tabindex="2">
+                  <div class="row">
+                    <div class="col-lg-9 col-xxl-9">
+                      <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                        <table class="table table-bordered user-management mb-0">
+                          <thead>
+                            <tr>
+                              <th scope="col">
+                                <span class="text-uppercase">Context Description</span>
+                              </th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let data of responseFormatDetails; let i=index">
+                              <td>
+                                <input type="text" name="contextDescription{{i}}" #contextDescription="ngModel" class="form-control py-2"
+                                  [(ngModel)]="data.name" required />
+                                <small style="color:red" *ngIf="!contextDescription.value && (contextDescription?.dirty || contextDescription?.touched)">Please
+                                    enter prompt</small>
+                              </td>
+                              <td style="width: 50px">
+                                <a class="cursor-pointer" (click)="removeResponseFormat(i)"><img src="./assets/images/trash-02.svg"
+                                    alt="delete" /></a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colspan="2">
+                                <button class="btn btn-info shadow" (click)="addResponseFormat()">
+                                  <img src="./assets/images/plus.svg" alt="add" />
+                                  Add New
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              </form>
+            </div>
+          </form>
+        </div>
+        <div *ngIf="activeTab=== 'llmRulesTab'">
+          <div *ngIf="showLLMRuleList">
+            <div class="d-flex align-items-center justify-content-end">
+              <button class="btn btn-info shadow" (click)="showLLMRuleDetails(null)">
+                <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                Create Rule
+              </button>              
+            </div>  
+            <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0 mt-3">
+              <table class="table table-bordered user-management mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col">
+                      <span class="text-uppercase">Rule Name</span>
+                    </th>
+                    <th scope="col">
+                      <span class="text-uppercase">Vendor</span>
+                    </th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of llmRules; let i=index">
+                    <td> {{data.ruleName}} </td>
+                    <td> {{data.vendorId}}<span *ngIf="data.vendorName"> - {{data.vendorName}}</span> </td>
+                    <td style="width: 50px">
+                      <!-- <a class="cursor-pointer" (click)="editLLMRule(data)"><img src="./assets/images/edit-01.svg" alt="Edit" /></a> -->
+                        <div class="d-flex gap-2">
+                        <a class="cursor-pointer" (click)="editLLMRule(data)"><img src="./assets/images/edit-01.svg" alt="Edit" /></a>
+                        <a class="cursor-pointer" (click)="openConfirmationModal(data)"><img src="./assets/images/trash-02.svg" alt="delete" /></a>
+                      </div> 
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>          
+          </div>
+          <div *ngIf="!showLLMRuleList">
+            <div class="d-flex align-items-center justify-content-between">
+              <a (click)="backToLLMRules()" class="text-decoration-none d-flex align-items-center px-0">
+                <h5 class="fw-semibold" *ngIf="editLLMRuleMode === 'new'"><img src="./assets/images/arrow-left.svg" class="me-1" cursor-pointer alt="arrow left">Create LLM Rule</h5>
+                <h5 class="fw-semibold" *ngIf="editLLMRuleMode === 'edit'"><img src="./assets/images/arrow-left.svg" class="me-1" cursor-pointer alt="arrow left">Edit LLM Rule</h5>
+              </a>
+              <div class="d-flex align-items-center justify-content-end">
+                <button class="btn btn-info shadow" (click)="saveLLMRule()">
+                  Save Rule
+                </button>
+              </div>
+            </div>
+            <form #form="ngForm">
+              <div class="row py-3">
+                <div class="col-xl-6">
+                  <label class="form-label fw-semibold text-font-dark">Rule Name</label>
+                  <input name="ruleName" [(ngModel)]="llmRuleObj.ruleName" type="text" class="form-control">
+                </div>
+                <div class="col-xl-6">
+                  <label class="form-label fw-semibold text-font-dark">Select Vendor</label>
+                  <input name="selectedVendor" [(ngModel)]="selectedVendor" [typeahead]="suggestions" [typeaheadAsync]="true" autocomplete="off"
+                   typeaheadOptionField="formattedName" (typeaheadLoading)="changeTypeaheadLoading($event)" (typeaheadOnSelect)="typeaheadOnSelect($event)" class="form-control">
+                </div>
+              </div>
+               <div class="row py-3">
+                <div class="col-xl-6">
+                   <mat-slide-toggle name="lineEnabled" [(ngModel)]="llmRuleObj.lineEnabled">
+                    <span>Line Field</span>
+                  </mat-slide-toggle>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <form #savePromptData="ngForm">
+                  <div>
+                    <div class="mt-3">
+                      <div class="row">
+                        <div class="col-lg-9 col-xxl-9">
+                          <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                            <table class="table table-bordered user-management mb-0">
+                              <thead>
+                                <tr>
+                                  <th scope="col">
+                                    <span class="text-uppercase">User Prompt</span>
+                                  </th>
+                                  <th scope="col"></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <textarea name="userPrompt" #userPromptModel="ngModel"
+                                      class="form-control py-2" rows="12" [(ngModel)]="llmRuleObj.userPrompt" required>
+                                    </textarea>
+                                    <small style="color:red" *ngIf="!llmRuleObj.userPrompt && (userPromptModel?.dirty || userPromptModel?.touched)">
+                                      Please enter prompt
+                                    </small>
+                                  </td>
+                                  <td class="text-center align-middle">
+                                    <a class="cursor-pointer" (click)="deletePrompt()">
+                                      <img src="./assets/images/trash-02.svg" alt="delete" />
+                                    </a>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>                  
+                  </div>
+                </form>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Delete Confirmation -->
+<app-delete-confirmation-modal #deleteModal [content]="
+    'Be careful, this process can not be undone. Are you sure you want to delete this LLM Rule?'
+  " [isLoading]="isDelete" (hidden)="deleteModal.hide()" (yes)="deleteLLMRule()" (no)="deleteModal.hide()"></app-delete-confirmation-modal>
+
+<!-- Delete Confirmation -->

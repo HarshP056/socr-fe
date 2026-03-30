@@ -1,0 +1,136 @@
+<div class="main-content bg-white w-100">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+      <div class="col-sm-12 mb-3">
+        <a routerLink="/system-admin/intelligence-hub" class="text-decoration-none d-flex align-items-center px-0">
+          <h5 class="fw-semibold"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">Fraud Detection Mapping</h5>
+        </a>
+        <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+          <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+          <div class="text-grey-4">
+            Defining AI Prompt and Criteria.
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <nav>
+          <div class="nav nav-underline" id="nav-tab" role="tablist">
+            <button class="nav-link px-2 active" id="nav-prompt-tab" data-bs-toggle="tab" data-bs-target="#nav-prompt"
+              type="button" role="tab" aria-controls="nav-prompt" aria-selected="true">
+              Prompts
+            </button>
+            <button class="nav-link px-2" id="nav-criteria-tab" data-bs-toggle="tab" data-bs-target="#nav-criteria"
+              type="button" role="tab" aria-controls="nav-criteria" aria-selected="true">
+              Criteria
+            </button>
+          </div>
+        </nav>
+        <form #savePromptData="ngForm">
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active mt-3" id="nav-prompt" role="tabpanel" aria-labelledby="nav-prompt-tab"
+              tabindex="0">
+              <div class="row">
+                <div class="col-lg-9 col-xxl-9">
+                  <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                    <table class="table table-bordered user-management mb-0">
+                      <thead>
+                        <tr>
+                          <th scope="col">
+                            <span class="text-uppercase">Prompts</span>
+                          </th>
+                          <th scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let data of prompts; let i=index">
+                          <td>
+                            <input type="text" name="prompt{{i}}" #prompt="ngModel" class="form-control py-2"
+                              [(ngModel)]="data.name" required />
+                            <small style="color:red" *ngIf="!prompt.value && (prompt?.dirty || prompt?.touched)">Please
+                                enter prompt</small>
+                          </td>
+                          <td style="width: 50px">
+                            <a class="cursor-pointer" (click)="removePrompt(i)"><img src="./assets/images/trash-02.svg"
+                                alt="delete" /></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                            <button class="btn btn-info shadow" (click)="addPrompts()">
+                              <img src="./assets/images/plus.svg" alt="add" />
+                              Add New
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade mt-3" id="nav-criteria" role="tabpanel" aria-labelledby="nav-criteria-tab"
+              tabindex="1">
+              <div class="row">
+                <div class="col-lg-9 col-xxl-9">
+                  <div class="table-responsive table-top-rounded-radius border-top-0 border-bottom-0 px-0">
+                    <table class="table table-bordered user-management mb-0">
+                      <thead>
+                        <tr>
+                          <th scope="col">
+                            <span class="text-uppercase">Criteria</span>
+                          </th>
+                          <th scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let data of criteria; let i=index">
+                          <td>
+                            <input type="text" name="criteria{{i}}" #criteria="ngModel" class="form-control py-2"
+                              [(ngModel)]="data.name" required />
+                            <small style="color:red" *ngIf="!criteria.value && (criteria?.dirty || criteria?.touched)">Please
+                              enter criteria</small>
+                          </td>
+                          <td style="width: 50px">
+                            <a class="cursor-pointer" (click)="removeCriteria(i)"><img
+                                src="./assets/images/trash-02.svg" alt="delete" /></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                            <button class="btn btn-info shadow" (click)="addCriteria()">
+                              <img src="./assets/images/plus.svg" class="me-1" alt="add" />
+                              Add New
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="row mt-3">
+          <div class="d-flex align-items-center justify-content-end">
+            <button routerLink="/system-admin/configurations" class="cancel-btn me-3">
+              Cancel
+            </button>
+            <button matRipple class="common-btn" [disabled]="isWait || !savePromptData.valid" (click)="submit()">
+              <ng-container *ngIf="isWait">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container>Update</ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="center h-100" *ngIf="initialLoader">
+        <app-page-loader class="v-center"></app-page-loader>
+      </div>
+    </div>
+  </div>
+</div>

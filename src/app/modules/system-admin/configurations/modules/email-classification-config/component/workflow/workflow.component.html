@@ -1,0 +1,94 @@
+<div class="main-content bg-white w-100">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+      <div class="col-sm-12 mb-3">
+        <div class="d-flex align-items-center justify-content-between pb-2">
+          <a routerLink="/system-admin/configurations/email-classification" class="text-decoration-none d-flex align-items-center px-0">
+            <h5 class="fw-semibold my-0"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left"> Workflow Configurations for {{emailClassifier?.name}}</h5>
+          </a>
+          <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 text-nowrap">
+            <a routerLink="create" class="btn btn-info shadow"><img src="./assets/images/plus.svg" class="me-1" alt="add" /> New Workflow</a>
+          </div>
+        </div>
+
+        <div class="alert alert-warning d-flex align-items-center rounded-0 border-0 p-2 mb-3" role="alert">
+          <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+          <div class="text-grey-4">
+            Configure email classifier workflows.
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-12 px-0 mb-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 bg-light-2 border border-dashed rounded-3 px-3">
+            <div class="d-flex align-items-center flex-wrap text-grey-3 fw-medium gap-3 pt-3 pb-0 pb-lg-3">
+              <div>
+                <div class="d-flex align-items-center">
+                  <div class="position-relative search-form">
+                    <img src="./assets/images/search.svg" class="ms-2 position-absolute" alt="search icon">
+                    <input type="search" class="form-control py-2" placeholder="Search by Name or Description" [(ngModel)]="queryParams.query" style="width: 250px;">
+                  </div>
+
+                  <div class="d-flex align-items-center gap-2 ms-2">
+                    <div>
+                      <button matRipple class="btn btn-info shadow" [disabled]="isLoading" (click)="search()">
+                        <ng-container *ngIf="isLoading">
+                          <span clas="indicator-progress" [style.display]="'block'">
+                            Searching...{{ " " }}
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                          </span>
+                        </ng-container>
+                        <span *ngIf="!isLoading">Search</span>
+                      </button>
+                    </div>
+                    <div>
+                      <button class="btn btn-light text-info-dark fw-semibold shadow bg-white me-3" matRipple [disabled]="resettingLoader" (click)="reset()">
+                        <ng-container *ngIf="resettingLoader">
+                          <span clas="indicator-progress" [style.display]="'block'">
+                            Resetting...{{ " " }}
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                          </span>
+                        </ng-container>
+                        <span *ngIf="!resettingLoader">Reset</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <ng-container *ngFor="let item of workflows">
+        <div class="card mb-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <div class="mb-1 d-flex align-items-center gap-3">
+                  <h5 class="fw-bold my-0">{{item?.name}}</h5>
+                  <span class="py-1 px-2 icon-box icon-box-success text-success rounded-3" *ngIf="item.enabled">Enabled</span>
+                  <span class="py-1 px-2 bg-light-2 rounded-3" *ngIf="!item.enabled">Disabled</span>
+                  <span class="py-1 px-2 bg-success rounded-3 text-white" *ngIf="!item.default">Default</span>
+                </div>
+                <p class="text-muted mb-1"><span class="text-dark fw-bold" style="letter-spacing: 0.5px;">Type:</span> {{item.type}}</p>
+                <p class="text-dark mb-1 fw-bold">Conditions:</p>
+                <span class="text-muted" *ngFor="let condition of item.conditions; let i = index;">
+                  <span *ngIf="i == 0">{{condition.name}}</span>
+                  <span *ngIf="item.conditions.length > 1 && i > 0">&nbsp;OR&nbsp;{{condition.name}}</span>
+                </span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <mat-slide-toggle [(ngModel)]="item.enabled" [checked]="item.enabled" (change)="updateEmailClassificationWorkflow($event, item)"></mat-slide-toggle>
+                <span (click)="editEmailClassificationWorkflow(item.id)" class="text-info-dark cursor-pointer">
+                  <fa-icon [icon]="faPencil" class="mt-1 cursor-pointer" style="font-size: 20px;" title="Edit"></fa-icon>
+                </span>
+                <span (click)="deleteEmailClassificationWorkflow(item.id)" class="text-danger cursor-pointer">
+                  <fa-icon [icon]="faTrash" class="mt-1 cursor-pointer" style="font-size: 20px;" title="Delete"></fa-icon>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

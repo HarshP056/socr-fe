@@ -1,0 +1,33 @@
+<div class="pb-5 d-flex flex-column justify-content-between"
+  style="height: 250px; width: 500px; margin: auto; background: white;">
+
+  <div class="px-4 mt-4">
+
+    <div class="search-box d-flex mt-3 gap-3 align-items-center">
+      <label class="myInput d-flex cursor-pointer w-100"
+        style="justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <div *ngIf="file != null">{{ file.name }}</div>
+        <div *ngIf="file == null" style="color: #a9a3af;">Choose File...</div>
+        <input #fileInput (change)="onFileSelect($event)" type="file" id="file-upload" accept=".xlsx,.xls,.xml,.json,.zip"
+          style="display: none;">
+        <label for="file-upload">
+          <img class="folder" src="./assets/images/file-folder.svg" alt="Upload" *ngIf="file == null">
+        </label>
+      </label>
+
+      <button [disabled]="file == null" type="button" class="btn btn-danger px-3" style="height: 40px;"
+        (click)="removeFile()">Remove</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="d-flex flex-grow-1 justify-content-end" style="position: absolute; bottom: 10px; right: 3px;width: 100%;
+    padding: 3px;">
+      <div class="d-flex w-100 justify-content-end">
+        <button type="button" class="btn btn-secondary px-3 me-3" (click)="closeDialog()" mat-dialog-close>Cancel</button>
+        <button [disabled]="file == null" type="button" class="btn btn-primary px-3"
+          (click)="uploadFile()">Upload</button>
+      </div>
+    </div>
+  </div>
+</div>

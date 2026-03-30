@@ -1,0 +1,1075 @@
+<div class="container-fluid px-0">
+  <div class="wrapper d-flex justify-content-center">
+    <div class="wrapper-content d-flex w-100 flex-wrap">
+      <div class="main-content bg-white">
+        <div class="row mx-0 pt-3 pt-lg-4">
+          <div class="">
+            <div class="col-sm-12">
+              <a (click)="onBack()" class="text-decoration-none d-flex align-items-center cursor-pointer px-0">
+                <div *ngIf="editMode === 'new'">
+                  <h5 class="fw-semibold">
+                    <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left" />
+                    {{heading}}
+                  </h5>
+                </div>
+                <div *ngIf="editMode === 'edit'">
+                  <h5 class="fw-semibold">
+                    <img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left" />
+                    Update
+                    <span *ngIf="channelsObject.type === 'email'"> Email </span>
+                    <span *ngIf="channelsObject.type === 'rest-based'">
+                      REST API Based
+                    </span>
+                    <span *ngIf="channelsObject.type === 'local-file'"> Local File </span>
+                    <span *ngIf="channelsObject.type === 'network-file'"> Network File </span>
+                    <span *ngIf="channelsObject.type === 'ftp'"> FTP File </span>
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div>
+            <ul class="nav nav-tab">
+              <li class="nav-item">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab ===1}" (click)="onTabchange(1)">
+                  <span>
+                    Details
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab ===2}" (click)="onTabchange(2)">
+                  <span>
+                    Channel Config
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab ===3}" (click)="onTabchange(3)">
+                  <span>
+                    Data Derivation
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item" *ngIf="!showRestAPIConfig && !showFtpField">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab ===4}" (click)="onTabchange(4)">
+                  <span>
+                    Blocked Email
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item" *ngIf="!showRestAPIConfig && !showFtpField">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab ===5}" (click)="onTabchange(5)">
+                  <span>
+                    Notification
+                  </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab ===6}" (click)="onTabchange(6)">
+                  <span>
+                    Doc Id Config
+                  </span>
+                </a>
+              </li>
+               <li class="nav-item" *ngIf="!showRestAPIConfig && !showFtpField">
+                <a class="nav-link" [ngClass]="{activeTab:selectedTab ===7}" (click)="onTabchange(7)">
+                  <span>
+                    To Address Config
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-3">
+            <form #form="ngForm">
+              <div *ngIf="selectedTab === 1">
+                <div class="d-flex align-items-center gap-5">
+                  <div class="form-check d-flex align-items-center gap-2">
+                    <input [(ngModel)]="channelsObject.enabled" class="form-check-input cursor-pointer mb-1"
+                      type="checkbox" name="enabled" id="erp" />
+                    <label class="form-check-label mb-0 cursor-pointer" for="erp">
+                      Enable
+                    </label>
+                  </div>
+                    <div  *ngIf="!showFtpField && !showRestAPIConfig">
+                      <input [checked]="channelsObject.singleAttachment"
+                      [(ngModel)]="channelsObject.singleAttachment" class="form-check-input cursor-pointer mb-1"
+                      type="checkbox" name="singleAttachment" id="singleAttachment" (change)="onChangeCheckbox1($event)"/>
+                      <label for="" class="form-label ms-2">Consider each attachment in the email as a single Invoice</label>
+                    </div>
+                    <div *ngIf="!showFtpField && !showRestAPIConfig">
+                      <input [checked]="channelsObject.firstAttachment"
+                      [(ngModel)]="channelsObject.firstAttachment" class="form-check-input cursor-pointer mb-1"
+                      type="checkbox" name="firstAttachment" id="firstAttachment" (change)="onChangeCheckbox2($event)"/>
+                      <label for="" class="form-label ms-2">Consider first attachment as an Invoice and rest all supporting documents</label>
+                    </div>
+                </div>
+                <div class="row">
+                  <div class="mt-3 col-md-6">
+                    <label class="mb-1" for="">Mode</label>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown name="mode" [(ngModel)]="channelsObject.mode" [options]="modeTypes" optionLabel="name" optionValue="value"
+                        placeholder="Select Mode" optionDisabled="inactive" [required]="true"></p-dropdown>
+                    </div>
+                  </div>
+                  <div class="mt-3 col-md-6">
+                    <label class="mb-1" for="">Process Types</label>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown name="processorType" [(ngModel)]="channelsObject.processorType"
+                        (onChange)="selectedType($event)" [options]="processTypes" optionLabel="name" optionValue="value" placeholder="Select Process Types"
+                        optionDisabled="inactive" [required]="true"></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf="showOcrSection">
+                  <div class="col-md-6">
+                    <div class="mt-4">
+                      <label class="mb-1" for="">OCR Project</label>
+                      <div class="dropdown-border w-100">
+                        <p-dropdown [(ngModel)]="channelsObject.ocrProject" optionLabel="projectNameOrGuid" optionValue="id"
+                          name="ocrprofile" [options]="ocrProject" placeholder="Select OCR Project" (onChange)="selectedProject($event)"
+                          optionDisabled="inactive"></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="col-md-6">
+                    <div class="mt-4">
+                      <label for="" class="mb-1">OCR Field Mapping</label>
+                      <div class="dropdown-border w-100">
+                        <p-dropdown optionLabel="projectNameOrGuid" optionValue="projectNameOrGuid" [(ngModel)]="channelsObject.ocrProject"
+                          name="ocrProject" [options]="ocrProject" placeholder="Select OCR Field Mapping"
+                          optionDisabled="inactive"></p-dropdown>
+                      </div>
+                    </div>
+                  </div> -->
+                  <div class="col-md-6">
+                    <div class="mt-4">
+                      <label class="mb-1" for="">Tag</label>
+                      <div class="dropdown-border w-100">
+                        <p-dropdown name="tagName" [(ngModel)]="channelsObject.tagName"
+                          [options]="tagNames"  placeholder="Select Tag Name"
+                          optionDisabled="inactive" [required]="true"></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" *ngIf="showThicklineSection">
+                  <div class="col-md-3">
+                    <div class="mt-4">
+                      <label class="mb-1" for="">MetaData File Path</label>
+                      <input type="text" [(ngModel)]="channelsObject.metadataFilePath" class="form-control"
+                        name="metadataFilePath" />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="mt-4">
+                      <label class="mb-1" for="">OCR In FilePath</label>
+                      <input type="text" [(ngModel)]="channelsObject.ocrinFilePath" class="form-control"
+                        name="ocrinFilePath" />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="mt-4">
+                      <label class="mb-1" for="">Original FilePath</label>
+                      <input type="text" [(ngModel)]="channelsObject.originalFilePath" class="form-control"
+                        name="originalFilePath" />
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="mt-4">
+                      <label class="mb-1" for="">Page Split Count</label>
+                      <input type="text" [(ngModel)]="channelsObject.pageSplitCount" class="form-control"
+                        name="pageSplitCount" />
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <label for="" class="form-label">Max File Size (30 MB)</label>
+                    <input [(ngModel)]="channelsObject.maxFileSize" name="maxFileSize" type="number" min="1" max="30" class="form-control"
+                      name="filesize" oninput="this.value =
+                    !!this.value && Math.abs(this.value) >= 1 ? Math.abs(this.value) : null"/>
+                  </div>
+                  <div class="col-md-6">
+                    <div>
+                      <label for="" class="form-label">Supported File Type</label>
+                      <p-multiSelect name="supportedFileTypes" [(ngModel)]="channelsObject.supportedFileTypes"
+                        [options]="supportedFiletype" [resetFilterOnHide]="true" required
+                        placeholder="Pick Supported File Type"></p-multiSelect>
+                    </div>
+                  </div>
+                </div>
+              
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <label for="tenantId" class="form-label">DocId Logic Type</label>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown [(ngModel)]="channelsObject.docIdLogicType"
+                        name="docIdLogicType" [options]="docIdLogicTypeList" placeholder="Select DocId Logic Type" (onChange)="onLogicTypeChange($event)"
+                        optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-md-6" *ngIf="showDocRangeType">
+                    <label for="" class="form-label">Doc Range Type</label>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown optionLabel="id" optionValue="id" [(ngModel)]="channelsObject.docRangeType"
+                        name="docRangeType" [options]="docRange" placeholder="Select Doc Range Type" 
+                        optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <label for="" class="form-label">System</label>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown optionLabel="systemId" optionValue="systemId"
+                        [(ngModel)]="channelsObject.logicalSystem" name="system" [options]="logicalSystems"
+                        placeholder="Select Logical System" optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                   <div class="col-md-6">
+                    <div>
+                      <label for="" class="form-label">Split Page</label>
+                      <input [(ngModel)]="channelsObject.pageSplitCount" type="number" class="form-control" min="1"
+                        name="pageSplit"
+                        oninput="this.value = !!this.value && Math.abs(this.value) >= 1 ? Math.abs(this.value) : null"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <div>
+                      <label for="" class="form-label">Channel Name</label>
+                      <input [(ngModel)]="channelsObject.usernameId" type="text" class="form-control"
+                        name="profileName" />
+                    </div>
+                  </div>
+                   <div class="col-md-6">
+                    <div>
+                      <label for="" class="form-label">Channel Type</label>
+                      <div class="dropdown-border w-100">
+                        <p-dropdown name="channelType" [(ngModel)]="channelsObject.channelType"
+                          [options]="channelTypes"  placeholder="Select Type"
+                          optionDisabled="inactive" [required]="true"></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <div>
+                      <label for="" class="form-label">Meta Profile</label>
+                      <div class="dropdown-border w-100">
+                        <p-dropdown [(ngModel)]="channelsObject.metaDataMapping" optionLabel="name" optionValue="name"
+                          name="metaProfile" [options]="metaDataMapping" placeholder="Select Meta Profile"
+                          optionDisabled="inactive"></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div>
+                      <label for="" class="form-label">Time Zone</label>
+                      <div class="dropdown-border w-100">
+                        <p-dropdown [(ngModel)]="channelsObject.timeZone" 
+                          name="timeZone" [options]="timeZone" placeholder="Select Time Zone"
+                          optionDisabled="inactive"></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6" *ngIf="channelsObject.channels == 'REST'">
+                    <div>
+                      <label for="" class="form-label">REST API Service</label>
+                      <div class="dropdown-border w-100">
+                        <p-dropdown [(ngModel)]="channelsObject.restAPIService" 
+                          name="restAPIService" [options]="restAPIService" placeholder="Select API Service" (onChange)="selectedApiService($event)"
+                          optionDisabled="inactive"></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-3" *ngIf="!showFtpField && !showRestAPIConfig">
+                    <input [checked]="channelsObject.storeEmlFile"
+                    [(ngModel)]="channelsObject.storeEmlFile" class="form-check-input cursor-pointer mb-1"
+                    type="checkbox" name="issuccess" id="issuccess" />
+                    <label for="" class="form-label ms-2">Store Eml File</label>
+                  </div>
+                  <div class="col-md-3" *ngIf="!showFtpField && !showRestAPIConfig">
+                    <input [checked]="channelsObject.noAttachment"
+                    [(ngModel)]="channelsObject.noAttachment" class="form-check-input cursor-pointer mb-1"
+                    type="checkbox" name="noAttachment" id="noAttachment" />
+                    <label for="" class="form-label ms-2">No Attachment</label>
+                  </div>
+                  <div class="col-md-3">
+                    <input [checked]="channelsObject.lineItemQtyChange"
+                    [(ngModel)]="channelsObject.lineItemQtyChange" class="form-check-input cursor-pointer mb-1"
+                    type="checkbox" name="lineItemQtyChange" id="lineItemQtyChange" />
+                    <label for="singleQty" class="form-label ms-2">Line Item Quantity change</label>
+                  </div>
+                  <div class="col-md-3">
+                    <input [checked]="channelsObject.unitPriceChange"
+                    [(ngModel)]="channelsObject.unitPriceChange" class="form-check-input cursor-pointer mb-1"
+                    type="checkbox" name="unitPriceChange" id="unitPriceChange" />
+                    <label for="unitPriceChange" class="form-label ms-2">Unit Price Change</label>
+                  </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6 d-flex align-items-center flex-wrap">
+                      <div class="form-check d-flex align-items-center me-5">
+                        <input
+                          [(ngModel)]="channelsObject.poExtractFromFile"
+                          class="form-check-input cursor-pointer"
+                          type="checkbox"
+                          name="poExtractFromFile"
+                          id="poExtractFromFile"
+                        />
+                        <label for="poExtractFromFile" class="form-label mb-0">Extract PO from FileName</label>
+                      </div>
+
+                      <div *ngIf="channelsObject.poExtractFromFile" class="d-flex align-items-center">
+                        <label for="poRegex" class="form-label mb-0 me-2">PO Regex</label>
+                        <input
+                          type="text"
+                          id="poRegex"
+                          name="poRegex"
+                          class="form-control"
+                          [(ngModel)]="channelsObject.poRegex"
+                          placeholder="Enter PO regex pattern"
+                          style="width: 250px;"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center flex-wrap">
+                      <div class="form-check d-flex align-items-center me-5">
+                        <input
+                          [(ngModel)]="channelsObject.xinvoice"
+                          class="form-check-input cursor-pointer"
+                          type="checkbox"
+                          name="xinvoice"
+                          id="xinvoice"
+                        />
+                        <label for="xinvoice" class="form-label mb-0">X Invoice</label>
+                      </div>
+                       <div class="form-check d-flex align-items-center me-5">
+                        <input
+                          [(ngModel)]="channelsObject.invoiceDateCheck"
+                          class="form-check-input cursor-pointer"
+                          type="checkbox"
+                          name="invoiceDateCheck"
+                          id="invoiceDateCheck"
+                        />
+                        <label for="invoiceDateCheck" class="form-label mb-0">Invoice Date Check</label>
+                      </div>
+                    </div>
+                    
+                  </div>
+
+                  <div class="row mt-3" *ngIf="channelsObject.xinvoice">
+                    <div class="col-md-6 d-flex align-items-center flex-wrap">
+                      <div class="form-check d-flex align-items-center me-5">
+                        <input
+                          [(ngModel)]="channelsObject.configurableXInvoiceMappingEnabled"
+                          class="form-check-input cursor-pointer"
+                          type="checkbox"
+                          name="configurableXInvoiceMappingEnabled"
+                          id="configurableXInvoiceMappingEnabled"
+                        />
+                        <label for="configurableXInvoiceMappingEnabled" class="form-label mb-0">Use Configurable X-Invoice Mapping</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center flex-wrap">
+                      <div class="form-check d-flex align-items-center me-5">
+                        <input
+                          [(ngModel)]="channelsObject.fallbackToHardCodedXInvoice"
+                          class="form-check-input cursor-pointer"
+                          type="checkbox"
+                          name="fallbackToHardCodedXInvoice"
+                          id="fallbackToHardCodedXInvoice"
+                        />
+                        <label for="fallbackToHardCodedXInvoice" class="form-label mb-0">Fallback to Hard-Coded</label>
+                      </div>
+                    </div>
+                  </div>
+
+                <div class="row mt-3" *ngIf="!showRestAPIConfig">
+                  <div class="col-md-6 d-flex align-items-center flex-wrap">
+                    <div class="form-check d-flex align-items-center me-5">
+                      <input
+                        [(ngModel)]="channelsObject.subjectCheck"
+                        class="form-check-input cursor-pointer"
+                        type="checkbox"
+                        name="subjectCheck"
+                        id="subjectCheck"
+                      />
+                      <label for="subjectCheck" class="form-label mb-0">Extract PO from Subject</label>
+                    </div>
+
+                    <div *ngIf="channelsObject.subjectCheck" class="d-flex align-items-center">
+                      <label for="subjectFormat" class="form-label mb-0 me-2">Subject Format</label>
+                      <input
+                        type="text"
+                        id="subjectFormat"
+                        name="subjectFormat"
+                        class="form-control"
+                        [(ngModel)]="channelsObject.subjectFormat"
+                        placeholder="Enter PO regex pattern"
+                        style="width: 250px;"
+                      />
+                    </div>
+                    </div>
+                </div>
+
+                 <div class="row mt-3">
+                  <div class="col-md-6 d-flex align-items-center flex-wrap">
+                    <div *ngIf="!showFtpField && !showRestAPIConfig" class="form-check d-flex align-items-center me-5">
+                      <input [checked]="channelsObject.ccReply"
+                      [(ngModel)]="channelsObject.ccReply" class="form-check-input cursor-pointer mb-1"
+                      type="checkbox" name="ccReply" id="ccReply" />
+                      <label for="ccReply" class="form-label">CC Reply</label>
+                    </div>
+                    <div class="d-flex align-items-center" *ngIf="!showFtpField && !showRestAPIConfig">
+                      <label for="ccEmail" class="form-label mb-0 me-2">CC Email</label>
+                      <input type="text" id="ccEmail" name="ccEmail"
+                          class="form-control" [(ngModel)]="channelsObject.ccEmail" placeholder="Enter CC email" style="width: 250px;" />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div *ngIf="selectedTab === 2">
+                <div *ngIf="!showFtpField && !showRestAPIConfig">
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label for="" class="form-label">Host</label>
+                      <input [(ngModel)]="channelsObject.channelImapConfig.host" type="text" class="form-control"
+                        name="host" />
+                    </div>
+                    <div class="col-md-6">
+                      <div>
+                        <label for="" class="form-label">Mail Stored Protocol</label>
+                        <input [(ngModel)]="channelsObject.channelImapConfig.mailStoredProtocol" type="text"
+                          class="form-control" name="mailStoredProtocol" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <div>
+                        <label for="" class="form-label">SSl</label>
+                        <input [(ngModel)]="channelsObject.channelImapConfig.ssl" type="text" class="form-control"
+                          name="ssl" />
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div>
+                        <label for="" class="form-label">port</label>
+                        <input [(ngModel)]="channelsObject.channelImapConfig.port" type="text" class="form-control"
+                          name="port" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label for="" class="form-label">Username</label>
+                      <input [(ngModel)]="channelsObject.channelImapConfig.username" type="text" class="form-control"
+                        name="username" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="" class="form-label">Password</label>
+                      <input [(ngModel)]="channelsObject.channelImapConfig.password" type="text" class="form-control"
+                        name="password" />
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label for="" class="form-label">Secured Connection</label>
+                      <input [(ngModel)]="channelsObject.channelImapConfig.securedConnection" type="text"
+                        class="form-control" name="securedConnection" />
+                    </div>
+                    <div class="col-md-6">
+                      <div>
+                        <label for="" class="form-label">SMTP Port</label>
+                        <input [(ngModel)]="channelsObject.channelImapConfig.smtpPort" type="text" class="form-control"
+                          name="smtpPort" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <div>
+                        <label for="" class="form-label">TLSV</label>
+                        <input [(ngModel)]="channelsObject.channelImapConfig.tlsV" type="text" class="form-control"
+                          name="tlsV" />
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div>
+                        <label for="" class="form-label">SMTP Host</label>
+                        <input [(ngModel)]="channelsObject.channelImapConfig.smtpHost" type="text" class="form-control"
+                          name="smtpHost" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="showFtpField">
+                  <div class="row mt-3" *ngIf="channelsObject.type === 'ftp' || channelsObject.type === 'network-file'">
+                    <div class="col-md-6">
+                      <label for="" class="form-label">Username</label>
+                      <input [(ngModel)]="channelFtpConfig.username" type="text" class="form-control"
+                        name="channelFtpConfigusername" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="" class="form-label">Password</label>
+                      <input [(ngModel)]="channelFtpConfig.password" type="text" class="form-control"
+                        name="channelFtpConfigpassword" />
+                    </div>
+                  </div>
+                  <div class="row mt-3" *ngIf="channelsObject.type === 'ftp'  || channelsObject.type === 'network-file'">
+                    <div class="col-md-6">
+                      <label for="" class="form-label">Host</label>
+                      <input [(ngModel)]="channelFtpConfig.host" type="text" class="form-control"
+                        name="channelFtpConfighost" />
+                    </div>
+                    <div class="col-md-6">
+                      <div>
+                        <label for="" class="form-label">port</label>
+                        <input [(ngModel)]="channelFtpConfig.port" type="text" class="form-control"
+                          name="channelFtpConfigport" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="border-bottom mt-3" *ngIf="channelsObject.type === 'ftp' || channelsObject.type === 'network-file'"></div>
+                  <div class="mt-3">
+                    <p  style="font-weight: 600;font-size: 15px;">Input Locations</p>
+                    <div class="row mt-3">
+                      <div class="col-md-6">
+                        <div>
+                          <label for="" class="form-label">Invoice Input Folder</label>
+                          <input [(ngModel)]="channelFtpConfig.invoiceInputFolder" type="text" class="form-control"
+                            name="channelFtpConfigInvoiceInputFolder" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div>
+                          <label for="" class="form-label">Invoice Supporting Doc. Folder</label>
+                          <input [(ngModel)]="channelFtpConfig.invoiceSupportingDocFolder" type="text" class="form-control"
+                            name="channelFtpConfigInvoiceSupportingDocFolder" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-5 mt-3">
+                      <div *ngIf="!showRestAPIConfig">
+                        <input [checked]="channelsObject.metadata"
+                        [(ngModel)]="channelsObject.metadata" class="form-check-input cursor-pointer mb-1"
+                        type="checkbox" name="metadata" id="metadata" (change)="onChangeMetaCheckbox1($event)"/>
+                        <label for="" class="form-label ms-2">Metadata</label>
+                      </div>
+                      <div *ngIf="!showRestAPIConfig">
+                        <input [checked]="channelsObject.noMetadata"
+                        [(ngModel)]="channelsObject.noMetadata" class="form-check-input cursor-pointer mb-1"
+                        type="checkbox" name="noMetadata" id="noMetadata" (change)="onChangeMetaCheckbox2($event)"/>
+                        <label for="" class="form-label ms-2">No Metadata</label>
+                      </div>
+                    </div>
+                    <div class="row mt-3">
+                      <div class="col-md-6">
+                        <div>
+                          <label for="" class="form-label">Invoice Metadata Folder</label>
+                          <input [(ngModel)]="channelFtpConfig.invoiceMetadataFolder" type="text" class="form-control"
+                            name="channelFtpConfigInvoiceMetadataFolder" [disabled]="channelsObject.noMetadata"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  <div class="border-bottom mt-3" *ngIf="channelsObject.type !== 'rest-based'"></div>
+                  <div class="mt-3">
+                    <p  style="font-weight: 600;font-size: 15px;">Output Locations</p>
+                    <div class="row mt-3">
+                      <div class="col-md-6">
+                        <label for="" class="form-label">Output Type</label>
+                        <div class="dropdown-border w-100">
+                          <p-dropdown  [(ngModel)]="channelsObject.outputType"
+                            name="outputType" [options]="outputType" placeholder="Select Output Type" (onChange)="selectedOutputType($event.value)"
+                            optionDisabled="inactive"></p-dropdown>
+                        </div>
+                      </div>
+                        <div class="col-md-6" *ngIf="channelsObject.outputType === 'File System'">
+                        <div>
+                          <label for="" class="form-label">File Name</label>
+                          <div class="dropdown-border w-100">
+                            <p-dropdown [(ngModel)]="channelsObject.fileNameDerived" optionLabel="dataField" optionValue="dataField"
+                              name="fileNameDerived" [options]="fileNameDerived" placeholder="Select Field for Deriving File Name"
+                              optionDisabled="inactive"></p-dropdown>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mt-3" *ngIf="channelsObject.outputType === 'File System'">
+                      <div class="col-md-6">
+                        <div>
+                          <label for="" class="form-label">Invoice Output Folder</label>
+                          <input [(ngModel)]="channelFtpConfig.invoiceOutputFolder" type="text" class="form-control"
+                            name="channelFtpConfigInvoiceOutputFolder" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div>
+                          <label for="" class="form-label">Data Folder</label>
+                          <input [(ngModel)]="channelFtpConfig.dataFolder" type="text" class="form-control"
+                            name="channelFtpConfigDataFolder" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3" *ngIf="channelsObject.outputType === 'Sone'">
+                      <div class="col-md-6">
+                        <div>
+                          <label for="" class="form-label">Sone Path</label>
+                          <input [(ngModel)]="channelsObject.s1SyncPath" type="text" class="form-control"
+                            name="s1SyncPath" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mt-3" *ngIf="channelsObject.outputType === 'SAP'">
+                      <div class="col-md-6">
+                        <div>
+                          <label for="" class="form-label">SAP System</label>
+                          <div class="dropdown-border w-100">
+                            <p-dropdown optionLabel="systemId" optionValue="systemId"
+                               [(ngModel)]="channelsObject.sapSystem" name="system" [options]="logicalSystems"
+                                placeholder="Select Logical System" optionDisabled="inactive"></p-dropdown>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <div class="border-bottom mt-3" *ngIf="channelsObject.type === 'rest-based'"></div>
+                <div *ngIf="showRestAPIConfig">
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label for="" class="form-label">App ID</label>
+                      <div class="d-flex inputDisabledBg">
+                        <input [(ngModel)]="channelRestAPIConfig.appId" type="text" class="form-control"
+                          name="appId"  [type]="showAppId ? 'text' : 'password'" disabled />
+                        <img [cdkCopyToClipboard]="channelRestAPIConfig.appId" class="px-2 cursor-pointer"
+                          src="./assets/images/content-copy-outline.svg" />
+                        <img *ngIf="!showAppId" img src="./assets/images/eye.svg" matTooltip="View" alt=""
+                            class="me-3 cursor-pointer" (click)="showAppId = !showAppId">
+                        <img *ngIf="showAppId" img src="./assets/images/eye-off-outline.svg" matTooltip="Hide" alt=""
+                            class="me-3 cursor-pointer" (click)="showAppId = !showAppId">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="" class="form-label">App Secret</label>
+                      <div class="d-flex inputDisabledBg">
+                        <input [(ngModel)]="channelRestAPIConfig.appSecret" type="text" class="form-control"
+                          name="appSecret" [type]="showAppSecret ? 'text': 'password'" disabled/>
+                        <img [cdkCopyToClipboard]="channelRestAPIConfig.appSecret" class="px-2 cursor-pointer"
+                          src="./assets/images/content-copy-outline.svg" />
+                        <img *ngIf="!showAppSecret" img src="./assets/images/eye.svg" matTooltip="View" alt=""
+                          class="me-3 cursor-pointer" (click)="showAppSecret = !showAppSecret">
+                        <img *ngIf="showAppSecret" img src="./assets/images/eye-off-outline.svg" matTooltip="Hide" alt=""
+                        class="me-3 cursor-pointer" (click)="showAppSecret = !showAppSecret">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="" class="form-label mt-3">Encoding Method</label>
+                      <input [(ngModel)]="channelRestAPIConfig.encodingMethod" type="text" class="form-control"
+                        name="encodingMethod" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="" class="form-label mt-3">Expiration Date</label>
+                      <input [(ngModel)]="channelRestAPIConfig.expiryDate" type="text" class="form-control"
+                        name="expiryDate" placeholder="Select" #dp="bsDatepicker" bsDatepicker
+                        [bsConfig]="{
+                          showWeekNumbers: false,
+                          dateInputFormat: 'DD MMM YYYY'
+                        }" (ngModelChange)="onDateRangeSelected()"  [minDate]="minDate" readonly/>
+                      <div class="input-icon">
+                        <img src="./assets/media/workspace/calendaricon.svg" alt="" (click)="dp.toggle()" />
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="" class="form-label mt-3">Profile Name</label>
+                      <input [(ngModel)]="channelsObject.usernameId" type="text" class="form-control"
+                        name="profileName" />
+                    </div>
+                    <div class="col-md-6" *ngIf="showIndecabSection || showHotelBillSection">
+                        <label for="" class="form-label mt-3">Endpoint</label>
+                        <input [(ngModel)]="channelRestAPIConfig.url" type="text" class="form-control"
+                          name="url" />
+                    </div>
+                    <div class="col-md-6" *ngIf="showIndecabSection">
+                        <label for="" class="form-label mt-3">Username</label>
+                        <input [(ngModel)]="channelRestAPIConfig.username" type="text" class="form-control"
+                          name="channelRestConfigusername" />
+                    </div>
+                    <div class="col-md-6" *ngIf="showIndecabSection">
+                        <label for="" class="form-label mt-3">Password</label>
+                        <input [(ngModel)]="channelRestAPIConfig.password" type="text" class="form-control"
+                          name="channelRestConfigpassword" />
+                    </div>
+                     <div class="col-md-6" *ngIf="showHotelBillSection">
+                        <label for="" class="form-label mt-3">C Name</label>
+                        <input [(ngModel)]="channelRestAPIConfig.cname" type="text" class="form-control"
+                          name="channelRestConfigcName" />
+                    </div>
+                    <div class="col-md-6" *ngIf="showHotelBillSection">
+                        <label for="" class="form-label mt-3">Unique Id</label>
+                        <input [(ngModel)]="channelRestAPIConfig.uniqueId" type="text" class="form-control"
+                          name="channelRestConfiguniqueId" />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div *ngIf="selectedTab === 3">
+                <div class="w-100" class="table-responsive mt-4 px-0">
+                  <table class="table user-management">
+                    <thead>
+                      <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>Regex</th>
+                        <th>Scope</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+
+                    <tr *ngFor="let data of channelsObject.fieldsConfig; let i=index">
+                      <td class="pe-2 py-2">
+                        <input type="text" name="field{{i}}" placeholder="Enter Field here" class="form-control py-2"
+                          [(ngModel)]="data.field" #field{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                        <input type="text" name="type{{i}}" placeholder="Enter Type here" class="form-control py-2"
+                          [(ngModel)]="data.type" #type{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                        <input type="text" name="value{{i}}" placeholder="Enter Value here"
+                          class="form-control py-2" [(ngModel)]="data.value" #value{{i}}="ngModel"
+                          (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                        <input type="text" name="regex{{i}}" placeholder="Enter Regex here" class="form-control py-2"
+                          [(ngModel)]="data.regex" #regex{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                          <input type="text" name="format{{i}}" placeholder="Enter Scope here" class="form-control py-2"
+                          [(ngModel)]="data.scope" #format{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="text-center">
+                        <span [matMenuTriggerFor]="menu" class="cursor-pointer">
+                          <img src="./assets/images/more-vertical.svg" alt="">
+                        </span>
+                        <mat-menu #menu="matMenu" xPosition="before">
+                          <button class="mat-item" mat-menu-item (click)="openConfirmationModal(data,i)">Edit</button>
+                          <button class="mat-item" mat-menu-item (click)="removeItem(data)">Remove</button>
+                        </mat-menu>
+                      </td>
+                    </tr>
+                  </table>
+                  <button matRipple class="btn btn-info shadow" (click)="openConfirmationModal('','')">
+                    <ng-container *ngIf="isLoading">
+                      <span clas="indicator-progress" [style.display]="'block'">
+                        Searching...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </ng-container>
+                    <span *ngIf="!isLoading">
+                      <span><img class="me-1" width="17" src="./assets/images/plus.svg"></span>
+                      <span>Add New</span>
+                    </span>
+                  </button>
+                  <!-- || saveApprMatrix.invalid -->
+                </div>
+              </div>
+              <div *ngIf="selectedTab === 4">
+                <div class="col-md-6">
+                  <div class="mt-4">
+                    <label class="mb-1" for="">Blocked Emails</label>
+                    <div *ngFor="let item of blockEmailRow; index as i">
+                      <div class="d-flex align-item-center mb-2 gap-2">
+                        <input type="email" placeholder="Enter Email" pattern="[a-zA-Z0-9._-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,}" [(ngModel)]="item.blockedemail" class="form-control"
+                          name="blockedemail{{i}}" required email/>
+                        <span (click)="onDelete(i)" class="cursor-pointer d-flex" matTooltip="Delete"
+                          matTooltipPosition="above">
+                          <img class="me-1" width="15" src="./assets/media/trash.svg" />
+                        </span>
+                      </div>
+                      <span *ngIf="item.blockedemail && !checkValidity(item.blockedemail)" class="text-danger">Please enter valid Email</span>
+                    </div>
+
+                  </div>
+                  <div>
+                    <button class="common-btn mt-2" (click)="addBlockedEmail()"> + Add new</button>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="selectedTab === 5">
+                <div class="d-flex align-items-center gap-5">
+                  <div class="form-check d-flex align-items-center gap-2 mb-2">
+                    <input [checked]="channelNotificationConfig.enabled" [(ngModel)]="channelNotificationConfig.enabled"
+                      class="form-check-input cursor-pointer mb-1" type="checkbox" name="enabled" id="enabled" />
+                    <label class="form-check-label mb-0 cursor-pointer" for="enabled">
+                      Enabled
+                    </label>
+                  </div>
+                </div>
+                <div class="form-check d-flex align-items-center gap-2 mb-2">
+                  <input [checked]="channelNotificationConfig.issuccess"
+                    [(ngModel)]="channelNotificationConfig.issuccess" class="form-check-input cursor-pointer mb-1"
+                    type="checkbox" name="issuccess" id="issuccess" />
+                  <label class="form-check-label mb-0 cursor-pointer" for="issuccess">
+                    Success
+                  </label>
+                  <div>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown optionLabel="title" optionValue="id" placeholder="Select Type"
+                        [(ngModel)]="channelNotificationConfig.successTemplate" name="successTemplate"
+                        [options]="successNotificationConfigList" optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-check d-flex align-items-center gap-2 mb-2">
+                  <input [checked]="channelNotificationConfig.nonSupportedAttachment"
+                    [(ngModel)]="channelNotificationConfig.nonSupportedAttachment"
+                    class="form-check-input cursor-pointer mb-1" type="checkbox" name="nonSupportedAttachment"
+                    id="nonSupportedAttachment" />
+                  <label class="form-check-label mb-0 cursor-pointer" for="nonSupportedAttachment">
+                    No Supported File
+                  </label>
+                  <div>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown optionLabel="title" optionValue="id" placeholder="Select Type"
+                        [(ngModel)]="channelNotificationConfig.nonSupportedAttachmentTemplate"
+                        name="nonSupportedAttachmentTemplate" [options]="nonSupportedFileNotificationConfigList"
+                        optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-check d-flex align-items-center gap-2 mb-2">
+                  <input [checked]="channelNotificationConfig.noAttachment"
+                    [(ngModel)]="channelNotificationConfig.noAttachment" class="form-check-input cursor-pointer mb-1"
+                    type="checkbox" name="noAttachment" id="noAttachment" />
+                  <label class="form-check-label mb-0 cursor-pointer" for="noAttachment">
+                    No Attachment
+                  </label>
+                  <div>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown optionLabel="title" optionValue="id" placeholder="Select Type"
+                        [(ngModel)]="channelNotificationConfig.noAttachmentTemplate" name="noAttachmentTemplate"
+                        [options]="noAttachmentNotificationConfigList" optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-check d-flex align-items-center gap-2 mb-2">
+                  <input [checked]="channelNotificationConfig.isfileSizeExceeded"
+                    [(ngModel)]="channelNotificationConfig.isfileSizeExceeded"
+                    class="form-check-input cursor-pointer mb-1" type="checkbox" name="isfileSizeExceeded"
+                    id="isfileSizeExceeded" />
+                  <label class="form-check-label mb-0 cursor-pointer" for="isfileSizeExceeded">
+                    File Size Exceeded
+                  </label>
+                  <div>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown optionLabel="title" optionValue="id" placeholder="Select Type"
+                        [(ngModel)]="channelNotificationConfig.fileSizeExceededTemplate" name="fileSizeExceededTemplate"
+                        [options]="filesizeExceededNotificationConfigList" optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-check d-flex align-items-center gap-2 mb-2">
+                  <input [checked]="channelNotificationConfig.wrongSubject"
+                    [(ngModel)]="channelNotificationConfig.wrongSubject"
+                    class="form-check-input cursor-pointer mb-1" type="checkbox" name="wrongSubject"
+                    id="wrongSubject" />
+                  <label class="form-check-label mb-0 cursor-pointer" for="wrongSubject">
+                    Wrong Subject Format
+                  </label>
+                  <div>
+                    <div class="dropdown-border w-100">
+                      <p-dropdown optionLabel="title" optionValue="id" placeholder="Select Type"
+                        [(ngModel)]="channelNotificationConfig.wrongSubjectTemplate" name="wrongSubjectTemplate"
+                        [options]="wrongSubjectFormatNotificationConfigList" optionDisabled="inactive"></p-dropdown>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="selectedTab === 6">
+                <div class="w-100" class="table-responsive mt-4 px-0">
+                  <table class="table user-management">
+                    <thead>
+                      <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>Regex</th>
+                        <th>Scope</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tr *ngFor="let data of channelsObject.docIdFieldConfig; let i=index">
+                      <td class="pe-2 py-2">
+                        <input type="text" name="field{{i}}" placeholder="Enter Field here" class="form-control py-2"
+                          [(ngModel)]="data.field" #field{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                        <input type="text" name="type{{i}}" placeholder="Enter Type here" class="form-control py-2"
+                          [(ngModel)]="data.type" #type{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                        <input type="text" name="value{{i}}" placeholder="Enter Value here"
+                          class="form-control py-2" [(ngModel)]="data.value" #value{{i}}="ngModel"
+                          (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                        <input type="text" name="regex{{i}}" placeholder="Enter Regex here" class="form-control py-2" style="width: 250px;"
+                          [(ngModel)]="data.regex" #regex{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="pe-2">
+                          <input type="text" name="format{{i}}" placeholder="Enter Scope here" class="form-control py-2"
+                          [(ngModel)]="data.scope" #format{{i}}="ngModel" (keydown)="spaceNotAllowed($event)" disabled>
+                      </td>
+                      <td class="text-center">
+                        <span [matMenuTriggerFor]="menu" class="cursor-pointer">
+                          <img src="./assets/images/more-vertical.svg" alt="">
+                        </span>
+                        <mat-menu #menu="matMenu" xPosition="before">
+                          <button class="mat-item" mat-menu-item (click)="openConfirmationModalDocId(data)">Edit</button>
+                          <button class="mat-item" mat-menu-item (click)="removeItem1(data)">Remove</button>
+                        </mat-menu>
+                      </td>
+                    </tr>
+                  </table>
+                  <button matRipple class="btn btn-info shadow" (click)="openConfirmationModalDocId('')">
+                    <ng-container *ngIf="isLoading">
+                      <span clas="indicator-progress" [style.display]="'block'">
+                        Searching...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                      </span>
+                    </ng-container>
+                    <span *ngIf="!isLoading">
+                      <span><img class="me-1" width="17" src="./assets/images/plus.svg"></span>
+                      <span>Add New</span>
+                    </span>
+                  </button>
+                  <!-- || saveApprMatrix.invalid -->
+                </div>
+              </div>
+
+                  <div *ngIf="selectedTab === 7">
+                <div class="w-100" class="table-responsive mt-4 px-0">
+                  <div class="border p-2 my-2" *ngFor="let emailObj of channelsObject.toAddressConfig; let idx=index">
+                    <div class="p-2 d-flex align-item-center gap-3" style="width: 500px;">
+                      <input type="text" class="form-control" placeholder="Enter Email" name="toEmail{{idx}}"
+                        [(ngModel)]="emailObj.toEmail"/>
+                        <span (click)="removeToAddressItem(idx)" class="cursor-pointer d-flex" matTooltip="Delete"
+                          matTooltipPosition="above">
+                          <img class="me-1" width="15" src="./assets/media/trash.svg" />
+                        </span>
+                    </div>
+                     <table class="table user-management">
+                      <thead>
+                        <tr>
+                          <th>Field</th>
+                          <th>Type</th>
+                          <th>Value</th>
+                          <th>Regex</th>
+                          <th>Scope</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+
+                    <tr *ngFor="let data of emailObj.fieldConfig; let i=index">
+                      <td class="pe-2 py-2">
+                       <div class="form-control py-2 bg-light" style="min-height: 40px">{{data.field}}</div>
+                      </td>
+                      <td class="pe-2">
+                       <div class="form-control py-2 bg-light" style="min-height: 40px">{{data.type}}</div>
+                      </td>
+                      <td class="pe-2">
+                        <div class="form-control py-2 bg-light" style="min-height: 40px">{{data.value}}</div>
+                      </td>
+                      <td class="pe-2">
+                        <div class="form-control py-2 bg-light" style="min-height: 40px">{{data.regex}}</div>
+                      </td>
+                      <td class="pe-2">
+                         <div class="form-control py-2 bg-light" style="min-height: 40px">{{data.scope}}</div>
+                      </td>
+                      <td class="text-center">
+                        <span [matMenuTriggerFor]="menu" class="cursor-pointer">
+                          <img src="./assets/images/more-vertical.svg" alt="">
+                        </span>
+                        <mat-menu #menu="matMenu" xPosition="before">
+                          <button class="mat-item" mat-menu-item (click)="openConfirmationToAddressModal(data,i, emailObj, idx)">Edit</button>
+                          <button class="mat-item" mat-menu-item (click)="removeAddressConfig(i, emailObj)">Remove</button>
+                        </mat-menu>
+                      </td>
+                    </tr>
+                    </table>
+                    <button matRipple class="btn btn-info shadow" (click)="openConfirmationToAddressModal('','', emailObj, idx)">
+                      <ng-container *ngIf="isLoading">
+                        <span clas="indicator-progress" [style.display]="'block'">
+                          Searching...{{ " " }}
+                          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                      </ng-container>
+                      <span *ngIf="!isLoading">
+                        <span><img class="me-1" width="17" src="./assets/images/plus.svg"></span>
+                        <span>Add New</span>
+                      </span>
+                    </button>
+                  </div>
+                  <button class="btn btn-info shadow mt-2" (click)="addEmail()">
+                     <span><img class="me-1" width="17" src="./assets/images/plus.svg"></span>
+                        <span>Add Email</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="d-flex align-items-center justify-content-end">
+            <button (click)="onBack()" class="cancel-btn me-3">
+              Cancel
+            </button>
+            <button matRipple class="common-btn" [disabled]="isWait || form.invalid" (click)="submit()">
+              <ng-container *ngIf="isWait">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isWait && editMode==='new'">Save</ng-container>
+              <ng-container *ngIf="!isWait && editMode==='edit'">Update</ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #addData>
+  <app-add-data [data]="fieldsData" (onclose)="addDataModal.hide()" (onsubmit)="onSuccess($event)"></app-add-data>
+</ng-template>
+<ng-template #addData1>
+  <app-add-data [data]="fieldsData1" (onclose)="addDataModal1.hide()" (onsubmit)="onSuccessDocId($event)"></app-add-data>
+</ng-template>
+<ng-template #addData2>
+  <app-add-data [data]="fieldsDataAddress" (onclose)="addDataModal2.hide()" (onsubmit)="onSuccessToAdress($event)"></app-add-data>
+</ng-template>
+<app-basic-modal #addDataModal (hidden)="addDataModal.hide()" [heading]="'Data Derivation Item'"></app-basic-modal>
+<app-basic-modal #addDataModal1 (hidden)="addDataModal1.hide()" [heading]="'Doc Id Item'"></app-basic-modal>
+<app-basic-modal #addDataModal2 (hidden)="addDataModal2.hide()" [heading]="'To Address'"></app-basic-modal>

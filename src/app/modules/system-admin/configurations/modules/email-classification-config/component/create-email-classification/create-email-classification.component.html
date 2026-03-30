@@ -1,0 +1,67 @@
+<div class="main-content bg-white w-100">
+  <div class="row mx-0 pt-3 pt-lg-4">
+    <div class="p-4 pt-0">
+      <div class="col-sm-12 mb-3">
+        <a routerLink="/system-admin/configurations/email-classification" class="text-decoration-none d-flex align-items-center px-0">
+          <h5 class="fw-semibold" *ngIf="editMode === 'new'"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">New Email Classifier</h5>
+          <h5 class="fw-semibold" *ngIf="editMode === 'edit'"><img src="./assets/images/arrow-left.svg" class="me-1" alt="arrow left">Update Email Classifier</h5>
+        </a>
+        <div class="alert alert-warning d-flex align-items-start rounded-0 border-0 p-2 mb-3" role="alert">
+          <img src="./assets/images/bulb.svg" class="me-2" alt="bilb">
+          <div class="text-grey-4">
+            Defining Email Classifier.
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-12 mb-3">
+          <label for="name" class="form-label fw-semibold text-font-dark my-0">Name</label>
+          <input type="text" class="form-control input-border" [(ngModel)]="emailClassifier.name" placeholder="Enter classifier name">
+        </div>
+        <div class="col-md-12 mb-3">
+          <label for="desc" class="form-label fw-semibold text-font-dark my-0">Decription</label>
+          <textarea type="text" class="form-control input-border" [(ngModel)]="emailClassifier.desc"  placeholder="Describe the purpose of this classifier"></textarea>
+        </div>
+        <div class="col-md-12 mb-3">
+          <label for="temperature" class="form-label fw-semibold text-font-dark my-0">Confidence Threshold</label>
+          <div>
+            <mat-slider min="0" max="100" step="1" style="width: 100% !important" class="mx-0">
+              <input matSliderThumb [(ngModel)]="emailClassifier.confidence"
+                name="confidence">
+            </mat-slider>
+            <div class="d-flex align-items-center justify-content-between">
+               <p class="text-muted mb-2">Low Accuracy</p>
+               <p class="text-muted mb-2">High Accuracy</p>
+            </div>
+            <div>
+              <img src="./assets/images/info.svg" alt="">  A higher confidence threshold will result in more accurate classifications but may increase the number of unclassified emails.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="row mt-3">
+          <div class="d-flex align-items-center justify-content-end">
+            <button routerLink="/system-admin/configurations" class="cancel-btn me-3">
+              Cancel
+            </button>
+            <button matRipple class="common-btn" [disabled]="isWait" (click)="submit()">
+              <ng-container *ngIf="isWait">
+                <span clas="indicator-progress" [style.display]="'block'">
+                  Please wait...{{ " " }}
+                  <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isWait && editMode === 'new'">Create Classifier</ng-container>
+              <ng-container *ngIf="!isWait && editMode === 'edit'">Update Classifier</ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="center h-100" *ngIf="initialLoader">
+        <app-page-loader class="v-center"></app-page-loader>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="mb-5 d-flex justify-content-between">
+    <div class="text-grey-3 fw-medium d-flex align-items-center ps-3 mt-2">
+        Alert Logs
+    </div>
+    <button type="button" class="btn btn-cls" mat-dialog-close aria-label="Close">
+      <img src="./assets/images/x.svg" alt="">
+    </button>
+</div>
+<div>
+    <div *ngIf="alertLogData && !initialLoader">
+        <ng-container *ngFor="let data of alertLogData; let i=index;">
+            <div class="mx-4 badge-outline-dark mb-2 cursor" (click)="setReadStatus(i)" [ngClass]=" data.read ? 'fw-normal': 'fw-bold cursor-pointer'">
+                <div>From: {{data.fromEmail}}</div>
+                <div>Date: {{data.date | date:'MM-dd-yyyy HH:mm a'}}</div>
+                <div>Subject: {{data.subject}}</div>
+            </div>
+        </ng-container>
+    </div>
+    <div *ngIf="!initialLoader">
+        <mat-paginator showFirstLastButtons [length]="totalElements" [pageSize]="this.query.limit"
+          (page)="onPaginateChange($event)" [pageIndex]="pageInd - 1" [pageSizeOptions]="[5,10,25,100]"
+          (page)="pageEvent = $event">
+        </mat-paginator>
+    </div>
+    <div class="center h-100 mt-5" *ngIf="initialLoader">
+        <app-page-loader class="v-center"></app-page-loader>
+    </div>
+</div>
+  

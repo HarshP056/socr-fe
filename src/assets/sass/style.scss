@@ -1,0 +1,142 @@
+.modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  z-index: 999;
+}
+.modal-dialog {
+  max-width: 90%;
+  display: flex;
+  justify-content: center;
+  .modal-content {
+    // padding: 24px;
+    box-shadow: 0px 0px 11px 2px rgb(0 0 0 / 19%);
+    width: fit-content;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border-radius: 4px;
+    outline: 0;
+    border: none !important;
+    // min-width: 889px;
+    &.new-modal-content {
+      padding: 16px 12px !important;
+    }
+    .modal-header {
+      padding: 16px;
+      font-weight: 500;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      color: black;
+      // margin: 0px 0px 24px 0px;
+      font-size: 1.5rem;
+      padding-bottom: 12px;
+      .heading {
+        height: 100%;
+        margin: auto 0;
+        text-align: left;
+        // width: calc(100% - 96px);
+        width: 100%;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.3333333333;
+        letter-spacing: 0;
+        // padding-left: 16px;
+      }
+    }
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      max-height: calc(100vh - 207px);
+      // padding: 0 8px;
+      // min-width: 668px !important;
+      margin: 8px;
+    }
+    .modal-footer {
+      background: #f4f5f7;
+      flex-wrap: nowrap;
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: row;
+      gap: 8px;
+      padding: 12px 16px !important;
+      button {
+        width: max-content;
+        margin: 0;
+      }
+    }
+  }
+}
+
+modal-container {
+  background-color: #4242423b !important;
+}
+
+.w-3 {
+  width: 300px;
+}
+
+.w-7 {
+  width: 700px;
+}
+
+.w-6 {
+  width: 600px;
+}
+.w-8 {
+  width: 800px;
+}
+.w-5 {
+  width: 500px;
+}
+.w-4 {
+  width: 400px;
+}
+.w-9 {
+  width: 900px;
+}
+
+.w-10 {
+  width: 1000px;
+  @media screen and (max-width: 1192px) {
+    width: calc(100vw - 145px);
+  }
+}
+.w-11 {
+  width: 1100px;
+  // width: calc(100vw - 354px);
+  @media screen and (max-width: 1192px) {
+    width: calc(100vw - 145px);
+  }
+}
+// @media screen and (max-width: 768px) {
+//   .w-11 {
+//     width: 600px;
+//   }
+//   .w-8 {
+//     width: 800px;
+//   }
+// }
+
+.w-12 {
+  width: 1200px;
+}
+.w-13 {
+  width: calc(100vw - 191px);
+}
+
+.modal-dialog {
+  // background-color: white;
+}
+
+.modal-backdrop {
+  z-index: 999 !important;
+  background-color: white;
+  &.show {
+    opacity: 0;
+  }
+}
